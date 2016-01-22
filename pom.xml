@@ -14,6 +14,8 @@
         <module>isuwang-soa-rpc</module>
         <module>isuwang-soa-spring</module>
         <module>isuwang-soa-zookeeper</module>
+        <module>isuwang-soa-hello</module>
+        <module>isuwang-soa-great</module>
     </modules>
 
     <properties>
