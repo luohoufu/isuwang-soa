@@ -1,0 +1,11 @@
+# Created by .ignore support plugin (hsz.mobi)
+isuwang-soa.iml
+/.idea/
+/isuwang-soa-core/isuwang-soa-core.iml
+/isuwang-soa-core/target/
+/isuwang-soa-container/isuwang-soa-container.iml
+/isuwang-soa-container/target/
+/isuwang-soa-rpc/isuwang-soa-rpc.iml
+/isuwang-soa-rpc/target/
+/isuwang-soa-spring/isuwang-soa-spring.iml
+/isuwang-soa-spring/target/
