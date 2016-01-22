@@ -13,6 +13,7 @@
         <module>isuwang-soa-container</module>
         <module>isuwang-soa-rpc</module>
         <module>isuwang-soa-spring</module>
+        <module>isuwang-soa-zookeeper</module>
     </modules>
 
     <properties>
