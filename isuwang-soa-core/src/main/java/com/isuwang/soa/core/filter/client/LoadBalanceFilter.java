@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by tangliu on 2016/1/15.
@@ -78,11 +79,10 @@ public class LoadBalanceFilter implements Filter {
 
             ServiceInfo serviceInfo = usableList.get(index);
 
-            synchronized (serviceInfo) {
-                serviceInfo.count++;
-                chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
-                LOGGER.info(serviceInfo.getHost() + ":" + serviceInfo.getPort() + " concurrency：" + serviceInfo.getCount());
-            }
+            serviceInfo.getActiveCount().incrementAndGet();
+            chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
+            LOGGER.info(serviceInfo.getHost() + ":" + serviceInfo.getPort() + " concurrency：" + serviceInfo.getActiveCount());
+
             callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort());
         }
         return callerInfo;
@@ -92,20 +92,19 @@ public class LoadBalanceFilter implements Filter {
 
         if (usableList.size() > 0) {
 
-            int count = usableList.get(0).getCount();
+            AtomicInteger count = usableList.get(0).getActiveCount();
             int index = 0;
 
             for (int i = 1; i < usableList.size(); i++) {
-                if (usableList.get(i).getCount() < count) {
+                if (usableList.get(i).getActiveCount().intValue() < count.intValue()) {
                     index = i;
                 }
             }
 
             ServiceInfo serviceInfo = usableList.get(index);
-            synchronized (serviceInfo) {
-                serviceInfo.count++;
-                chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
-            }
+            serviceInfo.getActiveCount().incrementAndGet();
+            chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
+
             callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort());
         }
         return callerInfo;
@@ -116,10 +115,9 @@ public class LoadBalanceFilter implements Filter {
         if (usableList.size() > 0) {
             roundRobinIndex = (roundRobinIndex++) % usableList.size();
             ServiceInfo serviceInfo = usableList.get(roundRobinIndex);
-            synchronized (serviceInfo) {
-                serviceInfo.count++;
-                chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
-            }
+            serviceInfo.getActiveCount().incrementAndGet();
+            chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
+
             callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort());
         }
         return callerInfo;

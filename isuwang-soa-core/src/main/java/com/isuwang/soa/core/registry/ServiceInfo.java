@@ -1,5 +1,7 @@
 package com.isuwang.soa.core.registry;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Created by tangliu on 2016/1/15.
  */
@@ -15,8 +17,8 @@ public class ServiceInfo {
         return versionName;
     }
 
-    public Integer getCount() {
-        return count;
+    public AtomicInteger getActiveCount() {
+        return activeCount;
     }
 
     public String getHost() {
@@ -28,10 +30,10 @@ public class ServiceInfo {
         return port;
     }
 
-    public Integer count;
+    public AtomicInteger activeCount;
 
-    public void setCount(Integer count) {
-        this.count = count;
+    public void setActiveCount(AtomicInteger activeCount) {
+        this.activeCount = activeCount;
     }
 
     public ServiceInfo(String host, Integer port, String versionName) {
@@ -40,11 +42,10 @@ public class ServiceInfo {
         this.host = host;
         this.port = port;
 
-        this.count = 0;
+        this.activeCount = new AtomicInteger(0);
     }
 
     public boolean equalTo(ServiceInfo sinfo) {
-
         if (!versionName.equals(sinfo.getVersionName()))
             return false;
 

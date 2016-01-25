@@ -84,10 +84,7 @@ public class BaseServiceClient {
             chain.setAttribute(StubFilterChain.ATTR_KEY_RESPONSE, resp);
 
             final ServiceInfo serviceInfo = (ServiceInfo) chain.getAttribute(StubFilterChain.ATTR_KEY_SERVERINFO);
-            synchronized (serviceInfo) {
-                serviceInfo.count--;
-            }
-
+            serviceInfo.getActiveCount().decrementAndGet();
         });
 
         stubFilterChain.doFilter();

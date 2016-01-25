@@ -207,7 +207,7 @@ public class ServiceInfoWatcher {
             for (ServiceInfo sinfo : sinfos) {
                 for (ServiceInfo currentSinfo : currentInfos) {
                     if (sinfo.equalTo(currentSinfo)) {
-                        sinfo.setCount(currentSinfo.getCount());
+                        sinfo.setActiveCount(currentSinfo.getActiveCount());
                         break;
                     }
                 }
