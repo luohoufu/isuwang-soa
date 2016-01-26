@@ -7,7 +7,6 @@ import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
 import com.isuwang.soa.core.registry.ServiceInfo;
 import com.isuwang.soa.core.registry.ServiceInfoWatcher;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +61,7 @@ public class LoadBalanceFilter implements Filter {
             String[] infos = callerInfo.split(":");
             context.setCalleeIp(infos[0]);
             context.setCalleePort(Integer.valueOf(infos[1]));
-        } else if (StringUtils.isNotBlank(SoaSystemEnvProperties.SOA_SERVICE_IP) && SoaSystemEnvProperties.SOA_SERVICE_PORT != null) {
+        } else if (SoaSystemEnvProperties.SOA_SERVICE_IP != null && SoaSystemEnvProperties.SOA_SERVICE_PORT != null) {
             context.setCalleeIp(SoaSystemEnvProperties.SOA_SERVICE_IP);
             context.setCalleePort(SoaSystemEnvProperties.SOA_SERVICE_PORT);
         }

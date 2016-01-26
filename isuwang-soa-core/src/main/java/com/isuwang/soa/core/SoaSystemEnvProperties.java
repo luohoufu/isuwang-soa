@@ -1,7 +1,5 @@
 package com.isuwang.soa.core;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * Soa System Env Properties
  *
@@ -18,7 +16,7 @@ public class SoaSystemEnvProperties {
     private static final String KEY_SOA_CONTAINER_PORT = "soa.container.port";
 
     public static final String SOA_SERVICE_IP = get(KEY_SOA_SERVICE_IP);
-    public static final Integer SOA_SERVICE_PORT = StringUtils.isNotBlank(get(KEY_SOA_SERVICE_PORT)) ? Integer.valueOf(get(KEY_SOA_SERVICE_PORT)) : null;
+    public static final Integer SOA_SERVICE_PORT = isNotBlank(get(KEY_SOA_SERVICE_PORT)) ? Integer.valueOf(get(KEY_SOA_SERVICE_PORT)) : null;
     public static final String SOA_ZOOKEEPER_HOST = get(KEY_SOA_ZOOKEEPER_HOST, "127.0.0.1:2181");
     public static final boolean SOA_CONTAINER_USETHREADPOOL = Boolean.valueOf(get(KEY_SOA_CONTAINER_USETHREADPOOL, Boolean.TRUE.toString()));
     //public static final boolean ZOOKEEPER_JMX_LOG4J_DISABLE = Boolean.valueOf(get(KEY_ZOOKEEPER_JMX_LOG4J_DISABLE, Boolean.FALSE.toString()));
@@ -38,4 +36,7 @@ public class SoaSystemEnvProperties {
     }
 
 
+    private static boolean isNotBlank(String val) {
+        return val != null && !val.trim().isEmpty();
+    }
 }
