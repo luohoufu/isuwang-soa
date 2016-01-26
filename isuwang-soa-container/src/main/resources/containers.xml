@@ -1,0 +1,18 @@
+<soa-containers>
+    <soa-container>
+        <name>logbackContainer</name>
+        <ref>com.isuwang.soa.container.logback.LogbackContainer</ref>
+    </soa-container>
+    <soa-container>
+        <name>springContainer</name>
+        <ref>com.isuwang.soa.container.spring.SpringContainer</ref>
+    </soa-container>
+    <soa-container>
+        <name>registryContainer</name>
+        <ref>com.isuwang.soa.container.registry.RegistryContainer</ref>
+    </soa-container>
+    <soa-container>
+        <name>nettyContainer</name>
+        <ref>com.isuwang.soa.container.netty.NettyContainer</ref>
+    </soa-container>
+</soa-containers>
