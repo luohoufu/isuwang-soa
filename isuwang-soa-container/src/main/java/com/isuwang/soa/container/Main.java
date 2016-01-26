@@ -1,9 +1,5 @@
 package com.isuwang.soa.container;
 
-import com.isuwang.soa.container.logback.LogbackContainer;
-import com.isuwang.soa.container.netty.NettyContainer;
-import com.isuwang.soa.container.registry.RegistryContainer;
-import com.isuwang.soa.container.spring.SpringContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
