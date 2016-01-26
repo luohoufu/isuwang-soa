@@ -1,11 +1,11 @@
 package com.isuwang.soa.container;
 
+import com.isuwang.soa.container.xml.SoaContainer;
+import com.isuwang.soa.container.xml.SoaContainers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.bind.JAXB;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,32 +29,17 @@ public class Main {
 
         try {
             InputStream is = Main.class.getClassLoader().getResourceAsStream("containers.xml");
-            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(is);
 
-            while (reader.hasNext()) {
-                int type = reader.next();
-                if (type == XMLStreamConstants.START_ELEMENT) {
-                    if (reader.getName().toString().equals("soa-container")) {
-                        String serviceName = "";
-                        while (reader.hasNext()) {
-                            if (reader.next() == XMLStreamConstants.START_ELEMENT) {
 
-                                if (reader.getName().toString().equals("name")) {
-                                    serviceName = reader.getElementText();
-                                } else if (reader.getName().toString().equals("ref")) {
+            SoaContainers soaContainers = JAXB.unmarshal(is, SoaContainers.class);
+            for (SoaContainer soaContainer : soaContainers.getSoaContainer()) {
 
-                                    String path = reader.getElementText();
-                                    Class containerClass = Main.class.getClassLoader().loadClass(path);
-                                    Container container = (Container) containerClass.newInstance();
-                                    containers.add(container);
+                Class containerClass = Main.class.getClassLoader().loadClass(soaContainer.getRef());
+                Container container = (Container) containerClass.newInstance();
 
-                                    LOGGER.info("load container {} with path {}", serviceName, path);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+                containers.add(container);
+
+                LOGGER.info("load container {} with path {}", soaContainer.getName(), soaContainer.getRef());
             }
 
         } catch (Exception e) {
