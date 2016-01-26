@@ -2,8 +2,6 @@ package com.isuwang.soa.container;
 
 import com.isuwang.soa.container.xml.SoaContainer;
 import com.isuwang.soa.container.xml.SoaContainers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXB;
 import java.io.InputStream;
@@ -18,8 +16,6 @@ import java.util.List;
  */
 public class Main {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
-
     private static volatile boolean running = true;
 
     public static void main(String[] args) {
@@ -27,10 +23,7 @@ public class Main {
 
         final List<Container> containers = new ArrayList<>();
 
-        try {
-            InputStream is = Main.class.getClassLoader().getResourceAsStream("containers.xml");
-
-
+        try (InputStream is = Main.class.getClassLoader().getResourceAsStream("containers.xml")) {
             SoaContainers soaContainers = JAXB.unmarshal(is, SoaContainers.class);
             for (SoaContainer soaContainer : soaContainers.getSoaContainer()) {
 
@@ -39,11 +32,10 @@ public class Main {
 
                 containers.add(container);
 
-                LOGGER.info("load container {} with path {}", soaContainer.getName(), soaContainer.getRef());
+                System.out.println("load container " + soaContainer.getName() + " with path " + soaContainer.getRef());
             }
-
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            e.printStackTrace();
         }
 
         try {

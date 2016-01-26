@@ -1,15 +1,23 @@
 package com.isuwang.soa.maven.plugin;
 
+import com.isuwang.soa.container.Main;
+import com.isuwang.soa.container.spring.SpringContainer;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-import java.lang.reflect.Method;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,8 +26,11 @@ import java.util.Map;
  * @author craneding
  * @date 16/1/25
  */
-@Mojo(name = "run")
+@Mojo(name = "run", threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST)
 public class RunContainerPlugin extends AbstractMojo {
+
+    @Parameter(defaultValue = "${project}", readonly = true)
+    protected MavenProject project;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         Map pluginContext = getPluginContext();
@@ -29,7 +40,7 @@ public class RunContainerPlugin extends AbstractMojo {
 
         getLog().info(pluginContext.toString());
 
-        MavenProject project = (MavenProject) pluginContext.get("project");
+        //project = (MavenProject) pluginContext.get("project");
 
         if (project == null)
             throw new MojoExecutionException("not found project.");
@@ -43,18 +54,54 @@ public class RunContainerPlugin extends AbstractMojo {
         getLog().info(Arrays.toString(urls));
 
         try {
-            URL respository = new URL("file", null, "/Users/craneding/git/isuwang-soa/isuwang-soa-container/target/classes/").toURI().toURL();
+            //URL url = new URL("file", null, project.getRuntimeClasspathElements().get(0).toString() + "/").toURI().toURL();
+            //URLClassLoader appClassLoader = new URLClassLoader(new URL[]{url});
 
-            URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{respository});
-
-            Class<?> aClass = urlClassLoader.loadClass("com.isuwang.soa.container.Main");
-
-            Method mainMethod = aClass.getMethod("main", String[].class);
-
-            mainMethod.invoke(aClass, new Object[]{new String[]{}});
+            SpringContainer.appClassLoaders = new ArrayList<ClassLoader>(Arrays.asList(getClassLoader()));
+//            getLog().info(Arrays.toString(methods));
         } catch (Exception e) {
             getLog().error(e.getMessage(), e);
         }
+
+        Main.main(new String[]{});
     }
 
+    private ClassLoader getClassLoader() throws MojoExecutionException {
+        List<URL> classpathURLs = new ArrayList<URL>();
+        //this.addRelevantPluginDependenciesToClasspath( classpathURLs );
+        this.addRelevantProjectDependenciesToClasspath(classpathURLs);
+        //this.addAdditionalClasspathElements( classpathURLs );
+        return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
+    }
+
+    private void addRelevantProjectDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
+        try {
+            getLog().debug("Project Dependencies will be included.");
+
+            List<Artifact> artifacts = new ArrayList<Artifact>();
+            List<File> theClasspathFiles = new ArrayList<File>();
+
+            collectProjectArtifactsAndClasspath(artifacts, theClasspathFiles);
+
+            for (File classpathFile : theClasspathFiles) {
+                URL url = classpathFile.toURI().toURL();
+                getLog().debug("Adding to classpath : " + url);
+                path.add(url);
+            }
+
+            for (Artifact classPathElement : artifacts) {
+                getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
+                        + " to classpath");
+                path.add(classPathElement.getFile().toURI().toURL());
+            }
+
+        } catch (MalformedURLException e) {
+            throw new MojoExecutionException("Error during setting up classpath", e);
+        }
+    }
+
+    private void collectProjectArtifactsAndClasspath(List<Artifact> artifacts, List<File> theClasspathFiles) {
+        artifacts.addAll(project.getRuntimeArtifacts());
+        theClasspathFiles.add(new File(project.getBuild().getOutputDirectory()));
+    }
 }
