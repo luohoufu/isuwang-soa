@@ -32,13 +32,13 @@ public class Main {
         final List<Container> containers = new ArrayList<>();
 
         try {
-            InputStream is = Main.class.getClassLoader().getResourceAsStream("service.xml");
+            InputStream is = Main.class.getClassLoader().getResourceAsStream("containers.xml");
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(is);
 
             while (reader.hasNext()) {
                 int type = reader.next();
                 if (type == XMLStreamConstants.START_ELEMENT) {
-                    if (reader.getName().toString().equals("soa-service")) {
+                    if (reader.getName().toString().equals("soa-container")) {
                         String serviceName = "";
                         while (reader.hasNext()) {
                             if (reader.next() == XMLStreamConstants.START_ELEMENT) {
@@ -52,7 +52,7 @@ public class Main {
                                     Container container = (Container) containerClass.newInstance();
                                     containers.add(container);
 
-                                    LOGGER.info("load service {} with path {}", serviceName, path);
+                                    LOGGER.info("load container {} with path {}", serviceName, path);
                                     break;
                                 }
                             }
