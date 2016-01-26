@@ -81,6 +81,7 @@
     </dependencies>
 
     <build>
+        <!--
         <finalName>${project.artifactId}</finalName>
 
         <resources>
@@ -126,5 +127,6 @@
                 </executions>
             </plugin>
         </plugins>
+        -->
     </build>
 </project>

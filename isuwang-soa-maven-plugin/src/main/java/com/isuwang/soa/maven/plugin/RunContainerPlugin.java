@@ -9,6 +9,7 @@ import org.apache.maven.project.MavenProject;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -35,6 +36,11 @@ public class RunContainerPlugin extends AbstractMojo {
 
         getLog().info("bundle:" + project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion());
 
+        String[] paths = System.getProperty("java.class.path").split(";");
+
+        URL[] urls = new URL[paths.length];
+
+        getLog().info(Arrays.toString(urls));
 
         try {
             URL respository = new URL("file", null, "/Users/craneding/git/isuwang-soa/isuwang-soa-container/target/classes/").toURI().toURL();
@@ -47,7 +53,7 @@ public class RunContainerPlugin extends AbstractMojo {
 
             mainMethod.invoke(aClass, new Object[]{new String[]{}});
         } catch (Exception e) {
-            e.printStackTrace();
+            getLog().error(e.getMessage(), e);
         }
     }
 
