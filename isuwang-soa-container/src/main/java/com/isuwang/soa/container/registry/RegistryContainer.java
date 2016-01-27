@@ -48,17 +48,6 @@ public class RegistryContainer implements Container {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-
-//        Map<String, SoaBaseProcessor> processorMap = context.getBeansOfType(SoaBaseProcessor.class);
-//
-//        Set<String> keys = processorMap.keySet();
-//        for (String key : keys) {
-//            SoaBaseProcessor processor = processorMap.get(key);
-//
-//            RegistryContainer.processorMap.put(processor.getInterfaceClass().getSimpleName(), processor);
-//
-//            processor.registerService();
-//        }
     }
 
     @Override

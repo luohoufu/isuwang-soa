@@ -7,6 +7,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -35,7 +36,12 @@ public class RunContainerPlugin extends SoaAbstractMojo {
 
                     SpringContainer.appClassLoaders = new ArrayList<ClassLoader>(Arrays.asList(contextClassLoader));
 
-                    Main.main(new String[]{});
+                    Class<?> mainClass = contextClassLoader.loadClass(Main.class.getName());
+
+                    Method mainMethod = mainClass.getMethod("main", new Class<?>[]{String[].class});
+
+                    mainMethod.invoke(mainClass, new Object[]{new String[]{}});
+                    //Main.main(new String[]{});
                 } catch (Exception e) {
                     Thread.currentThread().getThreadGroup().uncaughtException(Thread.currentThread(), e);
                 }

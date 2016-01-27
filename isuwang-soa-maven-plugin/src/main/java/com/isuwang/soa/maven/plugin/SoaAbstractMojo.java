@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,7 +27,11 @@ public abstract class SoaAbstractMojo extends AbstractMojo {
     protected MavenProject project;
 
     protected ClassLoader getClassLoader() throws MojoExecutionException {
-        List<URL> classpathURLs = new ArrayList<URL>();
+        URLClassLoader urlClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        URL[] urLs = urlClassLoader.getURLs();
+
+        List<URL> classpathURLs = new ArrayList<URL>(Arrays.asList(urLs));
+
         //this.addRelevantPluginDependenciesToClasspath( classpathURLs );
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
         //this.addAdditionalClasspathElements( classpathURLs );
