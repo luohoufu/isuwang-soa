@@ -42,7 +42,7 @@ public class SpringContainer implements Container {
 
         for (ClassLoader appClassLoader : SpringContainer.appClassLoaders) {
             try {
-                List<String> xmlPaths = new ArrayList<String>();
+                List<String> xmlPaths = new ArrayList<>();
 
                 Enumeration<URL> resources = appClassLoader.getResources(configPath);
 
