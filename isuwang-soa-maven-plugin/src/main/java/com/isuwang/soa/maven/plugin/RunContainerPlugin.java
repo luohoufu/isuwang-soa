@@ -18,7 +18,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Run Container Plugin
@@ -33,32 +32,13 @@ public class RunContainerPlugin extends AbstractMojo {
     protected MavenProject project;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Map pluginContext = getPluginContext();
-
-        if (pluginContext == null)
-            throw new MojoExecutionException("not found project.");
-
-        getLog().info(pluginContext.toString());
-
-        //project = (MavenProject) pluginContext.get("project");
-
         if (project == null)
             throw new MojoExecutionException("not found project.");
 
         getLog().info("bundle:" + project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion());
 
-        String[] paths = System.getProperty("java.class.path").split(";");
-
-        URL[] urls = new URL[paths.length];
-
-        getLog().info(Arrays.toString(urls));
-
         try {
-            //URL url = new URL("file", null, project.getRuntimeClasspathElements().get(0).toString() + "/").toURI().toURL();
-            //URLClassLoader appClassLoader = new URLClassLoader(new URL[]{url});
-
             SpringContainer.appClassLoaders = new ArrayList<ClassLoader>(Arrays.asList(getClassLoader()));
-//            getLog().info(Arrays.toString(methods));
         } catch (Exception e) {
             getLog().error(e.getMessage(), e);
         }

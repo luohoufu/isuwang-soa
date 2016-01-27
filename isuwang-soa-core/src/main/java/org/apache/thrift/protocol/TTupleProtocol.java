@@ -18,12 +18,12 @@
  */
 package org.apache.thrift.protocol;
 
-import java.util.BitSet;
-
 import org.apache.thrift.TException;
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.TupleScheme;
 import org.apache.thrift.transport.TTransport;
+
+import java.util.BitSet;
 
 public final class TTupleProtocol extends TCompactProtocol {
   public static class Factory implements TProtocolFactory {
