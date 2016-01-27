@@ -15,7 +15,6 @@
         <module>isuwang-soa-spring</module>
         <module>isuwang-soa-zookeeper</module>
         <module>isuwang-soa-maven-plugin</module>
-        <module>isuwang-soa-service-hello</module>
     </modules>
 
     <properties>
