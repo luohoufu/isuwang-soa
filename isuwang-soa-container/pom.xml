@@ -81,25 +81,29 @@
     </dependencies>
 
     <build>
-        <!--
+
         <finalName>${project.artifactId}</finalName>
 
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-            </resource>
-            <resource>
-                <filtering>true</filtering>
-                <directory>src/main/command</directory>
+                <directory>${basedir}/src/main/command</directory>
                 <includes>
                     <include>startup.sh</include>
                     <include>shutdown.sh</include>
                 </includes>
                 <targetPath>${project.build.directory}/${project.build.finalName}/bin</targetPath>
             </resource>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources</directory>
+                <includes>
+                    <include>containers.xml</include>
+                    <include>logback.xml</include>
+                </includes>
+                <targetPath>${project.build.directory}/${project.build.finalName}/conf</targetPath>
+            </resource>
         </resources>
-
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -127,6 +131,5 @@
                 </executions>
             </plugin>
         </plugins>
-        -->
     </build>
 </project>
