@@ -3,7 +3,6 @@ package com.isuwang.soa.container.spring;
 import com.isuwang.soa.container.Container;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -51,7 +50,9 @@ public class SpringContainer implements Container {
                     xmlPaths.add(nextElement.toString());
                 }
 
-                Class<?> appClass = appClassLoader.loadClass(ClassPathXmlApplicationContext.class.getName());
+                // ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new Object[]{xmlPaths.toArray(new String[0])});
+                // context.start();
+                Class<?> appClass = appClassLoader.loadClass("org.springframework.context.support.ClassPathXmlApplicationContext");
 
                 Class<?>[] parameterTypes = new Class[]{String[].class};
                 Constructor<?> constructor = appClass.getConstructor(parameterTypes);
