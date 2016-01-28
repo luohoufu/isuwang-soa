@@ -60,27 +60,11 @@
                                     <goal>copy-dependencies</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${project.build.directory}/${project.build.finalName}/bin/lib
-                                    </outputDirectory>
-                                    <overWriteReleases>false</overWriteReleases>
-                                    <overWriteSnapshots>false</overWriteSnapshots>
-                                    <overWriteIfNewer>true</overWriteIfNewer>
-                                    <excludeArtifactIds>isuwang-soa-core</excludeArtifactIds>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-dependencies-core</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>copy-dependencies</goal>
-                                </goals>
-                                <configuration>
                                     <outputDirectory>${project.build.directory}/${project.build.finalName}/lib
                                     </outputDirectory>
                                     <overWriteReleases>false</overWriteReleases>
                                     <overWriteSnapshots>false</overWriteSnapshots>
                                     <overWriteIfNewer>true</overWriteIfNewer>
-                                    <includeArtifactIds>isuwang-soa-core</includeArtifactIds>
                                 </configuration>
                             </execution>
                         </executions>
@@ -101,7 +85,6 @@
                                     <tasks>
                                         <mkdir dir="${project.build.directory}/${project.build.finalName}/apps"/>
                                         <mkdir dir="${project.build.directory}/${project.build.finalName}/logs"/>
-                                        <mkdir dir="${project.build.directory}/${project.build.finalName}/lib"/>
                                     </tasks>
                                 </configuration>
                             </execution>
@@ -147,13 +130,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
         </dependency>
-
-        <!--
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        -->
 
         <dependency>
             <groupId>io.netty</groupId>

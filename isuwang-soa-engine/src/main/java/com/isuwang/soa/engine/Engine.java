@@ -82,7 +82,7 @@ public class Engine {
     }
 
     private static void loadAllUrls() throws MalformedURLException {
-        shareURLs.addAll(findJarURLs(new File(enginePath)));
+        shareURLs.addAll(findJarURLs(new File(enginePath, "lib")));
 
         platformURLs.addAll(findJarURLs(new File(enginePath, "bin/lib")));
 
