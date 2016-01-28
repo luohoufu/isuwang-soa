@@ -21,5 +21,5 @@ if [ ! -d "$logdir" ]; then
 	mkdir "$logdir"
 fi
 
-nohup java -jar ./lib/isuwang-soa-container.jar  > $logdir/nohup.out 2>&1 &
+nohup java -Dsoa.base=$workdir/../ -Dsoa.run.mode=native -cp ./isuwang-soa-engine.jar com.isuwang.soa.engine.Engine > $logdir/nohup.out 2>&1 &
 echo $! > $logdir/pid.txt
