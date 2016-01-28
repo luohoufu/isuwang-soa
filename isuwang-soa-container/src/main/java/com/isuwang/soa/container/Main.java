@@ -4,7 +4,7 @@ import com.isuwang.soa.container.xml.SoaContainer;
 import com.isuwang.soa.container.xml.SoaContainers;
 
 import javax.xml.bind.JAXB;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,13 +17,13 @@ import java.util.List;
 public class Main {
 
     private static volatile boolean running = true;
+    public static final String SOA_BASE = System.getProperty("soa.base");
+    public static final String SOA_RUN_MODE = System.getProperty("soa.run.mode");
 
     public static void main(String[] args) {
-        //System.setProperty(SoaSystemEnvProperties.KEY_SOA_ZOOKEEPER_HOST, "192.168.3.39:2181");
-
         final List<Container> containers = new ArrayList<>();
 
-        try (InputStream is = Main.class.getClassLoader().getResourceAsStream("containers.xml")) {
+        try (InputStream is = new BufferedInputStream(loadInputStreamInClassLoader("containers.xml"))) {
             SoaContainers soaContainers = JAXB.unmarshal(is, SoaContainers.class);
             for (SoaContainer soaContainer : soaContainers.getSoaContainer()) {
 
@@ -72,6 +72,12 @@ public class Main {
                 System.out.println("soa is stopped.");
             }
         }
+    }
+
+    public static InputStream loadInputStreamInClassLoader(String path) throws FileNotFoundException {
+        if (SOA_RUN_MODE.endsWith("maven"))
+            return Main.class.getClassLoader().getResourceAsStream(path);
+        return new FileInputStream(new File(SOA_BASE, "conf/" + path));
     }
 
 }

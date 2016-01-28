@@ -29,6 +29,7 @@ public class RegistryContainer implements Container {
 
         Map<Object, Class<?>> contexts = SpringContainer.getContexts();
         Set<Object> ctxs = contexts.keySet();
+
         for (Object ctx : ctxs) {
             Class<?> contextClass = contexts.get(ctx);
 

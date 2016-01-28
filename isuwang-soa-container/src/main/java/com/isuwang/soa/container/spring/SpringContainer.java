@@ -22,7 +22,7 @@ public class SpringContainer implements Container {
     //public static final String DEFAULT_SPRING_CONFIG = "classpath*:META-INF/spring/*.xml";
     public static final String DEFAULT_SPRING_CONFIG = "META-INF/spring/services.xml";
 
-    public static List<ClassLoader> appClassLoaders = new ArrayList<>(Arrays.asList(SpringContainer.class.getClassLoader()));
+    public static List<ClassLoader> appClassLoaders = new ArrayList<>();
 
     static Map<Object, Class<?>> contexts;
 
@@ -38,6 +38,8 @@ public class SpringContainer implements Container {
         }
 
         contexts = new HashMap<>();
+
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
         for (ClassLoader appClassLoader : SpringContainer.appClassLoaders) {
             try {
@@ -57,6 +59,8 @@ public class SpringContainer implements Container {
                 Class<?>[] parameterTypes = new Class[]{String[].class};
                 Constructor<?> constructor = appClass.getConstructor(parameterTypes);
 
+                Thread.currentThread().setContextClassLoader(appClassLoader);
+
                 Object context = constructor.newInstance(new Object[]{xmlPaths.toArray(new String[0])});
 
                 Method startMethod = appClass.getMethod("start");
@@ -67,6 +71,8 @@ public class SpringContainer implements Container {
                 LOGGER.error(e.getMessage(), e);
             }
         }
+
+        Thread.currentThread().setContextClassLoader(contextClassLoader);
     }
 
     @Override

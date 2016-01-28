@@ -1,15 +1,17 @@
 package com.isuwang.soa.maven.plugin;
 
-import com.isuwang.soa.container.Main;
-import com.isuwang.soa.container.spring.SpringContainer;
+import com.isuwang.soa.engine.Engine;
+import com.isuwang.soa.engine.classloader.AppClassLoader;
+import com.isuwang.soa.engine.classloader.ClassLoaderManager;
+import com.isuwang.soa.engine.classloader.PlatformClassLoader;
+import com.isuwang.soa.engine.classloader.ShareClassLoader;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
  * Run Container Plugin
@@ -26,22 +28,21 @@ public class RunContainerPlugin extends SoaAbstractMojo {
 
         getLog().info("bundle:" + project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion());
 
-        final String mainClass = Main.class.getName();
+        final String mainClass = Engine.class.getName();
 
         IsolatedThreadGroup threadGroup = new IsolatedThreadGroup(mainClass);
         Thread bootstrapThread = new Thread(threadGroup, new Runnable() {
             public void run() {
                 try {
-                    ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+                    //ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
-                    SpringContainer.appClassLoaders = new ArrayList<ClassLoader>(Arrays.asList(contextClassLoader));
+                    URL[] urls = ((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs();
 
-                    Class<?> mainClass = contextClassLoader.loadClass(Main.class.getName());
+                    ClassLoaderManager.shareClassLoader = new ShareClassLoader(urls);
+                    ClassLoaderManager.platformClassLoader = new PlatformClassLoader(urls);
+                    ClassLoaderManager.appClassLoaders.add(new AppClassLoader(urls));
 
-                    Method mainMethod = mainClass.getMethod("main", new Class<?>[]{String[].class});
-
-                    mainMethod.invoke(mainClass, new Object[]{new String[]{}});
-                    //Main.main(new String[]{});
+                    Engine.main(new String[]{});
                 } catch (Exception e) {
                     Thread.currentThread().getThreadGroup().uncaughtException(Thread.currentThread(), e);
                 }
