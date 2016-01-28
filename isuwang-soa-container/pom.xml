@@ -90,25 +90,34 @@
                             </execution>
 
                             <!--copy container.jar to bin/lib/-->
-                            <execution>
-                                <id>copy-container-jar</id>
-                                <phase>package</phase>
-                                <configuration>
-                                    <tasks>
-                                        <copy todir="${project.build.directory}/${project.build.finalName}/bin/lib">
-                                            <fileset dir="${project.build.directory}">
-                                                <include name="*container.jar"/>
-                                            </fileset>
-                                        </copy>
-                                    </tasks>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-
+                            <!--<execution>-->
+                                <!--<id>copy-container-jar</id>-->
+                                <!--<phase>package</phase>-->
+                                <!--<configuration>-->
+                                    <!--<tasks>-->
+                                        <!--<copy todir="${project.build.directory}/${project.build.finalName}/bin/lib">-->
+                                            <!--<fileset dir="${project.build.directory}">-->
+                                                <!--<include name="*container.jar"/>-->
+                                            <!--</fileset>-->
+                                        <!--</copy>-->
+                                    <!--</tasks>-->
+                                <!--</configuration>-->
+                                <!--<goals>-->
+                                    <!--<goal>run</goal>-->
+                                <!--</goals>-->
+                            <!--</execution>-->
                         </executions>
                     </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>2.3.2</version>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/bin/lib</outputDirectory>
+                        </configuration>
+                    </plugin>
+
                 </plugins>
             </build>
         </profile>
