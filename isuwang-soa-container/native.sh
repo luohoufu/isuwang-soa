@@ -23,6 +23,6 @@ mvn clean package -Pdev
 # engine
 enginedir=${basedir}/../isuwang-soa-engine
 cd ${enginedir}
-mvn clean package
+mvn clean package -Pdev
 
 cp ${enginedir}/target/isuwang-soa-engine*.jar ${containerdir}/target/isuwang-soa-container/bin/
