@@ -16,8 +16,8 @@ else
 fi
 
 # soa-parent
-soaparentdir=${containerdir}/../
-cd $soaparentdir
+soaparentdir=${basedir}/../
+cd ${soaparentdir}
 mvn clean install
 
 # container
