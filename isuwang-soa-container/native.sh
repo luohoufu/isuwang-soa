@@ -15,6 +15,11 @@ else
     fi
 fi
 
+# soa-parent
+soaparentdir=${containerdir}/../
+cd $soaparentdir
+mvn clean install
+
 # container
 containerdir=${basedir}
 cd ${containerdir}
