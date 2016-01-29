@@ -1,4 +1,4 @@
-package com.isuwang.soa.core.filter.client;
+package com.isuwang.soa.rpc.filter.client;
 
 /**
  * Load Balance Stratage

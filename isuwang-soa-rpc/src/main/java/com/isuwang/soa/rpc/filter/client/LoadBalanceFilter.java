@@ -1,12 +1,12 @@
-package com.isuwang.soa.core.filter.client;
+package com.isuwang.soa.rpc.filter.client;
 
 import com.isuwang.soa.core.Context;
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
-import com.isuwang.soa.core.registry.ServiceInfo;
-import com.isuwang.soa.core.registry.ServiceInfoWatcher;
+import com.isuwang.soa.registry.ServiceInfo;
+import com.isuwang.soa.registry.ServiceInfoWatcher;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

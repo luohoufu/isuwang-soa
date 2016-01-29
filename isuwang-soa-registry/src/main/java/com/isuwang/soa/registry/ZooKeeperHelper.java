@@ -1,4 +1,4 @@
-package com.isuwang.soa.core.registry;
+package com.isuwang.soa.registry;
 
 import org.apache.zookeeper.*;
 import org.slf4j.Logger;

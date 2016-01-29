@@ -1,4 +1,4 @@
-package com.isuwang.soa.core.filter.client;
+package com.isuwang.soa.rpc.filter.client;
 
 import com.google.gson.Gson;
 import com.isuwang.soa.core.SoaHeader;

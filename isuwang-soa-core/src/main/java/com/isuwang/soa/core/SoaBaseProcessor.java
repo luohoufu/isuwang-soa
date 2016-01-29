@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import com.isuwang.soa.core.filter.container.DispatchFilter;
 import com.isuwang.soa.core.filter.container.ProviderTimesFilter;
-import com.isuwang.soa.core.registry.RegistryAgent;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TMessage;
@@ -79,14 +78,6 @@ public class SoaBaseProcessor<I> implements TProcessor {
         filterChain.doFilter();
 
         return true;
-    }
-
-    public void registerService() {
-        if (interfaceClass.getClass() != null) {
-            Service service = interfaceClass.getAnnotation(Service.class);
-
-            RegistryAgent.getInstance().registerService(interfaceClass.getSimpleName(), service.version());
-        }
     }
 
     public Map<String, SoaProcessFunction<I, ?, ?, ? extends TBeanSerializer<?>, ? extends TBeanSerializer<?>>> getProcessMapView() {
