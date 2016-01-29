@@ -16,6 +16,7 @@
         <module>isuwang-soa-zookeeper</module>
         <module>isuwang-soa-maven-plugin</module>
         <module>isuwang-soa-engine</module>
+        <module>isuwang-soa-registry</module>
     </modules>
 
     <properties>

@@ -1,6 +1,7 @@
-package com.isuwang.soa.core.registry;
+package com.isuwang.soa.registry;
 
 import com.isuwang.soa.core.IPUtils;
+import com.isuwang.soa.core.Service;
 import com.isuwang.soa.core.SoaBaseProcessor;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import org.slf4j.Logger;
@@ -8,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Registry Agent
@@ -24,7 +24,6 @@ public class RegistryAgent {
     private final ZooKeeperHelper zooKeeperHelper = new ZooKeeperHelper();
 
     private Map<String, SoaBaseProcessor<?>> processorMap;
-    private final Map<String, StubRegistry> stubRegistryMap = new ConcurrentHashMap<>();
 
     public static RegistryAgent getInstance() {
         return agent;
@@ -54,8 +53,12 @@ public class RegistryAgent {
         Set<String> keys = processorMap.keySet();
 
         for (String key : keys) {
-            SoaBaseProcessor processor = processorMap.get(key);
-            processor.registerService();
+            SoaBaseProcessor<?> processor = processorMap.get(key);
+
+            if (processor.getInterfaceClass().getClass() != null) {
+                Service service = processor.getInterfaceClass().getAnnotation(Service.class);
+                RegistryAgent.getInstance().registerService(processor.getInterfaceClass().getSimpleName(), service.version());
+            }
         }
     }
 

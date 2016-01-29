@@ -1,4 +1,4 @@
-package com.isuwang.soa.core.registry;
+package com.isuwang.soa.registry;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

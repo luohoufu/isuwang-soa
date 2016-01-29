@@ -2,8 +2,9 @@ package com.isuwang.soa.container.registry;
 
 import com.isuwang.soa.container.Container;
 import com.isuwang.soa.container.spring.SpringContainer;
+import com.isuwang.soa.core.Service;
 import com.isuwang.soa.core.SoaBaseProcessor;
-import com.isuwang.soa.core.registry.RegistryAgent;
+import com.isuwang.soa.registry.RegistryAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,15 +36,20 @@ public class RegistryContainer implements Container {
 
             try {
                 Method method = contextClass.getMethod("getBeansOfType", Class.class);
-                Map<String, SoaBaseProcessor> processorMap = (Map<String, SoaBaseProcessor>) method.invoke(ctx, contextClass.getClassLoader().loadClass(SoaBaseProcessor.class.getName()));
+                Map<String, SoaBaseProcessor<?>> processorMap = (Map<String, SoaBaseProcessor<?>>) method.invoke(ctx, contextClass.getClassLoader().loadClass(SoaBaseProcessor.class.getName()));
 
                 Set<String> keys = processorMap.keySet();
                 for (String key : keys) {
-                    SoaBaseProcessor processor = processorMap.get(key);
+                    SoaBaseProcessor<?> processor = processorMap.get(key);
 
                     RegistryContainer.processorMap.put(processor.getInterfaceClass().getSimpleName(), processor);
 
-                    processor.registerService();
+                    if (processor.getInterfaceClass().getClass() != null) {
+                        Service service = processor.getInterfaceClass().getAnnotation(Service.class);
+
+                        RegistryAgent.getInstance().registerService(processor.getInterfaceClass().getSimpleName(), service.version());
+                    }
+
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
