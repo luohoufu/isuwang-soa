@@ -57,7 +57,7 @@ public class SoaConnection {
                         responseSerializer.read(response, inputProtocol);
                         inputProtocol.readMessageEnd();
                     } else {
-                        throw new SoaException(soaHeader.getRespCode(), soaHeader.getRespMessage());
+                        throw new SoaException(soaHeader.getRespCode().get(), soaHeader.getRespMessage().get());
                     }
 
                     return response;

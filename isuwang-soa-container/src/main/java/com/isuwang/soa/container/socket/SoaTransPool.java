@@ -12,6 +12,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -90,8 +91,8 @@ public class SoaTransPool {
 
                 if (protocol != null) {
                     try {
-                        soaHeader.setRespCode(e.getCode());
-                        soaHeader.setRespMessage(e.getMsg());
+                        soaHeader.setRespCode(Optional.of(e.getCode()));
+                        soaHeader.setRespMessage(Optional.of(e.getMsg()));
                         protocol.writeMessageBegin(new TMessage(soaHeader.getServiceName() + ":" + soaHeader.getMethodName(), TMessageType.REPLY, context.getSeqid()));
                         protocol.writeMessageEnd();
 

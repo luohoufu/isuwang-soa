@@ -1,5 +1,7 @@
 package com.isuwang.soa.core;
 
+import java.util.Optional;
+
 /**
  * Created by tangliu on 2016/1/11.
  */
@@ -23,42 +25,42 @@ public class SoaHeader {
     /**
      * 调用源
      */
-    private String callerFrom;
+    private Optional<String> callerFrom;
 
     /**
      * 返回码
      */
-    private String respCode;
+    private Optional<String> respCode;
 
     /**
      * 返回信息
      */
-    private String respMessage;
+    private Optional<String> respMessage;
 
     /**
      * 调用源ip
      */
-    private String callerIp;
+    private Optional<String> callerIp;
 
     /**
      * 操作人编号
      */
-    private Integer operatorId;
+    private Optional<Integer> operatorId;
 
     /**
      * 操作人名称
      */
-    private String operatorName;
+    private Optional<String> operatorName;
 
     /**
      * 客户编号
      */
-    private Integer customerId;
+    private Optional<Integer> customerId;
 
     /**
      * 客户名称
      */
-    private String customerName;
+    private Optional<String> customerName;
 
 
     public String getServiceName() {
@@ -85,67 +87,67 @@ public class SoaHeader {
         this.versionName = versionName;
     }
 
-    public String getCallerIp() {
+    public Optional<String> getCallerIp() {
         return callerIp;
     }
 
-    public void setCallerIp(String callerIp) {
+    public void setCallerIp(Optional<String> callerIp) {
         this.callerIp = callerIp;
     }
 
-    public Integer getOperatorId() {
+    public Optional<Integer> getOperatorId() {
         return operatorId;
     }
 
-    public void setOperatorId(Integer operatorId) {
+    public void setOperatorId(Optional<Integer> operatorId) {
         this.operatorId = operatorId;
     }
 
-    public String getOperatorName() {
+    public Optional<String> getOperatorName() {
         return operatorName;
     }
 
-    public void setOperatorName(String operatorName) {
+    public void setOperatorName(Optional<String> operatorName) {
         this.operatorName = operatorName;
     }
 
-    public Integer getCustomerId() {
+    public Optional<Integer> getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(Optional<Integer> customerId) {
         this.customerId = customerId;
     }
 
-    public String getCustomerName() {
+    public Optional<String> getCustomerName() {
         return customerName;
     }
 
-    public void setCustomerName(String customerName) {
+    public void setCustomerName(Optional<String> customerName) {
         this.customerName = customerName;
     }
 
-    public String getRespCode() {
+    public Optional<String> getRespCode() {
         return respCode;
     }
 
-    public void setRespCode(String respCode) {
+    public void setRespCode(Optional<String> respCode) {
         this.respCode = respCode;
     }
 
-    public String getRespMessage() {
+    public Optional<String> getRespMessage() {
         return respMessage;
     }
 
-    public void setRespMessage(String respMessage) {
+    public void setRespMessage(Optional<String> respMessage) {
         this.respMessage = respMessage;
     }
 
-    public String getCallerFrom() {
+    public Optional<String> getCallerFrom() {
         return callerFrom;
     }
 
-    public void setCallerFrom(String callerFrom) {
+    public void setCallerFrom(Optional<String> callerFrom) {
         this.callerFrom = callerFrom;
     }
 }

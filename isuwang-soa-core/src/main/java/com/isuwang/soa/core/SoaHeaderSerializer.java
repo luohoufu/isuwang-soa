@@ -3,6 +3,8 @@ package com.isuwang.soa.core;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.*;
 
+import java.util.Optional;
+
 /**
  * Created by tangliu on 2016/1/11.
  * SoaHeader序列化和反序列化
@@ -47,56 +49,56 @@ public class SoaHeaderSerializer implements TBeanSerializer<SoaHeader> {
                     break;
                 case 4:
                     if (schemeField.type == TType.STRING) {
-                        bean.setCallerFrom(iprot.readString());
+                        bean.setCallerFrom(Optional.of(iprot.readString()));
                     } else {
                         TProtocolUtil.skip(iprot, schemeField.type);
                     }
                     break;
                 case 5:
                     if (schemeField.type == TType.STRING) {
-                        bean.setCallerIp(iprot.readString());
+                        bean.setCallerIp(Optional.of(iprot.readString()));
                     } else {
                         TProtocolUtil.skip(iprot, schemeField.type);
                     }
                     break;
                 case 11:
                     if (schemeField.type == TType.STRING) {
-                        bean.setRespCode(iprot.readString());
+                        bean.setRespCode(Optional.of(iprot.readString()));
                     } else {
                         TProtocolUtil.skip(iprot, schemeField.type);
                     }
                     break;
                 case 12:
                     if (schemeField.type == TType.STRING) {
-                        bean.setRespMessage(iprot.readString());
+                        bean.setRespMessage(Optional.of(iprot.readString()));
                     } else {
                         TProtocolUtil.skip(iprot, schemeField.type);
                     }
                     break;
                 case 15:
                     if (schemeField.type == TType.I32) {
-                        bean.setOperatorId(iprot.readI32());
+                        bean.setOperatorId(Optional.of(iprot.readI32()));
                     } else {
                         TProtocolUtil.skip(iprot, schemeField.type);
                     }
                     break;
                 case 16:
                     if (schemeField.type == TType.STRING) {
-                        bean.setOperatorName(iprot.readString());
+                        bean.setOperatorName(Optional.of(iprot.readString()));
                     } else {
                         TProtocolUtil.skip(iprot, schemeField.type);
                     }
                     break;
                 case 17:
                     if (schemeField.type == TType.I32) {
-                        bean.setCustomerId(iprot.readI32());
+                        bean.setCustomerId(Optional.of(iprot.readI32()));
                     } else {
                         TProtocolUtil.skip(iprot, schemeField.type);
                     }
                     break;
                 case 18:
                     if (schemeField.type == TType.STRING) {
-                        bean.setCustomerName(iprot.readString());
+                        bean.setCustomerName(Optional.of(iprot.readString()));
                     } else {
                         TProtocolUtil.skip(iprot, schemeField.type);
                     }
@@ -134,44 +136,44 @@ public class SoaHeaderSerializer implements TBeanSerializer<SoaHeader> {
             oprot.writeString(bean.getVersionName());
             oprot.writeFieldEnd();
         }
-        if (null != bean.getCallerFrom()) {
+        if (bean.getCallerFrom().isPresent()) {
             oprot.writeFieldBegin(new TField("callerFrom", TType.STRING, (short) 4));
-            oprot.writeString(bean.getCallerFrom());
+            oprot.writeString(bean.getCallerFrom().get());
             oprot.writeFieldEnd();
         }
-        if (null != bean.getCallerIp()) {
+        if (bean.getCallerIp().isPresent()) {
             oprot.writeFieldBegin(new TField("callerIP", TType.STRING, (short) 5));
-            oprot.writeString(bean.getCallerIp());
+            oprot.writeString(bean.getCallerIp().get());
             oprot.writeFieldEnd();
         }
-        if (null != bean.getRespCode()) {
+        if (bean.getRespCode().isPresent()) {
             oprot.writeFieldBegin(new TField("respCode", TType.STRING, (short) 11));
-            oprot.writeString(bean.getRespCode());
+            oprot.writeString(bean.getRespCode().get());
             oprot.writeFieldEnd();
         }
-        if (null != bean.getRespMessage()) {
+        if (bean.getRespMessage().isPresent()) {
             oprot.writeFieldBegin(new TField("respMessage", TType.STRING, (short) 12));
-            oprot.writeString(bean.getRespMessage());
+            oprot.writeString(bean.getRespMessage().get());
             oprot.writeFieldEnd();
         }
-        if (null != bean.getOperatorId()) {
+        if (bean.getOperatorId().isPresent()) {
             oprot.writeFieldBegin(new TField("operatorId", TType.I32, (short) 15));
-            oprot.writeI32(bean.getOperatorId());
+            oprot.writeI32(bean.getOperatorId().get());
             oprot.writeFieldEnd();
         }
-        if (null != bean.getOperatorName()) {
+        if (bean.getOperatorName().isPresent()) {
             oprot.writeFieldBegin(new TField("operatorName", TType.STRING, (short) 16));
-            oprot.writeString(bean.getOperatorName());
+            oprot.writeString(bean.getOperatorName().get());
             oprot.writeFieldEnd();
         }
-        if (null != bean.getCustomerId()) {
+        if (bean.getCustomerId().isPresent()) {
             oprot.writeFieldBegin(new TField("customerId", TType.I32, (short) 17));
-            oprot.writeI32(bean.getCustomerId());
+            oprot.writeI32(bean.getCustomerId().get());
             oprot.writeFieldEnd();
         }
-        if (null != bean.getCustomerName()) {
+        if (bean.getCustomerName().isPresent()) {
             oprot.writeFieldBegin(new TField("customerName", TType.STRING, (short) 18));
-            oprot.writeString(bean.getCustomerName());
+            oprot.writeString(bean.getCustomerName().get());
             oprot.writeFieldEnd();
         }
 

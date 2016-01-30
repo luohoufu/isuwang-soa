@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -111,8 +112,8 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     private void writeErrorMessage(ChannelHandlerContext ctx, ByteBuf outputBuf, Context context, SoaHeader soaHeader, TSoaTransport outputSoaTransport, TSoaServiceProtocol outputProtocol, SoaException e) {
         if (outputProtocol != null) {
             try {
-                soaHeader.setRespCode(e.getCode());
-                soaHeader.setRespMessage(e.getMsg());
+                soaHeader.setRespCode(Optional.of(e.getCode()));
+                soaHeader.setRespMessage(Optional.of(e.getMsg()));
                 outputProtocol.writeMessageBegin(new TMessage(soaHeader.getServiceName() + ":" + soaHeader.getMethodName(), TMessageType.REPLY, context.getSeqid()));
                 outputProtocol.writeMessageEnd();
 

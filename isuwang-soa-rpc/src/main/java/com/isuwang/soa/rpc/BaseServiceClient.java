@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -46,7 +47,7 @@ public class BaseServiceClient {
 
         SoaHeader soaHeader = new SoaHeader();
         try {
-            soaHeader.setCallerIp(InetAddress.getLocalHost().getHostAddress());
+            soaHeader.setCallerIp(Optional.of(InetAddress.getLocalHost().getHostAddress()));
         } catch (UnknownHostException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -54,7 +55,7 @@ public class BaseServiceClient {
         soaHeader.setServiceName(serviceName);
         soaHeader.setMethodName(methodName);
         soaHeader.setVersionName(versionName);
-        soaHeader.setCallerFrom(System.getProperty("soa.service.callerfrom", "web"));
+        soaHeader.setCallerFrom(Optional.of(System.getProperty("soa.service.callerfrom", "web")));
 
         context.setHeader(soaHeader);
 

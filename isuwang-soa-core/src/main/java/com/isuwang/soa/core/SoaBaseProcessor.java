@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Soa基础处理器
@@ -68,8 +69,8 @@ public class SoaBaseProcessor<I> implements TProcessor {
             LOGGER.info("{} response:{}", logId, gson.toJson(result));
 
             // write
-            context.getHeader().setRespCode("0000");
-            context.getHeader().setRespMessage("成功");
+            context.getHeader().setRespCode(Optional.of("0000"));
+            context.getHeader().setRespMessage(Optional.of("成功"));
             out.writeMessageBegin(new TMessage(context.getHeader().getMethodName(), TMessageType.CALL, context.getSeqid()));
             soaProcessFunction.getResSerializer().write(result, out);
             out.writeMessageEnd();
