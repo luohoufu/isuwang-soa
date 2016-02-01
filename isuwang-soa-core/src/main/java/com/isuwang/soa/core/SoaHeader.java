@@ -25,42 +25,42 @@ public class SoaHeader {
     /**
      * 调用源
      */
-    private Optional<String> callerFrom;
+    private Optional<String> callerFrom = Optional.empty();
 
     /**
      * 返回码
      */
-    private Optional<String> respCode;
+    private Optional<String> respCode = Optional.empty();
 
     /**
      * 返回信息
      */
-    private Optional<String> respMessage;
+    private Optional<String> respMessage = Optional.empty();
 
     /**
      * 调用源ip
      */
-    private Optional<String> callerIp;
+    private Optional<String> callerIp = Optional.empty();
 
     /**
      * 操作人编号
      */
-    private Optional<Integer> operatorId;
+    private Optional<Integer> operatorId = Optional.empty();
 
     /**
      * 操作人名称
      */
-    private Optional<String> operatorName;
+    private Optional<String> operatorName = Optional.empty();
 
     /**
      * 客户编号
      */
-    private Optional<Integer> customerId;
+    private Optional<Integer> customerId = Optional.empty();
 
     /**
      * 客户名称
      */
-    private Optional<String> customerName;
+    private Optional<String> customerName = Optional.empty();
 
 
     public String getServiceName() {
