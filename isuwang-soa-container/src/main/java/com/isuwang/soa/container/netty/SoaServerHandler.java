@@ -106,6 +106,8 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
             if (outputSoaTransport != null)
                 outputSoaTransport.close();
+
+            Context.Factory.removeCurrentInstance();
         }
     }
 
