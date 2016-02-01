@@ -54,7 +54,7 @@
                         <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>copy-dependencies</id>
+                                <id>copy-dependencies-0</id>
                                 <phase>prepare-package</phase>
                                 <goals>
                                     <goal>copy-dependencies</goal>
@@ -64,6 +64,21 @@
                                     <overWriteReleases>false</overWriteReleases>
                                     <overWriteSnapshots>false</overWriteSnapshots>
                                     <overWriteIfNewer>true</overWriteIfNewer>
+                                    <excludeArtifactIds>jline,zookeeper,isuwang-soa-registry</excludeArtifactIds>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-dependencies-1</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/${project.build.finalName}/bin/lib</outputDirectory>
+                                    <overWriteReleases>false</overWriteReleases>
+                                    <overWriteSnapshots>false</overWriteSnapshots>
+                                    <overWriteIfNewer>true</overWriteIfNewer>
+                                    <includeArtifactIds>jline,zookeeper,isuwang-soa-registry</includeArtifactIds>
                                 </configuration>
                             </execution>
                         </executions>
@@ -73,7 +88,6 @@
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version>1.8</version>
                         <executions>
-
                             <execution>
                                 <id>create-empty-directory</id>
                                 <phase>process-classes</phase>
@@ -87,24 +101,6 @@
                                     </tasks>
                                 </configuration>
                             </execution>
-
-                            <!--copy container.jar to bin/lib/-->
-                            <!--<execution>-->
-                            <!--<id>copy-container-jar</id>-->
-                            <!--<phase>package</phase>-->
-                            <!--<configuration>-->
-                            <!--<tasks>-->
-                            <!--<copy todir="${project.build.directory}/${project.build.finalName}/bin/lib">-->
-                            <!--<fileset dir="${project.build.directory}">-->
-                            <!--<include name="*container.jar"/>-->
-                            <!--</fileset>-->
-                            <!--</copy>-->
-                            <!--</tasks>-->
-                            <!--</configuration>-->
-                            <!--<goals>-->
-                            <!--<goal>run</goal>-->
-                            <!--</goals>-->
-                            <!--</execution>-->
                         </executions>
                     </plugin>
 

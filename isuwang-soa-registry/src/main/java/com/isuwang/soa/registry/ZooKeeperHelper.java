@@ -21,13 +21,13 @@ public class ZooKeeperHelper {
 
                 if (watchedEvent.getState() == Watcher.Event.KeeperState.Expired) {
 
-                    LOGGER.info("session过期，重连");
+                    LOGGER.info("Registry Session过期,重连 [Zookeeper]");
                     destroy();
                     connect();
                     RegistryAgent.getInstance().registerProcessor();//重新注册服务
 
                 } else if (Watcher.Event.KeeperState.SyncConnected == watchedEvent.getState()) {
-                    LOGGER.info("ZookeeperHelper已连接到zookeeper Server");
+                    LOGGER.info("Registry {} [Zookeeper]", zookeeperHost);
                 }
             });
         } catch (Exception e) {

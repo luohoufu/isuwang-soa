@@ -2,6 +2,8 @@ package com.isuwang.soa.container;
 
 import com.isuwang.soa.container.xml.SoaContainer;
 import com.isuwang.soa.container.xml.SoaContainers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXB;
 import java.io.*;
@@ -21,6 +23,8 @@ public class Main {
     public static final String SOA_RUN_MODE = System.getProperty("soa.run.mode");
 
     public static void main(String[] args) {
+        final long startTime = System.currentTimeMillis();
+
         final List<Container> containers = new ArrayList<>();
 
         try (InputStream is = new BufferedInputStream(loadInputStreamInClassLoader("containers.xml"))) {
@@ -46,6 +50,8 @@ public class Main {
             System.exit(-1);
         }
 
+        final Logger logger = LoggerFactory.getLogger(Main.class);
+
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -60,7 +66,7 @@ public class Main {
             }
         });
 
-        System.out.println("soa is started.");
+        logger.info("Server startup in {} ms", System.currentTimeMillis() - startTime);
 
         synchronized (Main.class) {
             while (running) {
@@ -69,6 +75,7 @@ public class Main {
                 } catch (InterruptedException e) {
                 }
 
+                logger.info("Server shutdown");
                 System.out.println("soa is stopped.");
             }
         }

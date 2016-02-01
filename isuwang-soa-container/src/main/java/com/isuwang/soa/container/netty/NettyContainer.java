@@ -37,6 +37,8 @@ public class NettyContainer implements Container {
 
     @Override
     public void start() {
+        LOGGER.info("Bind Local Port {} [Netty]", port);
+
         new Thread() {
             @Override
             public void run() {

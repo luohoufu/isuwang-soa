@@ -15,4 +15,8 @@
         <name>nettyContainer</name>
         <ref>com.isuwang.soa.container.netty.NettyContainer</ref>
     </soa-container>
+    <soa-container>
+        <name>versionContainer</name>
+        <ref>com.isuwang.soa.container.version.VersionContainer</ref>
+    </soa-container>
 </soa-containers>
