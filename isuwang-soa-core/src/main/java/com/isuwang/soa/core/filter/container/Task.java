@@ -1,0 +1,138 @@
+package com.isuwang.soa.core.filter.container;
+
+import com.isuwang.soa.core.Context;
+import com.isuwang.soa.core.SoaHeader;
+
+/**
+ * Created by tangliu on 2016/2/1.
+ */
+public class Task {
+
+    private String serviceName;
+
+    private String versionName;
+
+    private String methodName;
+
+    private long startTime;
+
+    private String callerFrom;
+
+    private String callerIp;
+
+    private Integer seqid;
+
+    private Integer operatorId;
+
+    private String operatorName;
+
+    private Integer customerId;
+
+    private String customerName;
+
+
+    public Task(Context context) {
+
+        this.startTime = System.currentTimeMillis();
+        this.seqid = context.getSeqid();
+
+        SoaHeader soaHeader = context.getHeader();
+        this.serviceName = soaHeader.getServiceName();
+        this.versionName = soaHeader.getVersionName();
+        this.methodName = soaHeader.getMethodName();
+        this.callerFrom = soaHeader.getCallerFrom().get();
+        this.callerIp = soaHeader.getCallerIp().get();
+        this.operatorId = soaHeader.getOperatorId().get();
+        this.operatorName = soaHeader.getOperatorName().get();
+        this.customerId = soaHeader.getCustomerId().get();
+        this.customerName = soaHeader.getCustomerName().get();
+    }
+
+    public Integer getSeqid() {
+        return seqid;
+    }
+
+    public void setSeqid(Integer seqid) {
+        this.seqid = seqid;
+    }
+
+    public Integer getOperatorId() {
+        return operatorId;
+    }
+
+    public void setOperatorId(Integer operatorId) {
+        this.operatorId = operatorId;
+    }
+
+    public String getOperatorName() {
+        return operatorName;
+    }
+
+    public void setOperatorName(String operatorName) {
+        this.operatorName = operatorName;
+    }
+
+    public Integer getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getCallerFrom() {
+        return callerFrom;
+    }
+
+    public void setCallerFrom(String callerFrom) {
+        this.callerFrom = callerFrom;
+    }
+
+    public String getCallerIp() {
+        return callerIp;
+    }
+
+    public void setCallerIp(String callerIp) {
+        this.callerIp = callerIp;
+    }
+}

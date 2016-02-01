@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import com.isuwang.soa.core.filter.container.DispatchFilter;
 import com.isuwang.soa.core.filter.container.ProviderTimesFilter;
+import com.isuwang.soa.core.filter.container.SlowTimeServiceFilter;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TMessage;
@@ -31,6 +32,7 @@ public class SoaBaseProcessor<I> implements TProcessor {
 
     static {
         ContainerFilterChain.addFilter(new ProviderTimesFilter());
+        ContainerFilterChain.addFilter(new SlowTimeServiceFilter());
     }
 
     protected SoaBaseProcessor(I iface, Map<String, SoaProcessFunction<I, ?, ?, ? extends TBeanSerializer<?>, ? extends TBeanSerializer<?>>> processMap) {
