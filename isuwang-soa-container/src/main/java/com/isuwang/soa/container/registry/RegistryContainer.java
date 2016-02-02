@@ -45,11 +45,11 @@ public class RegistryContainer implements Container {
             InputStream filterInput = null;
 
             try {
-                filterInput = contextClass.getClassLoader().getResourceAsStream("filters-container.xml");
-                if(filterInput != null) {
-                    //TODO ContainerFilterChain add filter
-
-                }
+//                filterInput = contextClass.getClassLoader().getResourceAsStream("filters-container.xml");
+//                if(filterInput != null) {
+//                    //TODO ContainerFilterChain add filter
+//
+//                }
 
                 Method method = contextClass.getMethod("getBeansOfType", Class.class);
                 Map<String, SoaBaseProcessor<?>> processorMap = (Map<String, SoaBaseProcessor<?>>) method.invoke(ctx, contextClass.getClassLoader().loadClass(SoaBaseProcessor.class.getName()));
