@@ -13,11 +13,6 @@ public class SlowTimeServiceFilter implements Filter {
     private final TaskManager taskManager = new TaskManager();
 
     @Override
-    public void init() {
-        taskManager.start();
-    }
-
-    @Override
     public void doFilter(FilterChain chain) throws TException {
 
         if (!taskManager.hasStarted()) {
@@ -35,8 +30,4 @@ public class SlowTimeServiceFilter implements Filter {
         }
     }
 
-    @Override
-    public void destory() {
-        taskManager.stop();
-    }
 }

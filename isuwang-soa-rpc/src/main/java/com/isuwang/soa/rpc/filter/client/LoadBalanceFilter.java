@@ -25,11 +25,6 @@ public class LoadBalanceFilter implements Filter {
     private static int roundRobinIndex = 8;
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public void doFilter(FilterChain chain) throws TException {
         final Context context = (Context) chain.getAttribute(StubFilterChain.ATTR_KEY_CONTEXT);
         final SoaHeader soaHeader = (SoaHeader) chain.getAttribute(StubFilterChain.ATTR_KEY_HEADER);
@@ -120,11 +115,6 @@ public class LoadBalanceFilter implements Filter {
             callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort());
         }
         return callerInfo;
-    }
-
-    @Override
-    public void destory() {
-
     }
 
 }

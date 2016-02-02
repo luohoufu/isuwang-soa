@@ -18,11 +18,6 @@ public class NetworkLogFilter implements Filter {
     private static final Logger LOGGER = LoggerFactory.getLogger(NetworkLogFilter.class);
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public void doFilter(FilterChain chain) throws TException {
         final SoaHeader soaHeader = (SoaHeader) chain.getAttribute(StubFilterChain.ATTR_KEY_HEADER);
         final Object request = chain.getAttribute(StubFilterChain.ATTR_KEY_REQUEST);
@@ -39,8 +34,4 @@ public class NetworkLogFilter implements Filter {
         }
     }
 
-    @Override
-    public void destory() {
-
-    }
 }

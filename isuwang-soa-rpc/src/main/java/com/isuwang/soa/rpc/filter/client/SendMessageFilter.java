@@ -21,20 +21,10 @@ public class SendMessageFilter implements Filter {
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public void doFilter(FilterChain chain) throws TException {
         SendMessageAction action = (SendMessageAction) chain.getAttribute(SendMessageFilter.ATTR_KEY_SENDMESSAGE);
 
         action.doAction(chain);
-    }
-
-    @Override
-    public void destory() {
-
     }
 
 }

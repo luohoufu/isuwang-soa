@@ -10,10 +10,10 @@ import org.apache.thrift.TException;
  */
 public interface Filter {
 
-    void init();
+    //void init();
 
     void doFilter(FilterChain chain) throws TException;
 
-    void destory();
+    //void destory();
 
 }

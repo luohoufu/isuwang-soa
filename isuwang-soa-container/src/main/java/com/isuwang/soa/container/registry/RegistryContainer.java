@@ -4,6 +4,9 @@ import com.isuwang.soa.container.Container;
 import com.isuwang.soa.container.spring.SpringContainer;
 import com.isuwang.soa.core.Service;
 import com.isuwang.soa.core.SoaBaseProcessor;
+import com.isuwang.soa.core.filter.container.ContainerFilterChain;
+import com.isuwang.soa.core.filter.container.ProviderTimesFilter;
+import com.isuwang.soa.core.filter.container.SlowTimeServiceFilter;
 import com.isuwang.soa.registry.RegistryAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +28,9 @@ public class RegistryContainer implements Container {
 
     @Override
     public void start() {
+        ContainerFilterChain.addFilter(new ProviderTimesFilter());
+        ContainerFilterChain.addFilter(new SlowTimeServiceFilter());
+
         RegistryAgent.getInstance().start();
         RegistryAgent.getInstance().setProcessorMap(processorMap);
 
@@ -49,7 +55,6 @@ public class RegistryContainer implements Container {
 
                         RegistryAgent.getInstance().registerService(processor.getInterfaceClass().getSimpleName(), service.version());
                     }
-
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);

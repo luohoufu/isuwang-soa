@@ -29,11 +29,6 @@ public class SoaBaseProcessor<I> implements TProcessor {
     private Class<I> interfaceClass;
     private final Map<String, SoaProcessFunction<I, ?, ?, ? extends TBeanSerializer<?>, ? extends TBeanSerializer<?>>> processMap;
 
-    static {
-        ContainerFilterChain.addFilter(new ProviderTimesFilter());
-        ContainerFilterChain.addFilter(new SlowTimeServiceFilter());
-    }
-
     protected SoaBaseProcessor(I iface, Map<String, SoaProcessFunction<I, ?, ?, ? extends TBeanSerializer<?>, ? extends TBeanSerializer<?>>> processMap) {
         this.iface = iface;
         this.processMap = processMap;
@@ -62,11 +57,11 @@ public class SoaBaseProcessor<I> implements TProcessor {
             soaProcessFunction.getReqSerializer().read(args, in);
             in.readMessageEnd();
 
-            LOGGER.info("{} request:{}", logId, ((RequestObject) args).toString());
+            LOGGER.info("{} request:{}", logId, args.toString());
 
             Object result = soaProcessFunction.getResult(iface, args);
 
-            LOGGER.info("{} response:{}", logId, ((RequestObject) result).toString());
+            LOGGER.info("{} response:{}", logId, result.toString());
 
             // write
             context.getHeader().setRespCode(Optional.of("0000"));

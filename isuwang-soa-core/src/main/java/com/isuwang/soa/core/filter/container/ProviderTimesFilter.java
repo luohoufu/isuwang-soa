@@ -17,11 +17,6 @@ public class ProviderTimesFilter implements Filter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProviderTimesFilter.class);
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public void doFilter(FilterChain chain) throws TException {
         long startTime = System.currentTimeMillis();
 
@@ -30,11 +25,6 @@ public class ProviderTimesFilter implements Filter {
         } finally {
             LOGGER.info("{} 耗时:{}ms", chain.getAttribute(ContainerFilterChain.ATTR_KEY_LOGID).toString(), System.currentTimeMillis() - startTime);
         }
-    }
-
-    @Override
-    public void destory() {
-
     }
 
 }

@@ -21,20 +21,10 @@ public class DispatchFilter implements Filter {
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public void doFilter(FilterChain chain) throws TException {
         DispatchAction dispatchAction = (DispatchAction) chain.getAttribute(DispatchFilter.ATTR_KEY_CONTAINER_DISPATCH_ACTION);
 
         dispatchAction.doAction(chain);
-    }
-
-    @Override
-    public void destory() {
-
     }
 
 }
