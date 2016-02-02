@@ -3,12 +3,17 @@ package com.isuwang.soa.rpc;
 import com.isuwang.soa.core.Context;
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.TBeanSerializer;
+import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.rpc.filter.client.*;
 import com.isuwang.soa.registry.ServiceInfo;
+import com.isuwang.soa.rpc.filter.client.xml.SoaFilter;
+import com.isuwang.soa.rpc.filter.client.xml.SoaFilters;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.JAXB;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
@@ -27,9 +32,22 @@ public class BaseServiceClient {
     protected static final AtomicInteger seqid_ = new AtomicInteger(0);
 
     static {
-        StubFilterChain.addFilter(new NetworkTimesFilter());
-        StubFilterChain.addFilter(new NetworkLogFilter());
-        StubFilterChain.addFilter(new LoadBalanceFilter());
+        try {
+            InputStream is = BaseServiceClient.class.getClassLoader().getResourceAsStream("filters-client.xml");
+
+            SoaFilters soaFilters = JAXB.unmarshal(is, SoaFilters.class);
+            for (SoaFilter soaFilter : soaFilters.getSoaFilter()) {
+
+                Class filterClass = BaseServiceClient.class.getClassLoader().loadClass(soaFilter.getRef());
+                Filter filter = (Filter) filterClass.newInstance();
+
+                StubFilterChain.addFilter(filter);
+                LOGGER.info("load filter {} with path {}", soaFilter.getName(), soaFilter.getRef());
+            }
+
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
     }
 
     protected String serviceName;
