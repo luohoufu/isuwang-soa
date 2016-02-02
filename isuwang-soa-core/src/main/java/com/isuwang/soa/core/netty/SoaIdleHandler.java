@@ -25,7 +25,6 @@ public class SoaIdleHandler extends ChannelHandlerAdapter {
                 LOGGER.info("读超时，关闭连接");
 
             } else if (e.state() == IdleState.WRITER_IDLE) {
-
                 ctx.writeAndFlush(ctx.alloc().buffer(1).writeInt(0));
                 LOGGER.info("写超时，发送心跳包");
 

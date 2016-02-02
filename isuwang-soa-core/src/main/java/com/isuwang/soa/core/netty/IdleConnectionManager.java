@@ -23,20 +23,11 @@ public class IdleConnectionManager {
     private static final long DEFAULT_SLEEP_TIME = 10000L;
 
     public static void addChannel(Channel channel) {
-
-        if (!channels.containsKey(channel)) {
-            AtomicInteger count = new AtomicInteger(1);
-            channels.put(channel, count);
-        } else {
-            AtomicInteger count = channels.get(channel);
-            count.incrementAndGet();
-        }
+        channels.putIfAbsent(channel, new AtomicInteger(0)).incrementAndGet();
     }
 
     public static void remove(Channel channel) {
-
-        if (channels.containsKey(channel))
-            channels.remove(channel);
+        channels.remove(channel);
     }
 
     public boolean hasStarted() {
@@ -67,7 +58,6 @@ public class IdleConnectionManager {
     }
 
     protected void checkIdleConnection() throws InterruptedException {
-
         Set<Channel> keys = channels.keySet();
         keys.stream().filter(channel -> channels.get(channel).get() > 10).forEach(channel -> {
             channel.close();
