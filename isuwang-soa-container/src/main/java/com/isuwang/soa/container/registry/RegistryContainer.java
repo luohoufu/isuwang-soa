@@ -11,6 +11,8 @@ import com.isuwang.soa.registry.RegistryAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +42,15 @@ public class RegistryContainer implements Container {
         for (Object ctx : ctxs) {
             Class<?> contextClass = contexts.get(ctx);
 
+            InputStream filterInput = null;
+
             try {
+                filterInput = contextClass.getClassLoader().getResourceAsStream("filters-container.xml");
+                if(filterInput != null) {
+                    //TODO ContainerFilterChain add filter
+
+                }
+
                 Method method = contextClass.getMethod("getBeansOfType", Class.class);
                 Map<String, SoaBaseProcessor<?>> processorMap = (Map<String, SoaBaseProcessor<?>>) method.invoke(ctx, contextClass.getClassLoader().loadClass(SoaBaseProcessor.class.getName()));
 
@@ -58,6 +68,12 @@ public class RegistryContainer implements Container {
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
+            } finally {
+                if (filterInput != null)
+                    try {
+                        filterInput.close();
+                    } catch (IOException e) {
+                    }
             }
         }
     }
