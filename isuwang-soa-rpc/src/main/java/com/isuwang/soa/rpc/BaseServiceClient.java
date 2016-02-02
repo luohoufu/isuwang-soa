@@ -4,6 +4,7 @@ import com.isuwang.soa.core.Context;
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.TBeanSerializer;
 import com.isuwang.soa.core.filter.Filter;
+import com.isuwang.soa.core.netty.IdleConnectionManager;
 import com.isuwang.soa.registry.ServiceInfo;
 import com.isuwang.soa.rpc.filter.client.SendMessageFilter;
 import com.isuwang.soa.rpc.filter.client.StubFilterChain;
@@ -49,6 +50,9 @@ public class BaseServiceClient {
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
+
+        IdleConnectionManager connectionManager = new IdleConnectionManager();
+        connectionManager.start();
     }
 
     static InputStream getFilterInputStream() {
