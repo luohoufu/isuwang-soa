@@ -29,6 +29,9 @@ public class SoaIdleHandler extends ChannelHandlerAdapter {
                 ctx.writeAndFlush(ctx.alloc().buffer(1).writeInt(0));
                 LOGGER.info("写超时，发送心跳包");
 
+                //check times of write idle, close the channel if exceed specify times
+                IdleConnectionManager.addChannel(ctx.channel());
+
             } else if (e.state() == IdleState.ALL_IDLE) {
                 LOGGER.info("读写都超时，发送心跳包");
             }

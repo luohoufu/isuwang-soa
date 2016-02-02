@@ -1,5 +1,6 @@
 package com.isuwang.soa.rpc.netty;
 
+import com.isuwang.soa.core.netty.IdleConnectionManager;
 import com.isuwang.soa.core.netty.SoaDecoder;
 import com.isuwang.soa.core.netty.SoaIdleHandler;
 import io.netty.bootstrap.Bootstrap;
@@ -45,7 +46,12 @@ public class SoaClient {
         this.host = host;
         this.port = port;
 
-        initBootstrap();
+        try {
+            connect(host, port);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        initBootstrap();
     }
 
     protected Bootstrap initBootstrap() {
@@ -123,6 +129,9 @@ public class SoaClient {
     public ByteBuf send(int seqid, ByteBuf request) throws Exception {
         if (channel == null || !channel.isActive())
             connect(host, port);
+
+        //means that this channel is not idle and would not managered by IdleConnectionManager
+        IdleConnectionManager.remove(channel);
 
         ByteBuf[] byteBufs = new ByteBuf[1];
 
