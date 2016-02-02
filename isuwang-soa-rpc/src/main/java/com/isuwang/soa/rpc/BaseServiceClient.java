@@ -4,8 +4,9 @@ import com.isuwang.soa.core.Context;
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.TBeanSerializer;
 import com.isuwang.soa.core.filter.Filter;
-import com.isuwang.soa.rpc.filter.client.*;
 import com.isuwang.soa.registry.ServiceInfo;
+import com.isuwang.soa.rpc.filter.client.SendMessageFilter;
+import com.isuwang.soa.rpc.filter.client.StubFilterChain;
 import com.isuwang.soa.rpc.filter.client.xml.SoaFilter;
 import com.isuwang.soa.rpc.filter.client.xml.SoaFilters;
 import org.apache.thrift.TException;
@@ -32,22 +33,31 @@ public class BaseServiceClient {
     protected static final AtomicInteger seqid_ = new AtomicInteger(0);
 
     static {
-        try {
-            InputStream is = BaseServiceClient.class.getClassLoader().getResourceAsStream("filters-client.xml");
+        try (InputStream is = getFilterInputStream()) {
+            if (is == null)
+                throw new RuntimeException("not found filters-client.xml in the classloader.");
 
             SoaFilters soaFilters = JAXB.unmarshal(is, SoaFilters.class);
             for (SoaFilter soaFilter : soaFilters.getSoaFilter()) {
-
                 Class filterClass = BaseServiceClient.class.getClassLoader().loadClass(soaFilter.getRef());
                 Filter filter = (Filter) filterClass.newInstance();
+                //filter.init();
 
                 StubFilterChain.addFilter(filter);
                 LOGGER.info("load filter {} with path {}", soaFilter.getName(), soaFilter.getRef());
             }
-
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
+    }
+
+    static InputStream getFilterInputStream() {
+        InputStream stream = BaseServiceClient.class.getClassLoader().getResourceAsStream("filters-client.xml");
+
+        if (stream == null)
+            return BaseServiceClient.class.getResourceAsStream("filters-client.xml");
+
+        return stream;
     }
 
     protected String serviceName;
@@ -110,6 +120,5 @@ public class BaseServiceClient {
 
         return (RESP) stubFilterChain.getAttribute(StubFilterChain.ATTR_KEY_RESPONSE);
     }
-
 
 }
