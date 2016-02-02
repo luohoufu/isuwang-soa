@@ -1,6 +1,5 @@
 package com.isuwang.soa.core;
 
-import com.google.gson.Gson;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import com.isuwang.soa.core.filter.container.DispatchFilter;
 import com.isuwang.soa.core.filter.container.ProviderTimesFilter;
@@ -55,7 +54,6 @@ public class SoaBaseProcessor<I> implements TProcessor {
         filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_CONTEXT, context);
         filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_HEADER, context.getHeader());
         filterChain.setAttribute(DispatchFilter.ATTR_KEY_CONTAINER_DISPATCH_ACTION, (DispatchFilter.DispatchAction) chain -> {
-            final Gson gson = new Gson();
 
             // read
             //TMessage tMessage = in.readMessageBegin();
@@ -64,11 +62,11 @@ public class SoaBaseProcessor<I> implements TProcessor {
             soaProcessFunction.getReqSerializer().read(args, in);
             in.readMessageEnd();
 
-            LOGGER.info("{} request:{}", logId, gson.toJson(args));
+            LOGGER.info("{} request:{}", logId, ((RequestObject) args).toString());
 
             Object result = soaProcessFunction.getResult(iface, args);
 
-            LOGGER.info("{} response:{}", logId, gson.toJson(result));
+            LOGGER.info("{} response:{}", logId, ((RequestObject) result).toString());
 
             // write
             context.getHeader().setRespCode(Optional.of("0000"));

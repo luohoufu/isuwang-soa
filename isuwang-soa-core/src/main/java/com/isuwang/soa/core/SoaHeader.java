@@ -62,6 +62,26 @@ public class SoaHeader {
      */
     private Optional<String> customerName = Optional.empty();
 
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder("{");
+
+        sb.append("\"").append("serviceName").append("\":\"").append(this.serviceName).append("\",");
+        sb.append("\"").append("methodName").append("\":\"").append(this.methodName).append("\",");
+        sb.append("\"").append("versionName").append("\":\"").append(this.versionName).append("\",");
+        sb.append("\"").append("callerFrom").append("\":\"").append(this.callerFrom.isPresent() ? this.callerFrom.get() : null).append("\",");
+        sb.append("\"").append("callerIp").append("\":\"").append(this.callerIp.isPresent() ? this.callerIp.get() : null).append("\",");
+        sb.append("\"").append("operatorId").append("\":").append(this.operatorId.isPresent() ? this.operatorId.get() : null).append(",");
+        sb.append("\"").append("operatorName").append("\":\"").append(this.operatorName.isPresent() ? this.operatorName.get() : null).append("\",");
+        sb.append("\"").append("customerId").append("\":").append(this.customerId.isPresent() ? this.customerId.get() : null).append(",");
+        sb.append("\"").append("customerName").append("\":\"").append(this.customerName.isPresent() ? this.customerName.get() : null).append("\",");
+        sb.append("\"").append("respCode").append("\":\"").append(this.respCode.isPresent() ? this.respCode.get() : null).append("\",");
+        sb.append("\"").append("respMessage").append("\":\"").append(this.respMessage.isPresent() ? this.respMessage.get() : null).append("\",");
+
+        sb.deleteCharAt(sb.lastIndexOf(","));
+        sb.append("}");
+        return sb.toString();
+    }
 
     public String getServiceName() {
         return serviceName;

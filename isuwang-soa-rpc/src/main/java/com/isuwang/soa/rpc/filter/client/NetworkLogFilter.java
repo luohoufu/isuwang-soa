@@ -1,6 +1,6 @@
 package com.isuwang.soa.rpc.filter.client;
 
-import com.google.gson.Gson;
+import com.isuwang.soa.core.RequestObject;
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
@@ -26,9 +26,8 @@ public class NetworkLogFilter implements Filter {
     public void doFilter(FilterChain chain) throws TException {
         final SoaHeader soaHeader = (SoaHeader) chain.getAttribute(StubFilterChain.ATTR_KEY_HEADER);
         final Object request = chain.getAttribute(StubFilterChain.ATTR_KEY_REQUEST);
-        final Gson gson = new Gson();
 
-        LOGGER.info("{} {} {} request:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), gson.toJson(request));
+        LOGGER.info("{} {} {} request:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), ((RequestObject) request).toString());
 
         try {
             chain.doFilter();
@@ -36,7 +35,7 @@ public class NetworkLogFilter implements Filter {
             Object response = chain.getAttribute(StubFilterChain.ATTR_KEY_RESPONSE);
 
             if (response != null)
-                LOGGER.info("{} {} {} response:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), gson.toJson(response));
+                LOGGER.info("{} {} {} response:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), ((RequestObject) response).toString());
         }
     }
 
