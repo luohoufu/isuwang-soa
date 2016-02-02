@@ -40,12 +40,12 @@ public class Task {
         this.serviceName = soaHeader.getServiceName();
         this.versionName = soaHeader.getVersionName();
         this.methodName = soaHeader.getMethodName();
-        this.callerFrom = soaHeader.getCallerFrom().get();
-        this.callerIp = soaHeader.getCallerIp().get();
-        this.operatorId = soaHeader.getOperatorId().get();
-        this.operatorName = soaHeader.getOperatorName().get();
-        this.customerId = soaHeader.getCustomerId().get();
-        this.customerName = soaHeader.getCustomerName().get();
+        this.callerFrom = soaHeader.getCallerFrom().isPresent() ? soaHeader.getCallerFrom().get() : null;
+        this.callerIp = soaHeader.getCallerIp().isPresent() ? soaHeader.getCallerIp().get() : null;
+        this.operatorId = soaHeader.getOperatorId().isPresent() ? soaHeader.getOperatorId().get() : null;
+        this.operatorName = soaHeader.getOperatorName().isPresent() ? soaHeader.getOperatorName().get() : null;
+        this.customerId = soaHeader.getCustomerId().isPresent() ? soaHeader.getCustomerId().get() : null;
+        this.customerName = soaHeader.getCustomerName().isPresent() ? soaHeader.getCustomerName().get() : null;
     }
 
     public Integer getSeqid() {

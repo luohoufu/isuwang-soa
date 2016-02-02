@@ -54,7 +54,7 @@ public class SoaConnection {
             } else if (msg.seqid != context.getSeqid()) {
                 throw new TApplicationException(4, header.getMethodName() + " failed: out of sequence response");
             } else {
-                if ("0000".equals(header.getRespCode())) {
+                if ("0000".equals(header.getRespCode().get())) {
                     responseSerializer.read(response, protocol);
                     protocol.readMessageEnd();
                 } else {
