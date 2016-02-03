@@ -28,9 +28,7 @@ public class FilterContainer implements Container {
 
     @Override
     public void start() {
-        try {
-            InputStream is = new BufferedInputStream(Main.loadInputStreamInClassLoader("filters-server.xml"));
-
+        try (InputStream is = new BufferedInputStream(Main.loadInputStreamInClassLoader("filters-server.xml"))) {
             SoaFilters soaFilters = JAXB.unmarshal(is, SoaFilters.class);
             for (SoaFilter soaFilter : soaFilters.getSoaFilter()) {
 
