@@ -76,7 +76,6 @@ public class Main {
                 }
 
                 logger.info("Server shutdown");
-                System.out.println("soa is stopped.");
             }
         }
     }
