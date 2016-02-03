@@ -45,7 +45,7 @@ public class BaseServiceClient {
                 //filter.init();
 
                 StubFilterChain.addFilter(filter);
-                LOGGER.info("load filter {} with path {}", soaFilter.getName(), soaFilter.getRef());
+                LOGGER.info("client load filter {} with path {}", soaFilter.getName(), soaFilter.getRef());
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
