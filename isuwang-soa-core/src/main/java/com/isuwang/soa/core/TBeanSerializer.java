@@ -17,4 +17,5 @@ public interface TBeanSerializer<T> {
 
     void validate(T bean) throws TException;
 
+    String toString(T bean);
 }

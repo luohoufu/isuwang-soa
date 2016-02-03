@@ -196,5 +196,9 @@ public class SoaHeaderSerializer implements TBeanSerializer<SoaHeader> {
             throw new SoaException(SoaBaseCode.NotNull, "versionName字段不允许为空");
     }
 
+    @Override
+    public String toString(SoaHeader bean) {
+        return bean == null ? "null" : bean.toString();
+    }
 
 }

@@ -56,11 +56,11 @@ public class SoaBaseProcessor<I> implements TProcessor {
             soaProcessFunction.getReqSerializer().read(args, in);
             in.readMessageEnd();
 
-            LOGGER.info("{} request:{}", logId, args.toString());
+            LOGGER.info("{} request:{}", logId, soaProcessFunction.getReqSerializer().toString(args));
 
             Object result = soaProcessFunction.getResult(iface, args);
 
-            LOGGER.info("{} response:{}", logId, result.toString());
+            LOGGER.info("{} response:{}", logId, soaProcessFunction.getResSerializer().toString(result));
 
             // write
             context.getHeader().setRespCode(Optional.of("0000"));
