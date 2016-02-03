@@ -50,6 +50,7 @@ public class SoaBaseProcessor<I> implements TProcessor {
 
             // read
             //TMessage tMessage = in.readMessageBegin();
+            @SuppressWarnings("unchecked")
             SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>> soaProcessFunction = (SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>>) getProcessMapView().get(methodName);
             Object args = soaProcessFunction.getEmptyArgsInstance();
             soaProcessFunction.getReqSerializer().read(args, in);

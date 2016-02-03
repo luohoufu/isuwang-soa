@@ -28,6 +28,7 @@ public class SoaProcessorFactory implements FactoryBean<SoaBaseProcessor<?>> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public SoaBaseProcessor<?> getObject() throws Exception {
         final Class<?> aClass = serviceRef.getClass();
         final List<Class<?>> interfaces = Arrays.asList(aClass.getInterfaces());

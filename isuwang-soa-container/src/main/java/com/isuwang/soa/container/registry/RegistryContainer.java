@@ -26,6 +26,7 @@ public class RegistryContainer implements Container {
     private static final Map<String, SoaBaseProcessor<?>> processorMap = new ConcurrentHashMap<>();
 
     @Override
+    @SuppressWarnings("unchecked")
     public void start() {
         RegistryAgent.getInstance().start();
         RegistryAgent.getInstance().setProcessorMap(processorMap);

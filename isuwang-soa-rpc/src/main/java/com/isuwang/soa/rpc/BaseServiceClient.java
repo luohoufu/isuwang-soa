@@ -98,6 +98,7 @@ public class BaseServiceClient {
         Context.Factory.removeCurrentInstance();
     }
 
+    @SuppressWarnings("unchecked")
     protected <REQ, RESP> RESP sendBase(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer) throws TException {
         Context context = Context.Factory.getCurrentInstance();
         SoaHeader soaHeader = context.getHeader();
