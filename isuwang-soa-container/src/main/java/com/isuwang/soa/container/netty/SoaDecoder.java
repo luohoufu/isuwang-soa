@@ -1,4 +1,4 @@
-package com.isuwang.soa.core.netty;
+package com.isuwang.soa.container.netty;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,11 +14,7 @@ import java.util.List;
  */
 public class SoaDecoder extends ByteToMessageDecoder {
 
-    private boolean backIdleMessage;
-
-    public SoaDecoder(boolean backIdleMessage) {
-        this.backIdleMessage = backIdleMessage;
-
+    public SoaDecoder() {
         setSingleDecode(false);
     }
 
@@ -32,10 +28,7 @@ public class SoaDecoder extends ByteToMessageDecoder {
         int length = in.readInt();
 
         if (length == 0) {// 心跳
-            if (backIdleMessage)
-                ctx.writeAndFlush(ctx.alloc().buffer(1).writeInt(0));
-
-            return;
+            ctx.writeAndFlush(ctx.alloc().buffer(1).writeInt(0));
         }
 
         // waiting for complete

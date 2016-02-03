@@ -1,7 +1,6 @@
 package com.isuwang.soa.rpc.netty;
 
 import com.isuwang.soa.core.*;
-import com.isuwang.soa.core.netty.TSoaTransport;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.apache.thrift.TApplicationException;

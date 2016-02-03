@@ -1,4 +1,4 @@
-package com.isuwang.soa.core.netty;
+package com.isuwang.soa.container.netty;
 
 import io.netty.buffer.ByteBuf;
 import org.apache.thrift.transport.TTransport;

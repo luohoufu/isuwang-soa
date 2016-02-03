@@ -1,7 +1,6 @@
 package com.isuwang.soa.container.netty;
 
 import com.isuwang.soa.core.*;
-import com.isuwang.soa.core.netty.TSoaTransport;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;

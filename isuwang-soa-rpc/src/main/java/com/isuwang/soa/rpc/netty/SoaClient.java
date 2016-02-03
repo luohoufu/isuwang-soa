@@ -1,8 +1,5 @@
 package com.isuwang.soa.rpc.netty;
 
-import com.isuwang.soa.core.netty.IdleConnectionManager;
-import com.isuwang.soa.core.netty.SoaDecoder;
-import com.isuwang.soa.core.netty.SoaIdleHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -63,7 +60,7 @@ public class SoaClient {
         b.handler(new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(new IdleStateHandler(readerIdleTimeSeconds, writerIdleTimeSeconds, allIdleTimeSeconds), new SoaDecoder(false), new SoaIdleHandler(), new SoaClientHandler(callBack));
+                ch.pipeline().addLast(new IdleStateHandler(readerIdleTimeSeconds, writerIdleTimeSeconds, allIdleTimeSeconds), new SoaDecoder(), new SoaIdleHandler(), new SoaClientHandler(callBack));
             }
         });
         return b;

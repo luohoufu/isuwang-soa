@@ -1,4 +1,4 @@
-package com.isuwang.soa.core.netty;
+package com.isuwang.soa.rpc.netty;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;

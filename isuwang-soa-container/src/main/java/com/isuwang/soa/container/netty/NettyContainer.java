@@ -3,8 +3,6 @@ package com.isuwang.soa.container.netty;
 import com.isuwang.soa.container.Container;
 import com.isuwang.soa.container.registry.RegistryContainer;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
-import com.isuwang.soa.core.netty.SoaDecoder;
-import com.isuwang.soa.core.netty.SoaIdleHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -50,7 +48,7 @@ public class NettyContainer implements Container {
                             .childHandler(new ChannelInitializer<SocketChannel>() {
                                 @Override
                                 protected void initChannel(SocketChannel ch) throws Exception {
-                                    ch.pipeline().addLast(new IdleStateHandler(15, 0, 0), new SoaDecoder(true), new SoaIdleHandler(), new SoaServerHandler(RegistryContainer.getProcessorMap()));
+                                    ch.pipeline().addLast(new IdleStateHandler(15, 0, 0), new SoaDecoder(), new SoaIdleHandler(), new SoaServerHandler(RegistryContainer.getProcessorMap()));
                                 }
                             })
                             .option(ChannelOption.SO_BACKLOG, 1024)
