@@ -8,6 +8,10 @@
         <ref>com.isuwang.soa.container.spring.SpringContainer</ref>
     </soa-container>
     <soa-container>
+        <name>filterContainer</name>
+        <ref>com.isuwang.soa.container.filter.FilterContainer</ref>
+    </soa-container>
+    <soa-container>
         <name>registryContainer</name>
         <ref>com.isuwang.soa.container.registry.RegistryContainer</ref>
     </soa-container>
