@@ -7,8 +7,6 @@ import com.isuwang.soa.core.Service;
 import com.isuwang.soa.core.SoaBaseProcessor;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
-import com.isuwang.soa.core.filter.container.ProviderTimesFilter;
-import com.isuwang.soa.core.filter.container.SlowTimeServiceFilter;
 import com.isuwang.soa.core.filter.container.xml.SoaFilter;
 import com.isuwang.soa.core.filter.container.xml.SoaFilters;
 import com.isuwang.soa.registry.RegistryAgent;

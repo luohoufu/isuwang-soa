@@ -2,8 +2,6 @@ package com.isuwang.soa.core;
 
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import com.isuwang.soa.core.filter.container.DispatchFilter;
-import com.isuwang.soa.core.filter.container.ProviderTimesFilter;
-import com.isuwang.soa.core.filter.container.SlowTimeServiceFilter;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TMessage;
