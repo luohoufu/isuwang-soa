@@ -6,7 +6,7 @@
 //
 
 
-package com.isuwang.soa.rpc.filter.client.xml;
+package com.isuwang.soa.rpc.filter.xml;
 
 import javax.xml.bind.annotation.*;
 import java.util.ArrayList;

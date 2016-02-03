@@ -1,4 +1,4 @@
-package com.isuwang.soa.rpc.filter.client;
+package com.isuwang.soa.rpc.filter;
 
 import com.isuwang.soa.core.Context;
 import com.isuwang.soa.core.SoaHeader;
