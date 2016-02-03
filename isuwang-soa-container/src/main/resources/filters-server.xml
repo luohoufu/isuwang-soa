@@ -1,10 +1,10 @@
 <soa-filters>
     <soa-filter>
         <name>ProviderTimesFilter</name>
-        <ref>com.isuwang.soa.core.filter.container.ProviderTimesFilter</ref>
+        <ref>com.isuwang.soa.container.filter.ProviderTimesFilter</ref>
     </soa-filter>
     <soa-filter>
         <name>SlowTimeServiceFilter</name>
-        <ref>com.isuwang.soa.core.filter.container.SlowTimeServiceFilter</ref>
+        <ref>com.isuwang.soa.container.filter.SlowTimeServiceFilter</ref>
     </soa-filter>
 </soa-filters>

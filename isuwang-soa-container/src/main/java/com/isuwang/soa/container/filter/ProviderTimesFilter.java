@@ -1,7 +1,8 @@
-package com.isuwang.soa.core.filter.container;
+package com.isuwang.soa.container.filter;
 
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
+import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

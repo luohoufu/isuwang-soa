@@ -6,7 +6,7 @@
 //
 
 
-package com.isuwang.soa.core.filter.container.xml;
+package com.isuwang.soa.container.filter.xml;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
