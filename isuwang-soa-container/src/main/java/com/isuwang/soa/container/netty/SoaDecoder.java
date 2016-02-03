@@ -29,6 +29,8 @@ public class SoaDecoder extends ByteToMessageDecoder {
 
         if (length == 0) {// 心跳
             ctx.writeAndFlush(ctx.alloc().buffer(1).writeInt(0));
+
+            return;
         }
 
         // waiting for complete
