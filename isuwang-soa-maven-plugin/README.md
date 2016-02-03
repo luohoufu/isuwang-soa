@@ -10,5 +10,5 @@
 #### Maven运行
 
 ```
-mvn compile com.isuwang:maven-isuwangsoa-plugin:1.0-SNAPSHOT:run
+mvn compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run
 ```

@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.isuwang</groupId>
-    <artifactId>maven-isuwangsoa-plugin</artifactId>
+    <artifactId>isuwangsoa-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>maven-isuwangsoa-plugin</name>
 
