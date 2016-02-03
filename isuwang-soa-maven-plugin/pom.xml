@@ -13,7 +13,7 @@
     <groupId>com.isuwang</groupId>
     <artifactId>isuwangsoa-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>maven-isuwangsoa-plugin</name>
+    <name>isuwangsoa-maven-plugin</name>
 
     <dependencies>
         <dependency>
