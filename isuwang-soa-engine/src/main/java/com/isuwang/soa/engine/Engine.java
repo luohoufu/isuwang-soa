@@ -91,18 +91,17 @@ public class Engine {
         if (appsPath.exists() && appsPath.isDirectory()) {
             final File[] files = appsPath.listFiles();
 
-            final List<URL> urlList = new ArrayList<>();
-
             for (File file : files) {
+                final List<URL> urlList = new ArrayList<>();
+
                 if (file.isDirectory()) {
                     urlList.addAll(findJarURLs(file));
                 } else if (file.isFile() && file.getName().endsWith(".jar")) {
                     urlList.add(file.toURI().toURL());
                 }
+                if (!urlList.isEmpty())
+                    appURLs.add(urlList);
             }
-
-            if (!urlList.isEmpty())
-                appURLs.add(urlList);
         }
     }
 
