@@ -47,12 +47,12 @@ public class RegistryContainer implements Container {
                 for (String key : keys) {
                     SoaBaseProcessor<?> processor = processorMap.get(key);
 
-                    RegistryContainer.processorMap.put(processor.getInterfaceClass().getSimpleName(), processor);
+                    RegistryContainer.processorMap.put(processor.getInterfaceClass().getName(), processor);
 
                     if (processor.getInterfaceClass().getClass() != null) {
                         Service service = processor.getInterfaceClass().getAnnotation(Service.class);
 
-                        RegistryAgent.getInstance().registerService(processor.getInterfaceClass().getSimpleName(), service.version());
+                        RegistryAgent.getInstance().registerService(processor.getInterfaceClass().getName(), service.version());
                     }
                 }
             } catch (Exception e) {

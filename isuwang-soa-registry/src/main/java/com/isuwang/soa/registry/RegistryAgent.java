@@ -57,7 +57,7 @@ public class RegistryAgent {
 
             if (processor.getInterfaceClass().getClass() != null) {
                 Service service = processor.getInterfaceClass().getAnnotation(Service.class);
-                RegistryAgent.getInstance().registerService(processor.getInterfaceClass().getSimpleName(), service.version());
+                RegistryAgent.getInstance().registerService(processor.getInterfaceClass().getName(), service.version());
             }
         }
     }
