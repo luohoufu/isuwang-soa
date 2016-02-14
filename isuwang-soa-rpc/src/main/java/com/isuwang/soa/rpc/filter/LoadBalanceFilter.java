@@ -22,7 +22,7 @@ public class LoadBalanceFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadBalanceFilter.class);
 
-    private static int roundRobinIndex = 8;
+    private static AtomicInteger roundRobinIndex = new AtomicInteger(8);
 
     @Override
     public void doFilter(FilterChain chain) throws TException {
@@ -34,7 +34,7 @@ public class LoadBalanceFilter implements Filter {
         List<ServiceInfo> usableList = ServiceInfoWatcher.getServiceInfo(soaHeader.getServiceName(), soaHeader.getVersionName());
 
         //TODO load static config in zookeeper
-        LoadBalanceStratage balance = LoadBalanceStratage.Random;
+        LoadBalanceStratage balance = LoadBalanceStratage.LeastActive;
 
         switch (balance) {
             case Random:
@@ -72,8 +72,6 @@ public class LoadBalanceFilter implements Filter {
             final int index = random.nextInt(usableList.size());
 
             ServiceInfo serviceInfo = usableList.get(index);
-
-            serviceInfo.getActiveCount().incrementAndGet();
             chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
             LOGGER.info(serviceInfo.getHost() + ":" + serviceInfo.getPort() + " concurrency：" + serviceInfo.getActiveCount());
 
@@ -96,7 +94,6 @@ public class LoadBalanceFilter implements Filter {
             }
 
             ServiceInfo serviceInfo = usableList.get(index);
-            serviceInfo.getActiveCount().incrementAndGet();
             chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
 
             callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort());
@@ -107,9 +104,8 @@ public class LoadBalanceFilter implements Filter {
     private String roundRobin(String callerInfo, List<ServiceInfo> usableList, FilterChain chain) {
 
         if (usableList.size() > 0) {
-            roundRobinIndex = (roundRobinIndex++) % usableList.size();
-            ServiceInfo serviceInfo = usableList.get(roundRobinIndex);
-            serviceInfo.getActiveCount().incrementAndGet();
+            roundRobinIndex = new AtomicInteger(roundRobinIndex.incrementAndGet() % usableList.size());
+            ServiceInfo serviceInfo = usableList.get(roundRobinIndex.get());
             chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
 
             callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort());
