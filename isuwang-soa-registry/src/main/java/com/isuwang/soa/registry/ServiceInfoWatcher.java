@@ -2,10 +2,13 @@ package com.isuwang.soa.registry;
 
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import org.apache.zookeeper.*;
+import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +23,8 @@ public class ServiceInfoWatcher {
 
     private static Map<String, List<ServiceInfo>> caches = new ConcurrentHashMap<>();
 
+    private static Map<String, Map<ConfigKey, Object>> config = new ConcurrentHashMap<>();
+
     private ZooKeeper zk;
 
     public void init() {
@@ -28,6 +33,8 @@ public class ServiceInfoWatcher {
         createServicesNode();
 
         getServersList();
+
+        getConfig("/soa/config");
     }
 
     public void destroy() {
@@ -42,6 +49,7 @@ public class ServiceInfoWatcher {
         }
 
         caches = null;
+        config = null;
 
         LOGGER.info("关闭连接，清空service info caches");
     }
@@ -216,6 +224,154 @@ public class ServiceInfoWatcher {
         caches.put(serviceName, sinfos);
     }
     //----------------------servicesInfo相关-----------------------------------
+
+    //----------------------static config-------------------------------------
+    private void getConfig(String path) {
+
+        zk.getChildren(path, configChildrenChangeWatcher, getConfigChildrenCallBack, null);
+    }
+
+    private Watcher configChildrenChangeWatcher = watchedEvent -> {
+
+        if (watchedEvent.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
+            LOGGER.info(watchedEvent.getPath() + "'s children changed, reset config in memory");
+            getConfig(watchedEvent.getPath());
+        }
+    };
+
+    private AsyncCallback.ChildrenCallback getConfigChildrenCallBack = (i, path, ctx, children) -> {
+        switch (KeeperException.Code.get(i)) {
+            case CONNECTIONLOSS:
+                getConfig(path);
+                break;
+            case OK:
+                LOGGER.info("get children of {} succeed.", path);
+                resetConfigCache(path, children);
+                break;
+            default:
+                LOGGER.error("get chileren of {} failed", path);
+        }
+    };
+
+    private void resetConfigCache(String path, List<String> children) {
+
+        for (String key : children) {
+            String configNodePath = path + "/" + key;
+            getConfigData(configNodePath, key);
+        }
+    }
+
+    private void getConfigData(String path, String configNodeName) {
+        if (configNodeName == null) {
+            String[] tmp = path.split("/");
+            configNodeName = tmp[tmp.length - 1];
+        }
+        zk.getData(path, configDataChangeWatcher, getConfigDataCallback, configNodeName);
+    }
+
+    private Watcher configDataChangeWatcher = watchedEvent -> {
+
+        if (watchedEvent.getType() == Watcher.Event.EventType.NodeDataChanged) {
+            LOGGER.info(watchedEvent.getPath() + "'s data changed, reset config in memory");
+            getConfigData(watchedEvent.getPath(), null);
+        }
+    };
+
+    private AsyncCallback.DataCallback getConfigDataCallback = new AsyncCallback.DataCallback() {
+        @Override
+        public void processResult(int rc, String path, Object ctx, byte[] data, Stat stat) {
+            switch (KeeperException.Code.get(rc)) {
+                case CONNECTIONLOSS:
+                    getConfigData(path, (String) ctx);
+                    break;
+                case OK:
+                    processConfigData(path, data);
+                    break;
+                default:
+                    LOGGER.error("Error when trying to get data of {}.", path);
+            }
+        }
+    };
+
+    private void processConfigData(String path, byte[] data) {
+
+        Map<ConfigKey, Object> propertyMap = new HashMap<>();
+        try {
+            String propertiesStr = new String(data, "utf-8");
+
+            String[] properties = propertiesStr.split(";");
+            for (String property : properties) {
+
+                String[] key_values = property.split("=");
+                if (key_values.length == 2) {
+
+                    ConfigKey type = ConfigKey.findByValue(key_values[0]);
+                    switch (type) {
+
+                        case Thread:
+                            Integer value = Integer.valueOf(key_values[1]);
+                            propertyMap.put(type, value);
+                            break;
+                        case ThreadPool:
+                            Boolean bool = Boolean.valueOf(key_values[1]);
+                            propertyMap.put(type, bool);
+                            break;
+                        case Timeout:
+                            Integer timeout = Integer.valueOf(key_values[1]);
+                            propertyMap.put(type, timeout);
+                            break;
+                        case LoadBalance:
+                            propertyMap.put(type, key_values[1]);
+                            break;
+                    }
+                }
+            }
+
+            LOGGER.info("get config form {} with data [{}]", path, propertiesStr);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        config.put(path, propertyMap);
+    }
+
+    public enum ConfigKey {
+
+        Thread("thread"),
+
+        ThreadPool("threadPool"),
+
+        Timeout("timeout"),
+
+        LoadBalance("loadBalance");
+
+        private final String value;
+
+        private ConfigKey(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return this.value;
+        }
+
+        public static ConfigKey findByValue(String value) {
+            switch (value) {
+                case "thread":
+                    return Thread;
+                case "threadPool":
+                    return ThreadPool;
+                case "timeout":
+                    return Timeout;
+                case "loadBalance":
+                    return LoadBalance;
+                default:
+                    return null;
+            }
+        }
+    }
+
+    //---------------------static config end-----------------------------------
 
     /**
      * 连接zookeeper

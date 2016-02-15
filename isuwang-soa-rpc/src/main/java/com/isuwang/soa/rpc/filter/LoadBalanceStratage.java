@@ -38,6 +38,21 @@ public enum LoadBalanceStratage {
      * <li>当某一台提供者挂时，原本发往该提供者的请求，基于虚拟节点，平摊到其它提供者，不会引起剧烈变动。</li>
      * </ul>
      */
-    ConsistentHash
+    ConsistentHash;
+
+    public static LoadBalanceStratage findByValue(String value) {
+        switch (value) {
+            case "random":
+                return Random;
+            case "roundRobin":
+                return RoundRobin;
+            case "leastActive":
+                return LeastActive;
+            case "consistentHash":
+                return ConsistentHash;
+            default:
+                return null;
+        }
+    }
 
 }
