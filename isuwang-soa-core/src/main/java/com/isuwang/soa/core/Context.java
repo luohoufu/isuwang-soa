@@ -22,6 +22,16 @@ public class Context {
 
     private boolean hasHeader = false;
 
+    private int failedTimes = 0;
+
+    public int getFailedTimes() {
+        return failedTimes;
+    }
+
+    public void setFailedTimes(int failedTimes) {
+        this.failedTimes = failedTimes;
+    }
+
     protected Context() {
     }
 

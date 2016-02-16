@@ -10,6 +10,8 @@ import org.apache.thrift.protocol.TMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
 public class SoaConnection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SoaConnection.class);
@@ -17,7 +19,11 @@ public class SoaConnection {
     private SoaClient soaClient;
 
     public SoaConnection(String host, int port) {
-        soaClient = new SoaClient(host, port);
+        try {
+            soaClient = new SoaClient(host, port);
+        } catch (SoaException e) {
+            LOGGER.error("connect to {}:{} failed", host, port);
+        }
     }
 
     public <REQ, RESP> RESP send(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer) throws TException {
@@ -36,6 +42,9 @@ public class SoaConnection {
             outputProtocol.writeMessageEnd();
 
             outputSoaTransport.flush();//在报文头部写入int,代表报文长度(不包括自己)
+            if (soaClient == null) {
+                throw new SoaException(SoaBaseCode.NotConnected);
+            }
             ByteBuf responseBuf = soaClient.send(context.getSeqid(), requestBuf); //发送请求，返回结果
 
             if (responseBuf == null) {
@@ -64,8 +73,8 @@ public class SoaConnection {
             }
         } catch (SoaException e) {
             LOGGER.error(e.getMessage(), e);
-
             throw e;
+
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
 

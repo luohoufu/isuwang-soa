@@ -1,5 +1,7 @@
 package com.isuwang.soa.rpc.netty;
 
+import com.isuwang.soa.core.SoaBaseCode;
+import com.isuwang.soa.core.SoaException;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -39,14 +41,14 @@ public class SoaClient {
      */
     private final Map<String, ByteBuf[]> caches = new ConcurrentHashMap<>();
 
-    public SoaClient(String host, int port) {
+    public SoaClient(String host, int port) throws SoaException {
         this.host = host;
         this.port = port;
 
         try {
             connect(host, port);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new SoaException(SoaBaseCode.NotConnected);
         }
 //        initBootstrap();
     }
@@ -83,9 +85,9 @@ public class SoaClient {
             return channel = b.connect(host, port).sync().channel();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
+            throw new SoaException(SoaBaseCode.NotConnected);
         }
-
-        return null;
+//        return null;
     }
 
 

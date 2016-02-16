@@ -1,8 +1,6 @@
 package com.isuwang.soa.rpc;
 
-import com.isuwang.soa.core.Context;
-import com.isuwang.soa.core.SoaHeader;
-import com.isuwang.soa.core.TBeanSerializer;
+import com.isuwang.soa.core.*;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.registry.ServiceInfo;
 import com.isuwang.soa.rpc.filter.SendMessageFilter;
@@ -121,7 +119,19 @@ public class BaseServiceClient {
             serviceInfo.getActiveCount().decrementAndGet();
         });
 
-        stubFilterChain.doFilter();
+        try {
+            stubFilterChain.doFilter();
+        } catch (SoaException e) {
+            if (e.getCode().equals(SoaBaseCode.NotConnected.getCode())) {
+                if (context.getFailedTimes() < 3) {
+                    context.setFailedTimes(context.getFailedTimes() + 1);
+                    LOGGER.info("connect failed {} times, try again", context.getFailedTimes());
+                    sendBase(request, response, requestSerializer, responseSerializer);
+                } else
+                    throw e;
+            } else
+                throw e;
+        }
 
         return (RESP) stubFilterChain.getAttribute(StubFilterChain.ATTR_KEY_RESPONSE);
     }
