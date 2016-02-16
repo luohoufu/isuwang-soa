@@ -23,7 +23,16 @@ public class IdleConnectionManager {
     private static final long DEFAULT_SLEEP_TIME = 10000L;
 
     public static void addChannel(Channel channel) {
-        channels.putIfAbsent(channel, new AtomicInteger(0)).incrementAndGet();
+
+        if (!channels.containsKey(channel)) {
+            AtomicInteger count = new AtomicInteger(1);
+            channels.put(channel, count);
+        } else {
+            AtomicInteger count = channels.get(channel);
+            count.incrementAndGet();
+        }
+
+        //channels.putIfAbsent(channel, new AtomicInteger(0)).incrementAndGet();
     }
 
     public static void remove(Channel channel) {
