@@ -26,7 +26,9 @@ public class SendMessageFilter implements Filter {
 
         //add active count
         ServiceInfo serviceInfo = (ServiceInfo) chain.getAttribute(StubFilterChain.ATTR_KEY_SERVERINFO);
-        serviceInfo.getActiveCount().incrementAndGet();
+
+        if (serviceInfo != null)
+            serviceInfo.getActiveCount().incrementAndGet();
 
         SendMessageAction action = (SendMessageAction) chain.getAttribute(SendMessageFilter.ATTR_KEY_SENDMESSAGE);
 
