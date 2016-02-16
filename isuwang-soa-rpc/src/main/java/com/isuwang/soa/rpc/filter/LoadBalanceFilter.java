@@ -5,6 +5,7 @@ import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
+import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.ServiceInfo;
 import com.isuwang.soa.registry.ServiceInfoWatcher;
 import org.apache.thrift.TException;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,7 +36,8 @@ public class LoadBalanceFilter implements Filter {
         List<ServiceInfo> usableList = ServiceInfoWatcher.getServiceInfo(soaHeader.getServiceName(), soaHeader.getVersionName());
 
         //TODO load static config in zookeeper
-        LoadBalanceStratage balance = LoadBalanceStratage.LeastActive;
+        String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
+        LoadBalanceStratage balance = getLoadBalanceStratage(serviceKey) == null ? LoadBalanceStratage.LeastActive : getLoadBalanceStratage(serviceKey);
 
         switch (balance) {
             case Random:
@@ -62,6 +65,15 @@ public class LoadBalanceFilter implements Filter {
         }
 
         chain.doFilter();
+    }
+
+    private LoadBalanceStratage getLoadBalanceStratage(String key) {
+
+        Map<ConfigKey, Object> configs = ServiceInfoWatcher.getConfig().get(key);
+        if (null != configs) {
+            return LoadBalanceStratage.findByValue((String) configs.get(ConfigKey.LoadBalance));
+        }
+        return null;
     }
 
     private String random(String callerInfo, List<ServiceInfo> usableList, FilterChain chain) {

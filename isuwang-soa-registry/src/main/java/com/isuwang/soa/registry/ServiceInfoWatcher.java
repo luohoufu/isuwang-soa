@@ -25,6 +25,10 @@ public class ServiceInfoWatcher {
 
     private static Map<String, Map<ConfigKey, Object>> config = new ConcurrentHashMap<>();
 
+    public static Map<String, Map<ConfigKey, Object>> getConfig() {
+        return config;
+    }
+
     private ZooKeeper zk;
 
     public void init() {
@@ -285,7 +289,7 @@ public class ServiceInfoWatcher {
                     getConfigData(path, (String) ctx);
                     break;
                 case OK:
-                    processConfigData(path, data);
+                    processConfigData((String) ctx, data);
                     break;
                 default:
                     LOGGER.error("Error when trying to get data of {}.", path);
@@ -293,7 +297,7 @@ public class ServiceInfoWatcher {
         }
     };
 
-    private void processConfigData(String path, byte[] data) {
+    private void processConfigData(String configNode, byte[] data) {
 
         Map<ConfigKey, Object> propertyMap = new HashMap<>();
         try {
@@ -327,48 +331,12 @@ public class ServiceInfoWatcher {
                 }
             }
 
-            LOGGER.info("get config form {} with data [{}]", path, propertiesStr);
+            LOGGER.info("get config form {} with data [{}]", configNode, propertiesStr);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
-        config.put(path, propertyMap);
-    }
-
-    public enum ConfigKey {
-
-        Thread("thread"),
-
-        ThreadPool("threadPool"),
-
-        Timeout("timeout"),
-
-        LoadBalance("loadBalance");
-
-        private final String value;
-
-        private ConfigKey(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return this.value;
-        }
-
-        public static ConfigKey findByValue(String value) {
-            switch (value) {
-                case "thread":
-                    return Thread;
-                case "threadPool":
-                    return ThreadPool;
-                case "timeout":
-                    return Timeout;
-                case "loadBalance":
-                    return LoadBalance;
-                default:
-                    return null;
-            }
-        }
+        config.put(configNode, propertyMap);
     }
 
     //---------------------static config end-----------------------------------
