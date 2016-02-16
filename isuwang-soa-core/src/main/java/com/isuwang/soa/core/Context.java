@@ -82,7 +82,7 @@ public class Context {
     }
 
     public static class Factory {
-        private static ThreadLocal<Context> threadLocal = new ThreadLocal<>();
+        public static ThreadLocal<Context> threadLocal = new ThreadLocal<>();
 
         public static Context getNewInstance() {
             Context context = new Context();

@@ -31,14 +31,22 @@ public class ServiceInfoWatcher {
 
     private ZooKeeper zk;
 
+    public boolean usedByClent = true;
+
     public void init() {
+
         connect();
 
-        createServicesNode();
+        if (usedByClent) {
+            createServicesNode();
 
-        getServersList();
+            getServersList();
 
-        getConfig("/soa/config");
+            getConfig("/soa/config");
+
+        } else {
+            getConfig("/soa/config");
+        }
     }
 
     public void destroy() {

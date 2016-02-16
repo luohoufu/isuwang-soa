@@ -5,6 +5,7 @@ import com.isuwang.soa.container.spring.SpringContainer;
 import com.isuwang.soa.core.Service;
 import com.isuwang.soa.core.SoaBaseProcessor;
 import com.isuwang.soa.registry.RegistryAgent;
+import com.isuwang.soa.registry.ServiceInfoWatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,12 @@ public class RegistryContainer implements Container {
     @Override
     @SuppressWarnings("unchecked")
     public void start() {
+
+        ServiceInfoWatcher siw = new ServiceInfoWatcher();
+        siw.usedByClent = false;
+        siw.init();
+        LOGGER.info("service info watcher started.");
+
         RegistryAgent.getInstance().start();
         RegistryAgent.getInstance().setProcessorMap(processorMap);
 
