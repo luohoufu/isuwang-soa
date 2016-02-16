@@ -2,7 +2,9 @@ package com.isuwang.soa.rpc;
 
 import com.isuwang.soa.core.*;
 import com.isuwang.soa.core.filter.Filter;
+import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.ServiceInfo;
+import com.isuwang.soa.registry.ServiceInfoWatcher;
 import com.isuwang.soa.rpc.filter.SendMessageFilter;
 import com.isuwang.soa.rpc.filter.StubFilterChain;
 import com.isuwang.soa.rpc.filter.xml.SoaFilter;
@@ -16,6 +18,7 @@ import javax.xml.bind.JAXB;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -123,7 +126,15 @@ public class BaseServiceClient {
             stubFilterChain.doFilter();
         } catch (SoaException e) {
             if (e.getCode().equals(SoaBaseCode.NotConnected.getCode())) {
-                if (context.getFailedTimes() < 3) {
+
+                int failOverTimes = 0;
+                String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
+                Map<ConfigKey, Object> configs = ServiceInfoWatcher.getConfig().get(serviceKey);
+                if (null != configs) {
+                    failOverTimes = (Integer) configs.get(ConfigKey.FailOver);
+                }
+
+                if (context.getFailedTimes() < failOverTimes) {
                     context.setFailedTimes(context.getFailedTimes() + 1);
                     LOGGER.info("connect failed {} times, try again", context.getFailedTimes());
                     sendBase(request, response, requestSerializer, responseSerializer);

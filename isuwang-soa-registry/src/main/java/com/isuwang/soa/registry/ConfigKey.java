@@ -11,7 +11,9 @@ public enum ConfigKey {
 
     Timeout("timeout"),
 
-    LoadBalance("loadBalance");
+    LoadBalance("loadBalance"),
+
+    FailOver("failover");
 
     private final String value;
 
@@ -33,6 +35,8 @@ public enum ConfigKey {
                 return Timeout;
             case "loadBalance":
                 return LoadBalance;
+            case "failover":
+                return FailOver;
             default:
                 return null;
         }

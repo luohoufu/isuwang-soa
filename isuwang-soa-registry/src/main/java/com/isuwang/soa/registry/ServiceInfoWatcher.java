@@ -335,6 +335,9 @@ public class ServiceInfoWatcher {
                         case LoadBalance:
                             propertyMap.put(type, key_values[1]);
                             break;
+                        case FailOver:
+                            propertyMap.put(type, Integer.valueOf(key_values[1]));
+                            break;
                     }
                 }
             }
