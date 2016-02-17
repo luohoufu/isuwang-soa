@@ -48,7 +48,8 @@ public class SoaConnection {
             ByteBuf responseBuf = soaClient.send(context.getSeqid(), requestBuf); //发送请求，返回结果
 
             if (responseBuf == null) {
-                throw new TException("request time out.");
+                throw new SoaException(SoaBaseCode.TimeOut);
+//                throw new TException("request time out.");
             } else {
                 final TSoaTransport inputSoaTransport = new TSoaTransport(responseBuf);
                 TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport);

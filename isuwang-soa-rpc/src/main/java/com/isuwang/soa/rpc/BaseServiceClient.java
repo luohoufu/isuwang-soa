@@ -125,7 +125,7 @@ public class BaseServiceClient {
         try {
             stubFilterChain.doFilter();
         } catch (SoaException e) {
-            if (e.getCode().equals(SoaBaseCode.NotConnected.getCode())) {
+            if (e.getCode().equals(SoaBaseCode.NotConnected.getCode()) || e.getCode().equals(SoaBaseCode.TimeOut.getCode())) {
 
                 int failOverTimes = 0;
                 String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
