@@ -54,6 +54,9 @@ public class BaseServiceClient {
 
         IdleConnectionManager connectionManager = new IdleConnectionManager();
         connectionManager.start();
+
+        ServiceInfoWatcher siw = new ServiceInfoWatcher();
+        siw.init();
     }
 
     static InputStream getFilterInputStream() {
