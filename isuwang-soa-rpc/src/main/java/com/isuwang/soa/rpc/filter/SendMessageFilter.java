@@ -23,16 +23,21 @@ public class SendMessageFilter implements Filter {
 
     @Override
     public void doFilter(FilterChain chain) throws TException {
-
         //add active count
         ServiceInfo serviceInfo = (ServiceInfo) chain.getAttribute(StubFilterChain.ATTR_KEY_SERVERINFO);
 
         if (serviceInfo != null)
             serviceInfo.getActiveCount().incrementAndGet();
 
-        SendMessageAction action = (SendMessageAction) chain.getAttribute(SendMessageFilter.ATTR_KEY_SENDMESSAGE);
+        try {
+            SendMessageAction action = (SendMessageAction) chain.getAttribute(SendMessageFilter.ATTR_KEY_SENDMESSAGE);
 
-        action.doAction(chain);
+            action.doAction(chain);
+        } finally {
+            if (serviceInfo != null)
+                serviceInfo.getActiveCount().decrementAndGet();
+        }
+
     }
 
 }

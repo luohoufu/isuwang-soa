@@ -117,9 +117,6 @@ public class BaseServiceClient {
             RESP resp = conn.send(request, response, requestSerializer, responseSerializer);
 
             chain.setAttribute(StubFilterChain.ATTR_KEY_RESPONSE, resp);
-
-            final ServiceInfo serviceInfo = (ServiceInfo) chain.getAttribute(StubFilterChain.ATTR_KEY_SERVERINFO);
-            serviceInfo.getActiveCount().decrementAndGet();
         });
 
         try {

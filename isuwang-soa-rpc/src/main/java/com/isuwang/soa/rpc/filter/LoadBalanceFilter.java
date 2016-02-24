@@ -35,7 +35,6 @@ public class LoadBalanceFilter implements Filter {
 
         List<ServiceInfo> usableList = ServiceInfoWatcher.getServiceInfo(soaHeader.getServiceName(), soaHeader.getVersionName());
 
-        //TODO load static config in zookeeper
         String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
         LoadBalanceStratage balance = getLoadBalanceStratage(serviceKey) == null ? LoadBalanceStratage.LeastActive : getLoadBalanceStratage(serviceKey);
 
