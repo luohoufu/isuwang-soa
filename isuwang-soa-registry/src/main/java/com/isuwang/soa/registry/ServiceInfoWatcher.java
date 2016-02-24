@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +33,8 @@ public class ServiceInfoWatcher {
     private ZooKeeper zk;
 
     public boolean usedByClent = true;
+
+    public static AtomicBoolean serviceListInitialized = new AtomicBoolean(false);
 
     public void init() {
 
@@ -67,6 +70,15 @@ public class ServiceInfoWatcher {
     }
 
     public static List<ServiceInfo> getServiceInfo(String serviceName, String versionName) {
+        synchronized (serviceListInitialized) {
+            if (!serviceListInitialized.get()) {
+                try {
+                    serviceListInitialized.wait(10000L);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+
         List<ServiceInfo> serverList = caches.get(serviceName);
         List<ServiceInfo> usableList = new ArrayList<>();
         if (serverList != null && serverList.size() > 0) {
@@ -112,9 +124,7 @@ public class ServiceInfoWatcher {
      * @return
      */
     public void getServersList() {
-
         zk.getChildren("/soa/runtime/services", servicesListChangeWatcher, getServicesListCallback, null);
-
     }
 
     private AsyncCallback.ChildrenCallback getServicesListCallback = (i, path, ctx, children) -> {
@@ -147,6 +157,8 @@ public class ServiceInfoWatcher {
 
     //----------------------serviceInfo相关-----------------------------------
 
+    private int serviceCounts;
+
     /**
      * 对每一个serviceName,要获取serviceName下的子节点
      *
@@ -154,6 +166,7 @@ public class ServiceInfoWatcher {
      * @param serviceList
      */
     private void resetServiceCaches(String path, List<String> serviceList) {
+        serviceCounts = serviceList.size();
 
         for (String serviceName : serviceList) {
             getServiceInfoByPath(path + "/" + serviceName, serviceName);
@@ -209,7 +222,6 @@ public class ServiceInfoWatcher {
      * @param infos
      */
     private void resetServiceInfoByName(String serviceName, String path, List<String> infos) {
-
         LOGGER.info(serviceName + "\n" + infos);
 
         List<ServiceInfo> sinfos = new ArrayList<>();
@@ -221,7 +233,6 @@ public class ServiceInfoWatcher {
         }
 
         if (caches.containsKey(serviceName)) {
-
             List<ServiceInfo> currentInfos = caches.get(serviceName);
 
             for (ServiceInfo sinfo : sinfos) {
@@ -234,6 +245,14 @@ public class ServiceInfoWatcher {
             }
         }
         caches.put(serviceName, sinfos);
+
+        if (--serviceCounts <= 0) {
+            synchronized (serviceListInitialized) {
+                serviceListInitialized.set(true);
+
+                serviceListInitialized.notifyAll();
+            }
+        }
     }
     //----------------------servicesInfo相关-----------------------------------
 
