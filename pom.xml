@@ -17,6 +17,7 @@
         <module>isuwang-soa-maven-plugin</module>
         <module>isuwang-soa-engine</module>
         <module>isuwang-soa-registry</module>
+        <module>isuwang-soa-code-generator</module>
     </modules>
 
     <properties>
