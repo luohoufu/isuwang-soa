@@ -78,16 +78,19 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             /**
              * check if use executorService for this service and
              */
-            Boolean b = false;
+            boolean b = true;
 
             String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".producer";
             Map<ConfigKey, Object> configs = ServiceInfoWatcher.getConfig().get(serviceKey);
 
             if (null != configs) {
-                b = (Boolean) configs.get(ConfigKey.ThreadPool);
+                Boolean aBoolean = (Boolean) configs.get(ConfigKey.ThreadPool);
+
+                if (aBoolean != null)
+                    b = aBoolean.booleanValue();
             }
 
-            if (useThreadPool && b != null && b) {
+            if (useThreadPool && b) {
                 executorService.execute(() -> processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context));
             } else
                 processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context);
