@@ -13,6 +13,10 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Run Container Plugin
@@ -40,9 +44,27 @@ public class RunContainerPlugin extends SoaAbstractMojo {
 
                 URL[] urls = ((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs();
 
+                List<URL> urlList = new ArrayList<>(Arrays.asList(urls));
+                Iterator<URL> iterator = urlList.iterator();
+                while (iterator.hasNext()) {
+                    URL url = iterator.next();
+
+                    if (url.getFile().matches("^.*/isuwang-soa-container.*\\.jar$")) {
+                        iterator.remove();
+
+                        continue;
+                    }
+
+                    if (url.getFile().matches("^.*/isuwang-soa-engine.*\\.jar$")) {
+                        iterator.remove();
+
+                        continue;
+                    }
+                }
+
                 ClassLoaderManager.shareClassLoader = new ShareClassLoader(urls);
                 ClassLoaderManager.platformClassLoader = new PlatformClassLoader(urls);
-                ClassLoaderManager.appClassLoaders.add(new AppClassLoader(urls));
+                ClassLoaderManager.appClassLoaders.add(new AppClassLoader(urlList.toArray(new URL[urlList.size()])));
 
                 Engine.main(new String[]{});
             } catch (Exception e) {
