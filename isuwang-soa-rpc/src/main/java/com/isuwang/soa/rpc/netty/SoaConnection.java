@@ -10,8 +10,6 @@ import org.apache.thrift.protocol.TMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
-
 public class SoaConnection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SoaConnection.class);

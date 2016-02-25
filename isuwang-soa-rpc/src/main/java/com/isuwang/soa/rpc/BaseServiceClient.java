@@ -3,7 +3,6 @@ package com.isuwang.soa.rpc;
 import com.isuwang.soa.core.*;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.registry.ConfigKey;
-import com.isuwang.soa.registry.ServiceInfo;
 import com.isuwang.soa.registry.ServiceInfoWatcher;
 import com.isuwang.soa.rpc.filter.SendMessageFilter;
 import com.isuwang.soa.rpc.filter.StubFilterChain;
