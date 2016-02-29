@@ -40,7 +40,9 @@ public class RegistryAgent {
 
     public void registerService(String serverName, String versionName) {
         try {
-            zooKeeperHelper.addOrUpdateServerInfo("/soa/runtime/services/" + serverName + "/" + IPUtils.localIp() + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT + ":" + versionName, "");
+            String path = "/soa/runtime/services/" + serverName + "/" + IPUtils.localIp() + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT + ":" + versionName;
+            String data = "";
+            zooKeeperHelper.addOrUpdateServerInfo(path, data);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

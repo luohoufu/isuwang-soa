@@ -1,6 +1,7 @@
 package com.isuwang.soa.registry;
 
 import org.apache.zookeeper.*;
+import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,14 +19,11 @@ public class ZooKeeperHelper {
     public void connect() {
         try {
             zk = new ZooKeeper(zookeeperHost, 15000, watchedEvent -> {
-
                 if (watchedEvent.getState() == Watcher.Event.KeeperState.Expired) {
-
                     LOGGER.info("Registry Session过期,重连 [Zookeeper]");
                     destroy();
                     connect();
                     RegistryAgent.getInstance().registerProcessor();//重新注册服务
-
                 } else if (Watcher.Event.KeeperState.SyncConnected == watchedEvent.getState()) {
                     LOGGER.info("Registry {} [Zookeeper]", zookeeperHost);
                 }
@@ -44,7 +42,6 @@ public class ZooKeeperHelper {
     }
 
     public void addOrUpdateServerInfo(String path, String data) throws KeeperException, InterruptedException {
-
         String[] paths = path.split("/");
 
         String createPath = "/";
@@ -68,7 +65,26 @@ public class ZooKeeperHelper {
      * @param data
      */
     private void addPersistServerNode(String path, String data) {
-        zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, serverNameCreateCb, data);
+        Stat stat = exists(path);
+
+        if (stat == null)
+            zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, serverNameCreateCb, data);
+        else
+            try {
+                zk.setData(path, data.getBytes(), -1);
+            } catch (KeeperException e) {
+            } catch (InterruptedException e) {
+            }
+    }
+
+    private Stat exists(String path) {
+        Stat stat = null;
+        try {
+            stat = zk.exists(path, false);
+        } catch (KeeperException e) {
+        } catch (InterruptedException e) {
+        }
+        return stat;
     }
 
     /**
