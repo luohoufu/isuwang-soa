@@ -1,0 +1,14 @@
+<soa-filters>
+    <soa-filter>
+        <name>networkTimeFilter</name>
+        <ref>com.isuwang.soa.remoting.filter.NetworkTimesFilter</ref>
+    </soa-filter>
+    <soa-filter>
+        <name>networkLogFilter</name>
+        <ref>com.isuwang.soa.remoting.filter.NetworkLogFilter</ref>
+    </soa-filter>
+    <soa-filter>
+        <name>loadBalanceFilter</name>
+        <ref>com.isuwang.soa.remoting.filter.LoadBalanceFilter</ref>
+    </soa-filter>
+</soa-filters>
