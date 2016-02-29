@@ -8,6 +8,7 @@ import com.isuwang.soa.core.filter.FilterChain;
 import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.ServiceInfo;
 import com.isuwang.soa.registry.ServiceInfoWatcher;
+import com.isuwang.soa.registry.ZookeeperWatcher;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class LoadBalanceFilter implements Filter {
 
         String callerInfo = null;
 
-        List<ServiceInfo> usableList = ServiceInfoWatcher.getServiceInfo(soaHeader.getServiceName(), soaHeader.getVersionName());
+        List<ServiceInfo> usableList = ZookeeperWatcher.getServiceInfo(soaHeader.getServiceName(), soaHeader.getVersionName());
 
         String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
         LoadBalanceStratage balance = getLoadBalanceStratage(serviceKey) == null ? LoadBalanceStratage.LeastActive : getLoadBalanceStratage(serviceKey);
@@ -68,7 +69,7 @@ public class LoadBalanceFilter implements Filter {
 
     private LoadBalanceStratage getLoadBalanceStratage(String key) {
 
-        Map<ConfigKey, Object> configs = ServiceInfoWatcher.getConfig().get(key);
+        Map<ConfigKey, Object> configs = ZookeeperWatcher.getConfig().get(key);
         if (null != configs) {
             return LoadBalanceStratage.findByValue((String) configs.get(ConfigKey.LoadBalance));
         }

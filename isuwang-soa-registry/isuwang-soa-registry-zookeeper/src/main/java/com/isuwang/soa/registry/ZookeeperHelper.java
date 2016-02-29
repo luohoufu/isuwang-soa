@@ -6,11 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by tangliu on 2016/1/15.
+ * Created by tangliu on 2016/2/29.
  */
-public class ZooKeeperHelper {
+public class ZookeeperHelper implements ServiceInfoHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperHelper.class);
 
     private String zookeeperHost = "127.0.0.1:2181";
 
@@ -39,6 +39,11 @@ public class ZooKeeperHelper {
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void setHost(String host) {
+        setZookeeperHost(host);
     }
 
     public void addOrUpdateServerInfo(String path, String data) throws KeeperException, InterruptedException {

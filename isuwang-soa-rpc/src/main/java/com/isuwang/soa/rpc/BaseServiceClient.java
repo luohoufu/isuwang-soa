@@ -4,6 +4,7 @@ import com.isuwang.soa.core.*;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.ServiceInfoWatcher;
+import com.isuwang.soa.registry.ZookeeperWatcher;
 import com.isuwang.soa.rpc.filter.SendMessageFilter;
 import com.isuwang.soa.rpc.filter.StubFilterChain;
 import com.isuwang.soa.rpc.filter.xml.SoaFilter;
@@ -54,7 +55,7 @@ public class BaseServiceClient {
         IdleConnectionManager connectionManager = new IdleConnectionManager();
         connectionManager.start();
 
-        ServiceInfoWatcher siw = new ServiceInfoWatcher();
+        ServiceInfoWatcher siw = new ZookeeperWatcher();
         siw.init();
     }
 
@@ -128,7 +129,7 @@ public class BaseServiceClient {
 
                 int failOverTimes = 0;
                 String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
-                Map<ConfigKey, Object> configs = ServiceInfoWatcher.getConfig().get(serviceKey);
+                Map<ConfigKey, Object> configs = ZookeeperWatcher.getConfig().get(serviceKey);
                 if (null != configs) {
                     failOverTimes = (Integer) configs.get(ConfigKey.FailOver);
                 }

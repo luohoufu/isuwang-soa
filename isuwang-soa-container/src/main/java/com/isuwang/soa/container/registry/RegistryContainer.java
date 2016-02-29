@@ -6,6 +6,7 @@ import com.isuwang.soa.core.Service;
 import com.isuwang.soa.core.SoaBaseProcessor;
 import com.isuwang.soa.registry.RegistryAgent;
 import com.isuwang.soa.registry.ServiceInfoWatcher;
+import com.isuwang.soa.registry.ZookeeperWatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,7 @@ public class RegistryContainer implements Container {
     @SuppressWarnings("unchecked")
     public void start() {
 
-        ServiceInfoWatcher siw = new ServiceInfoWatcher();
+        ZookeeperWatcher siw = new ZookeeperWatcher();
         siw.usedByClent = false;
         siw.init();
         LOGGER.info("service info watcher started.");

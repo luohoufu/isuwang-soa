@@ -21,7 +21,7 @@ public class RegistryAgent {
 
     private static final RegistryAgent agent = new RegistryAgent();
 
-    private final ZooKeeperHelper zooKeeperHelper = new ZooKeeperHelper();
+    private final ZookeeperHelper zooKeeperHelper = new ZookeeperHelper();
 
     private Map<String, SoaBaseProcessor<?>> processorMap;
 

@@ -16,9 +16,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
- * Created by tangliu on 2016/1/15.
+ * Created by tangliu on 2016/2/29.
  */
-public class ServiceInfoWatcher {
+public class ZookeeperWatcher implements ServiceInfoWatcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInfoWatcher.class);
 
@@ -36,6 +36,7 @@ public class ServiceInfoWatcher {
 
     public static AtomicBoolean serviceListInitialized = new AtomicBoolean(false);
 
+    @Override
     public void init() {
 
         connect();
@@ -52,6 +53,7 @@ public class ServiceInfoWatcher {
         }
     }
 
+    @Override
     public void destroy() {
 
         if (zk != null) {
@@ -397,10 +399,12 @@ public class ServiceInfoWatcher {
 
     public static void main(String[] args) throws InterruptedException {
 
-        ServiceInfoWatcher siw = new ServiceInfoWatcher();
+        ServiceInfoWatcher siw = new ZookeeperWatcher();
         siw.init();
 
         Thread.sleep(Long.MAX_VALUE);
         siw.destroy();
     }
+
+
 }
