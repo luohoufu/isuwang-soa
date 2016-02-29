@@ -92,11 +92,13 @@ public class Context {
     }
 
     public static class Factory {
-        public static ThreadLocal<Context> threadLocal = new ThreadLocal<>();
+        private static ThreadLocal<Context> threadLocal = new ThreadLocal<>();
 
         public static Context getNewInstance() {
-            Context context = new Context();
+            return new Context();
+        }
 
+        public static Context setCurrentInstance(Context context) {
             threadLocal.set(context);
 
             return context;
@@ -105,8 +107,11 @@ public class Context {
         public static Context getCurrentInstance() {
             Context context = threadLocal.get();
 
-            if (context == null)
-                return getNewInstance();
+            if (context == null) {
+                context = getNewInstance();
+
+                threadLocal.set(context);
+            }
 
             return context;
         }

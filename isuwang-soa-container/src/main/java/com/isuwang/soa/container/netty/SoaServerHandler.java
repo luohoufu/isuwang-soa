@@ -65,10 +65,12 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     }
 
     protected void readRequestHeader(ChannelHandlerContext ctx, ByteBuf inputBuf) throws TException {
-        final Context context = Context.Factory.getCurrentInstance();
+        final Context context = Context.Factory.getNewInstance();
         final SoaHeader soaHeader = new SoaHeader();
         final TSoaTransport inputSoaTransport = new TSoaTransport(inputBuf);
         context.setHeader(soaHeader);
+
+        Context.Factory.setCurrentInstance(context);
 
         try {
             final TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport);
@@ -97,13 +99,16 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         } finally {
             if (inputSoaTransport.isOpen())
                 inputSoaTransport.close();
+
+            Context.Factory.removeCurrentInstance();
         }
     }
 
     protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, Context context) {
         final ByteBuf outputBuf = ctx.alloc().buffer(8192);
 
-        Context.Factory.threadLocal.set(context);
+        Context.Factory.setCurrentInstance(context);
+
         SoaHeader soaHeader = context.getHeader();
 
         final TSoaTransport outputSoaTransport = new TSoaTransport(outputBuf);
