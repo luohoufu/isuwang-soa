@@ -132,7 +132,7 @@ class JavaGenerator extends CodeGenerator {
 
         import com.isuwang.soa.core.*;
         import org.apache.thrift.*;
-        import com.isuwang.soa.rpc.BaseServiceClient;
+        import com.isuwang.soa.remoting.BaseServiceClient;
         import {service.namespace.substring(0, service.namespace.lastIndexOf(".")) + "." + service.name + "Codec.*"};
 
         public class {service.name}Client extends BaseServiceClient<block>

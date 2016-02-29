@@ -3,20 +3,22 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>isuwang-soa</artifactId>
+        <artifactId>isuwang-soa-registry</artifactId>
         <groupId>com.isuwang</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>isuwang-soa-registry</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>isuwang-soa-registry-api</module>
-        <module>isuwang-soa-registry-zookeeper</module>
-    </modules>
+    <artifactId>isuwang-soa-registry-zookeeper</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.isuwang</groupId>
+            <artifactId>isuwang-soa-registry-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
@@ -27,6 +29,7 @@
             <artifactId>isuwang-soa-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
     </dependencies>
 
 
