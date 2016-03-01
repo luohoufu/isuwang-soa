@@ -10,31 +10,30 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>isuwang-soa-remoting</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>isuwang-soa-remoting-api</module>
+        <module>isuwang-soa-remoting-netty</module>
+        <module>isuwang-soa-remoting-socket</module>
+    </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-        </dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.isuwang</groupId>
+                <artifactId>isuwang-soa-remoting-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
-        <dependency>
-            <groupId>com.isuwang</groupId>
-            <artifactId>isuwang-soa-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.isuwang</groupId>
-            <artifactId>isuwang-soa-registry-zookeeper</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-    </dependencies>
-
-
+            <dependency>
+                <groupId>com.isuwang</groupId>
+                <artifactId>isuwang-soa-registry-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

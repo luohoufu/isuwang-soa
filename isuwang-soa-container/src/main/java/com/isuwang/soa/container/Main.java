@@ -1,7 +1,7 @@
 package com.isuwang.soa.container;
 
-import com.isuwang.soa.container.xml.SoaContainer;
-import com.isuwang.soa.container.xml.SoaContainers;
+import com.isuwang.soa.container.conf.SoaServer;
+import com.isuwang.soa.container.conf.SoaServerContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,16 +21,17 @@ public class Main {
     private static volatile boolean running = true;
     public static final String SOA_BASE = System.getProperty("soa.base");
     public static final String SOA_RUN_MODE = System.getProperty("soa.run.mode");
+    public static SoaServer soaServer = null;
 
     public static void main(String[] args) {
         final long startTime = System.currentTimeMillis();
 
         final List<Container> containers = new ArrayList<>();
 
-        try (InputStream is = new BufferedInputStream(loadInputStreamInClassLoader("containers.xml"))) {
-            SoaContainers soaContainers = JAXB.unmarshal(is, SoaContainers.class);
-            for (SoaContainer soaContainer : soaContainers.getSoaContainer()) {
+        try (InputStream is = new BufferedInputStream(loadInputStreamInClassLoader("server-conf.xml"))) {
+            soaServer = JAXB.unmarshal(is, SoaServer.class);
 
+            for (SoaServerContainer soaContainer : soaServer.getSoaServerContainers().getSoaServerContainer()) {
                 Class containerClass = Main.class.getClassLoader().loadClass(soaContainer.getRef());
                 Container container = (Container) containerClass.newInstance();
 

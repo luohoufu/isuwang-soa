@@ -2,16 +2,12 @@ package com.isuwang.soa.container.filter;
 
 import com.isuwang.soa.container.Container;
 import com.isuwang.soa.container.Main;
-import com.isuwang.soa.container.filter.xml.SoaFilter;
-import com.isuwang.soa.container.filter.xml.SoaFilters;
+import com.isuwang.soa.container.conf.SoaServerFilter;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXB;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +24,8 @@ public class FilterContainer implements Container {
 
     @Override
     public void start() {
-        try (InputStream is = new BufferedInputStream(Main.loadInputStreamInClassLoader("filters-server.xml"))) {
-            SoaFilters soaFilters = JAXB.unmarshal(is, SoaFilters.class);
-            for (SoaFilter soaFilter : soaFilters.getSoaFilter()) {
-
+        try {
+            for (SoaServerFilter soaFilter : Main.soaServer.getSoaFilters().getSoaServerFilter()) {
                 Class filterClass = FilterContainer.class.getClassLoader().loadClass(soaFilter.getRef());
                 Filter filter = (Filter) filterClass.newInstance();
 

@@ -1,7 +1,7 @@
 package com.isuwang.soa.container.netty;
 
 import com.isuwang.soa.container.Container;
-import com.isuwang.soa.container.registry.RegistryContainer;
+import com.isuwang.soa.container.registry.ZookeeperRegistryContainer;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -48,7 +48,7 @@ public class NettyContainer implements Container {
                             .childHandler(new ChannelInitializer<SocketChannel>() {
                                 @Override
                                 protected void initChannel(SocketChannel ch) throws Exception {
-                                    ch.pipeline().addLast(new IdleStateHandler(15, 0, 0), new SoaDecoder(), new SoaIdleHandler(), new SoaServerHandler(RegistryContainer.getProcessorMap()));
+                                    ch.pipeline().addLast(new IdleStateHandler(15, 0, 0), new SoaDecoder(), new SoaIdleHandler(), new SoaServerHandler(ZookeeperRegistryContainer.getProcessorMap()));
                                 }
                             })
                             .option(ChannelOption.SO_BACKLOG, 1024)

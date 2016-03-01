@@ -2,8 +2,7 @@ package com.isuwang.soa.container.netty;
 
 import com.isuwang.soa.core.*;
 import com.isuwang.soa.registry.ConfigKey;
-import com.isuwang.soa.registry.ServiceInfoWatcher;
-import com.isuwang.soa.registry.ZookeeperWatcher;
+import com.isuwang.soa.registry.RegistryAgentProxy;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
@@ -84,7 +83,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             boolean b = true;
 
             String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".producer";
-            Map<ConfigKey, Object> configs = ZookeeperWatcher.getConfig().get(serviceKey);
+            Map<ConfigKey, Object> configs = RegistryAgentProxy.getCurrentInstance().getConfig().get(serviceKey);
 
             if (null != configs) {
                 Boolean aBoolean = (Boolean) configs.get(ConfigKey.ThreadPool);
