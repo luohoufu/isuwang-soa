@@ -1,7 +1,7 @@
 package com.isuwang.soa.container.filter;
 
 import com.isuwang.soa.container.Container;
-import com.isuwang.soa.container.Main;
+import com.isuwang.soa.container.ContainerStartup;
 import com.isuwang.soa.container.conf.SoaServerFilter;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
@@ -25,7 +25,7 @@ public class FilterContainer implements Container {
     @Override
     public void start() {
         try {
-            for (SoaServerFilter soaFilter : Main.soaServer.getSoaFilters().getSoaServerFilter()) {
+            for (SoaServerFilter soaFilter : ContainerStartup.soaServer.getSoaFilters().getSoaServerFilter()) {
                 Class filterClass = FilterContainer.class.getClassLoader().loadClass(soaFilter.getRef());
                 Filter filter = (Filter) filterClass.newInstance();
 

@@ -25,5 +25,5 @@ jvm_opts="-Xms256m -Xmx256m -Xloggc:$logdir/gc.log -XX:+PrintGCDateStamps -XX:+P
 debug_opts="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5000"
 soa_base="-Dsoa.base=$workdir/../ -Dsoa.run.mode=native"
 
-nohup java $jvm_opts $soa_base $debug_opts -cp ./isuwang-soa-engine.jar com.isuwang.soa.engine.Engine >> $logdir/catalina.out 2>&1 &
+nohup java $jvm_opts $soa_base $debug_opts -cp ./isuwang-soa-bootstrap.jar com.isuwang.soa.bootstrap.Bootstrap >> $logdir/catalina.out 2>&1 &
 echo $! > $logdir/pid.txt

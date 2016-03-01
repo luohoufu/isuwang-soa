@@ -26,8 +26,8 @@ cd ${containerdir}
 mvn clean package -Pdev
 
 # engine
-enginedir=${basedir}/../isuwang-soa-engine
+enginedir=${basedir}/../isuwang-soa-bootstrap
 cd ${enginedir}
 mvn clean package -Pdev
 
-cp ${enginedir}/target/isuwang-soa-engine*.jar ${containerdir}/target/isuwang-soa-container/bin/
+cp ${enginedir}/target/isuwang-soa-bootstrap*.jar ${containerdir}/target/isuwang-soa-container/bin/

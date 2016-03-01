@@ -4,7 +4,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.isuwang.soa.container.Container;
-import com.isuwang.soa.container.Main;
+import com.isuwang.soa.container.ContainerStartup;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
@@ -20,7 +20,7 @@ public class LogbackContainer implements Container {
 
     @Override
     public void start() {
-        try (InputStream logbackCnfgStream = new BufferedInputStream(Main.loadInputStreamInClassLoader("logback.xml"))) {
+        try (InputStream logbackCnfgStream = new BufferedInputStream(ContainerStartup.loadInputStreamInClassLoader("logback.xml"))) {
             LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 
             JoranConfigurator configurator = new JoranConfigurator();

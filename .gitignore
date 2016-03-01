@@ -7,8 +7,8 @@ isuwang-soa.iml
 /isuwang-soa-container/isuwang-soa-container.iml
 /isuwang-soa-core/target/
 /isuwang-soa-core/isuwang-soa-core.iml
-/isuwang-soa-engine/target/
-/isuwang-soa-engine/isuwang-soa-engine.iml
+/isuwang-soa-bootstrap/target/
+/isuwang-soa-bootstrap/isuwang-soa-bootstrap.iml
 /isuwang-soa-maven-plugin/target/
 /isuwang-soa-maven-plugin/isuwangsoa-maven-plugin.iml
 /isuwang-soa-registry/isuwang-soa-registry-api/target/

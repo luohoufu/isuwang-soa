@@ -1,9 +1,9 @@
-package com.isuwang.soa.engine;
+package com.isuwang.soa.bootstrap;
 
-import com.isuwang.soa.engine.classloader.AppClassLoader;
-import com.isuwang.soa.engine.classloader.ClassLoaderManager;
-import com.isuwang.soa.engine.classloader.PlatformClassLoader;
-import com.isuwang.soa.engine.classloader.ShareClassLoader;
+import com.isuwang.soa.bootstrap.classloader.AppClassLoader;
+import com.isuwang.soa.bootstrap.classloader.ClassLoaderManager;
+import com.isuwang.soa.bootstrap.classloader.PlatformClassLoader;
+import com.isuwang.soa.bootstrap.classloader.ShareClassLoader;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -15,17 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Engine
+ * Bootstrap
  *
  * @author craneding
  * @date 16/1/28
  */
-public class Engine {
+public class Bootstrap {
 
     private static final List<URL> shareURLs = new ArrayList<>();
     private static final List<URL> platformURLs = new ArrayList<>();
     private static final List<List<URL>> appURLs = new ArrayList<>();
-    private static final String enginePath = System.getProperty("soa.base", new File(Engine.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent());
+    private static final String enginePath = System.getProperty("soa.base", new File(Bootstrap.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent());
     private static final String soaRunMode = System.getProperty("soa.run.mode", "maven");
 
     public static void main(String[] args) throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -64,9 +64,9 @@ public class Engine {
 
     private static void startup() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Thread.currentThread().setContextClassLoader(ClassLoaderManager.platformClassLoader);
-        Class<?> mainClass = ClassLoaderManager.platformClassLoader.loadClass("com.isuwang.soa.container.Main");
-        Method mainMethod = mainClass.getMethod("main", new Class[]{String[].class});
-        mainMethod.invoke(mainClass, new Object[]{new String[]{}});
+        Class<?> mainClass = ClassLoaderManager.platformClassLoader.loadClass("com.isuwang.soa.container.ContainerStartup");
+        Method mainMethod = mainClass.getMethod("startup");
+        mainMethod.invoke(mainClass);
     }
 
     private static void loadAllClassLoader() {

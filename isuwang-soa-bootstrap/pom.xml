@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>isuwang-soa-engine</artifactId>
+    <artifactId>isuwang-soa-bootstrap</artifactId>
 
     <dependencies>
         <dependency>
@@ -43,5 +43,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>

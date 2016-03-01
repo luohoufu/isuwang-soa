@@ -14,10 +14,10 @@
         <module>isuwang-soa-spring</module>
         <module>isuwang-soa-zookeeper</module>
         <module>isuwang-soa-maven-plugin</module>
-        <module>isuwang-soa-engine</module>
         <module>isuwang-soa-registry</module>
         <module>isuwang-soa-code-generator</module>
         <module>isuwang-soa-remoting</module>
+        <module>isuwang-soa-bootstrap</module>
     </modules>
 
     <properties>
