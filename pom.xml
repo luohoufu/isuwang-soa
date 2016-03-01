@@ -18,6 +18,7 @@
         <module>isuwang-soa-code-generator</module>
         <module>isuwang-soa-remoting</module>
         <module>isuwang-soa-bootstrap</module>
+        <module>isuwang-soa-doc</module>
     </modules>
 
     <properties>
