@@ -1,28 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>isuwang-soa</artifactId>
         <groupId>com.isuwang</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>isuwang-soa-doc</artifactId>
-    <packaging>war</packaging>
-    <name>isuwang-soa-doc Maven Webapp</name>
-    <url>http://maven.apache.org</url>
+
+    <artifactId>isuwang-soa-api-doc</artifactId>
 
     <properties>
-        <!-- Adapt this to a version found on
-             http://central.maven.org/maven2/org/eclipse/jetty/jetty-maven-plugin/
-          -->
-        <jettyVersion>9.0.2.v20130417</jettyVersion>
-        <org.springframework-version>4.2.0.RELEASE</org.springframework-version>
         <spring.version>4.2.0.RELEASE</spring.version>
         <jetty.version>9.1.0.M0</jetty.version>
     </properties>
 
     <dependencies>
 
+        <!-- jetty -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
@@ -36,6 +32,7 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--springMVC-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
@@ -78,7 +75,7 @@
             <version>${spring.version}</version>
         </dependency>
 
-        <!-- 使用jstp -->
+        <!-- 使用jstl -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
@@ -87,8 +84,7 @@
         </dependency>
 
 
-
-
+        <!--jackson-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -107,9 +103,28 @@
             <version>2.6.2</version>
         </dependency>
 
+        <!-- log -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+
     </dependencies>
     <build>
-        <finalName>isuwang-soa-doc</finalName>
+        <finalName>isuwang-soa-api-doc</finalName>
 
         <plugins>
             <plugin>
@@ -127,6 +142,41 @@
                     <mainClass>com.isuwang.soa.doc.Main</mainClass>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.isuwang.soa.doc.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
+
 </project>

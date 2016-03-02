@@ -18,7 +18,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.isuwang.api.doc" level="INFO"/>
+    <logger name="com.isuwang.soa.doc" level="INFO"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>
