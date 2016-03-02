@@ -19,18 +19,45 @@
     <dependencies>
 
         <!-- jetty -->
+        <!--<dependency>-->
+            <!--<groupId>org.eclipse.jetty</groupId>-->
+            <!--<artifactId>jetty-webapp</artifactId>-->
+            <!--<version>${jetty.version}</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-            <version>${jetty.version}</version>
+            <version>9.3.7.v20160115</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>9.3.7.v20160115</version>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-jsp</artifactId>
-            <version>${jetty.version}</version>
-            <scope>provided</scope>
+            <version>9.2.15.v20160210</version>
+            <exclusions>
+                <!--<exclusion>-->
+                    <!--<groupId>org.glassfish.web</groupId>-->
+                    <!--<artifactId>javax.servlet.jsp.jstl</artifactId>-->
+                <!--</exclusion>-->
+                <exclusion>
+                    <groupId>org.eclipse.jetty.orbit</groupId>
+                    <artifactId>javax.servlet.jsp.jstl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.eclipse.jetty</groupId>-->
+            <!--<artifactId>jetty-jsp</artifactId>-->
+            <!--<version>${jetty.version}</version>-->
+            <!--&lt;!&ndash;<scope>provided</scope>&ndash;&gt;-->
+        <!--</dependency>-->
 
         <!--springMVC-->
         <dependency>
@@ -76,11 +103,15 @@
         </dependency>
 
         <!-- 使用jstl -->
+        <!--<dependency>-->
+            <!--<groupId>javax.servlet</groupId>-->
+            <!--<artifactId>jstl</artifactId>-->
+            <!--<version>1.2</version>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
-            <scope>provided</scope>
+            <groupId>javax.servlet.jsp.jstl</groupId>
+            <artifactId>javax.servlet.jsp.jstl-api</artifactId>
+            <version>1.2.1</version>
         </dependency>
 
 
@@ -120,6 +151,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.isuwang</groupId>
+            <artifactId>isuwang-soa-code-generator</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

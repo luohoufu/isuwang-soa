@@ -13,6 +13,22 @@ public class Service {
     public static class ServiceMeta {
         public String version;
         public int timeout;
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public int getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(int timeout) {
+            this.timeout = timeout;
+        }
     }
 
     @XmlAttribute

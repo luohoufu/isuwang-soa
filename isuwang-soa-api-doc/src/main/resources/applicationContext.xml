@@ -7,7 +7,7 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <mvc:annotation-driven />
+    <mvc:annotation-driven/>
 
     <context:component-scan base-package="com.isuwang.soa.doc"/>
 
@@ -25,6 +25,8 @@
             </bean>
         </mvc:message-converters>
     </mvc:annotation-driven>
+
+    <bean id="serviceCache" class="com.isuwang.soa.doc.cache.ServiceCache" init-method="init" destroy-method="destory"/>
 
     <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
