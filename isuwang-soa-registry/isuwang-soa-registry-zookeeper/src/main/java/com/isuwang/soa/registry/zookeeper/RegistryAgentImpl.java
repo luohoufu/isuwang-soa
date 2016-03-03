@@ -64,7 +64,7 @@ public class RegistryAgentImpl implements RegistryAgent {
 
     @Override
     public void registerAllServices() {
-        if(processorMap == null)
+        if (processorMap == null)
             return;
 
         Set<String> keys = processorMap.keySet();
@@ -83,6 +83,11 @@ public class RegistryAgentImpl implements RegistryAgent {
     @Override
     public void setProcessorMap(Map<String, SoaBaseProcessor<?>> processorMap) {
         this.processorMap = processorMap;
+    }
+
+    @Override
+    public Map<String, SoaBaseProcessor<?>> getProcessorMap() {
+        return this.processorMap;
     }
 
     @Override
