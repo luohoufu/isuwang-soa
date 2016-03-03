@@ -13,7 +13,8 @@ var api;
             var url = window.basePath + "/api/findmethod/" + serviceName + "/" + version + "/" + methodName + ".htm";
             var settings = { type: "get", url: url, dataType: "json" };
             var self = this;
-            $.ajax(settings).done(function (result) {
+            $.ajax(settings)
+                .done(function (result) {
                 for (var index = 0; index < result.request.fields.length; index++) {
                     $(".req-field-datatype-" + index).html(self.dataTypeToHTML(result.request.fields[index].dataType));
                 }

@@ -3,19 +3,23 @@ package com.isuwang.soa.doc;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 /**
- * Created by tangliu on 2016/3/1.
+ * Created by tangliu on 2016/3/3.
  */
-public class Main {
+public class ApiWebSite {
 
     private static final int port = 8080;
 
     private static final String CONTEXT = "/";
 
-    private static Server createServer() {
-
+    private static Server createServer() throws MalformedURLException, URISyntaxException {
         Server server = new Server();
         server.setStopAtShutdown(true);
 
@@ -25,10 +29,9 @@ public class Main {
 
         server.setConnectors(new Connector[]{connector});
 
-        WebAppContext webContext = new WebAppContext("src/main/webapp", CONTEXT);
-        webContext.setDescriptor("src/main/webapp/WEB-INF/web.xml");
-        webContext.setResourceBase("src/main/webapp");
-        webContext.setClassLoader(Thread.currentThread().getContextClassLoader());
+        WebAppContext webContext = new WebAppContext("webapp", CONTEXT);
+        webContext.setBaseResource(Resource.newResource(new URL(ApiWebSite.class.getResource("/webapp/WEB-INF"), ".")));
+        webContext.setClassLoader(ApiWebSite.class.getClassLoader());
 
         server.setHandler(webContext);
 
@@ -37,16 +40,18 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        Server server = Main.createServer();
+        Server server = ApiWebSite.createServer();
 
         try {
             server.stop();
             server.start();
             server.join();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-    }
 
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            System.out.println("API站点启动失败...");
+        }
+
+    }
 }

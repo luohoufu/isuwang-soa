@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXB;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,9 +56,13 @@ public class ServiceCache {
                     e.printStackTrace();
                 }
 
-                Service serviceData = JAXB.unmarshal(metadata, com.isuwang.soa.code.generator.metadata.Service.class);
-                loadResource(serviceData, services);
-
+                try(StringReader reader = new StringReader(metadata)) {
+                    Service serviceData = JAXB.unmarshal(reader, com.isuwang.soa.code.generator.metadata.Service.class);
+                    loadResource(serviceData, services);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LOGGER.error("生成SERVICE出错");
+                }
             }
         }
         this.services = services;

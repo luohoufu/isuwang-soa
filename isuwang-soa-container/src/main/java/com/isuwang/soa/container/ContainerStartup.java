@@ -2,6 +2,7 @@ package com.isuwang.soa.container;
 
 import com.isuwang.soa.container.conf.SoaServer;
 import com.isuwang.soa.container.conf.SoaServerContainer;
+import com.isuwang.soa.doc.ApiWebSite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +53,16 @@ public class ContainerStartup {
         }
 
         final Logger logger = LoggerFactory.getLogger(ContainerStartup.class);
+
+        if ("maven".equals(SOA_RUN_MODE)) {
+            try {
+                ApiWebSite.main(new String[]{});
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                logger.error("api站点启动失败");
+            }
+        }
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
