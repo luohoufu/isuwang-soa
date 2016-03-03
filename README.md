@@ -177,7 +177,7 @@ service HelloService {
     ```
     
 3. 在`hello-service`目录下使用maven命令启动service:
-    `compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run`
+    `compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run` or `compile isuwangsoa:run`
 
 到此为止，插件会启动容器，加载服务并向zookeeper注册。
 
