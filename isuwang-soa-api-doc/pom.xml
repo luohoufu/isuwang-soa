@@ -17,13 +17,6 @@
     </properties>
 
     <dependencies>
-
-        <!-- jetty -->
-        <!--<dependency>-->
-            <!--<groupId>org.eclipse.jetty</groupId>-->
-            <!--<artifactId>jetty-webapp</artifactId>-->
-            <!--<version>${jetty.version}</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
@@ -42,8 +35,8 @@
             <version>9.2.15.v20160210</version>
             <exclusions>
                 <!--<exclusion>-->
-                    <!--<groupId>org.glassfish.web</groupId>-->
-                    <!--<artifactId>javax.servlet.jsp.jstl</artifactId>-->
+                <!--<groupId>org.glassfish.web</groupId>-->
+                <!--<artifactId>javax.servlet.jsp.jstl</artifactId>-->
                 <!--</exclusion>-->
                 <exclusion>
                     <groupId>org.eclipse.jetty.orbit</groupId>
@@ -51,13 +44,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.eclipse.jetty</groupId>-->
-            <!--<artifactId>jetty-jsp</artifactId>-->
-            <!--<version>${jetty.version}</version>-->
-            <!--&lt;!&ndash;<scope>provided</scope>&ndash;&gt;-->
-        <!--</dependency>-->
 
         <!--springMVC-->
         <dependency>
@@ -103,11 +89,6 @@
         </dependency>
 
         <!-- 使用jstl -->
-        <!--<dependency>-->
-            <!--<groupId>javax.servlet</groupId>-->
-            <!--<artifactId>jstl</artifactId>-->
-            <!--<version>1.2</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>javax.servlet.jsp.jstl</groupId>
             <artifactId>javax.servlet.jsp.jstl-api</artifactId>
@@ -153,10 +134,30 @@
             <version>1.7.12</version>
         </dependency>
 
+        <!-- isuwang-soa-->
         <dependency>
             <groupId>com.isuwang</groupId>
             <artifactId>isuwang-soa-code-generator</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.isuwang</groupId>
+            <artifactId>isuwang-soa-remoting-netty</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.isuwang</groupId>
+            <artifactId>isuwang-soa-registry-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!--google Json -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.3.1</version>
         </dependency>
 
     </dependencies>

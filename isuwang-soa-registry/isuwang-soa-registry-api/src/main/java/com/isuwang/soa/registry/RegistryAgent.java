@@ -38,6 +38,11 @@ public interface RegistryAgent {
     void setProcessorMap(Map<String, SoaBaseProcessor<?>> processorMap);
 
     /**
+     * 获取处理器集合
+     */
+    Map<String, SoaBaseProcessor<?>> getProcessorMap();
+
+    /**
      * 加载匹配的服务
      *
      * @param serviceName 服务名称

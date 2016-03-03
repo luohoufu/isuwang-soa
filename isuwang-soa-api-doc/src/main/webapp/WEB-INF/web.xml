@@ -47,7 +47,7 @@
     </servlet-mapping>
 
     <welcome-file-list>
-        <welcome-file>index.htm</welcome-file>
+        <welcome-file>index</welcome-file>
     </welcome-file-list>
 
     <listener>
