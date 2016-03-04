@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXB;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +27,8 @@ public class ServiceCache {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCache.class);
 
     private static Map<String, Service> services = new TreeMap<>();
+
+    private static Map<String, Service> fullNameService = new TreeMap<>();
 
     public static TreeMultimap<String, String> urlMappings = TreeMultimap.create();
 
@@ -56,7 +57,7 @@ public class ServiceCache {
                     e.printStackTrace();
                 }
 
-                try(StringReader reader = new StringReader(metadata)) {
+                try (StringReader reader = new StringReader(metadata)) {
                     Service serviceData = JAXB.unmarshal(reader, com.isuwang.soa.code.generator.metadata.Service.class);
                     loadResource(serviceData, services);
                 } catch (Exception e) {
@@ -78,6 +79,9 @@ public class ServiceCache {
 
         String key = getKey(service);
         services.put(key, service);
+
+        String fullNameKey = getFullNameKey(service);
+        fullNameService.put(fullNameKey, service);
 
         //将service和service中的方法、结构体、枚举和字段名分别设置对应的url，以方便搜索
         urlMappings.put(service.getName(), "api/service/" + service.name + "/" + service.meta.version + ".htm");
@@ -108,11 +112,19 @@ public class ServiceCache {
     }
 
     public Service getService(String name, String version) {
-        return services.get(getKey(name, version));
+
+        if (name.contains("."))
+            return fullNameService.get(getKey(name, version));
+        else
+            return services.get(getKey(name, version));
     }
 
     private String getKey(Service service) {
         return getKey(service.getName(), service.getMeta().version);
+    }
+
+    private String getFullNameKey(Service service) {
+        return getKey(service.getNamespace() + "." + service.getName(), service.getMeta().version);
     }
 
     private String getKey(String name, String version) {

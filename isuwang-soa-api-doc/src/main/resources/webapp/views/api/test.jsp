@@ -126,7 +126,7 @@
 
             <br>
             <button type="button" class="btn btn-info"
-                    onclick="applyTest('${service.name}', '${service.meta.version}', '${method.name}');">提交请求
+                    onclick="applyTest('${service.namespace}.${service.name}', '${service.meta.version}', '${method.name}');">提交请求
             </button>
             <br>
             <hr>

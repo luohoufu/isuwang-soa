@@ -1,14 +1,18 @@
 package com.isuwang.soa.doc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.isuwang.soa.core.SoaException;
+import com.isuwang.soa.core.*;
 import com.isuwang.soa.doc.codec.JSONSerializer;
 import com.isuwang.soa.doc.restful.DataInfo;
 import com.isuwang.soa.doc.restful.InvocationInfo;
+import com.isuwang.soa.remoting.netty.SoaClient;
+import com.isuwang.soa.remoting.netty.TSoaTransport;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TCompactProtocol;
-import org.apache.thrift.transport.TFramedTransport;
-import org.apache.thrift.transport.TIOStreamTransport;
+import org.apache.thrift.protocol.TMessage;
+import org.apache.thrift.protocol.TMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +24,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.net.ConnectException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
+import java.io.StringWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 测试Controller
@@ -53,22 +56,7 @@ public class TestController {
     /**
      * 远程端口
      */
-    private static int port = 9091;
-    /**
-     * 超时时间
-     */
-    private static int timeout = 35000;// 35秒
-    /**
-     * 超时时间
-     */
-    private static int connectTimeout = 10000;// 10秒
-    /**
-     * 多路服务
-     */
-    private static boolean multiplexed = true;
-
-    private static boolean verbose = true;
-
+    private static int port = 9090;
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
@@ -99,8 +87,10 @@ public class TestController {
             final DataInfo request = new DataInfo();
             request.setConsumesType("JSON");
             request.setConsumesValue(out.toString());
+            request.setServiceName(serviceName);
+            request.setVersion(version);
+            request.setMethodName(methodName);
             invocationInfo.setDataInfo(request);
-            invocationInfo.setMultiplexed(multiplexed);
 
             final long beginTime = System.currentTimeMillis();
 
@@ -119,51 +109,115 @@ public class TestController {
         return null;
     }
 
+
+    private void initContext(DataInfo data) {
+
+        Context context = Context.Factory.getCurrentInstance();
+
+        context.setSeqid(1);
+
+        SoaHeader soaHeader = new SoaHeader();
+        try {
+            soaHeader.setCallerIp(Optional.of(InetAddress.getLocalHost().getHostAddress()));
+        } catch (UnknownHostException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        soaHeader.setServiceName(data.getServiceName());
+        soaHeader.setMethodName(data.getMethodName());
+        soaHeader.setVersionName(data.getVersion());
+        soaHeader.setCallerFrom(Optional.of("web"));
+
+        context.setHeader(soaHeader);
+        context.setCalleeTimeout(45000);
+    }
+
     String post(InvocationInfo invocationInfo) {
 
         String jsonResponse = "{}";
 
-        try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(host, port), connectTimeout);
-            socket.setSoTimeout(timeout);
-            socket.setKeepAlive(true);
+        SoaClient client = null;
+        TSoaTransport inputSoaTransport = null;
+        TSoaTransport outputSoaTransport = null;
 
-            final InputStream input = new BufferedInputStream(socket.getInputStream());
-            final OutputStream output = new BufferedOutputStream(socket.getOutputStream());
-            final TIOStreamTransport transport = new TIOStreamTransport(input, output);
-            final TCompactProtocol protocol = new TCompactProtocol(new TFramedTransport(transport));
+        try {
+            client = new SoaClient(host, port);
 
-            // 发送请求包
-            jsonSerializer.write(invocationInfo, protocol);
+            initContext(invocationInfo.getDataInfo());
+            Context context = Context.Factory.getCurrentInstance();
+            SoaHeader soaHeader = context.getHeader();
 
-            // 接收返回包
-            jsonSerializer.read(invocationInfo, protocol);
+            final ByteBuf requestBuf = Unpooled.buffer(8192);
+            outputSoaTransport = new TSoaTransport(requestBuf);
 
-            jsonResponse = invocationInfo.getResponseData();
-        } catch (ConnectException e) {
-            LOGGER.error(e.getMessage(), e);
+            TSoaServiceProtocol outputProtocol;
 
-            LOGGER.warn("连接接口失败 " + host + ":" + port);
+            outputProtocol = new TSoaServiceProtocol(outputSoaTransport);
+            outputProtocol.writeMessageBegin(new TMessage(invocationInfo.getDataInfo().getServiceName() + ":" + invocationInfo.getDataInfo().getMethodName(), TMessageType.CALL, context.getSeqid()));
+            jsonSerializer.write(invocationInfo, outputProtocol);
+            outputProtocol.writeMessageEnd();
+            outputSoaTransport.flush();//在报文头部写入int,代表报文长度(不包括自己)
 
-            jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", "AA98", "系统繁忙，请稍后再试！[AA98]", "{}");
-        } catch (SocketTimeoutException e) {
-            LOGGER.error(e.getMessage(), e);
+            if (client == null) {
+                throw new SoaException(SoaBaseCode.NotConnected);
+            }
+            ByteBuf responseBuf = client.send(context.getSeqid(), requestBuf); //发送请求，返回结果
 
-            LOGGER.warn("等待接口超时 " + host + ":" + port);
+            if (null != responseBuf) {
 
-            jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", "AA96", "系统繁忙，请稍后再试！[AA96]", "{}");
+                inputSoaTransport = new TSoaTransport(responseBuf);
+                TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport);
+
+                TMessage msg = inputProtocol.readMessageBegin();
+                if (TMessageType.EXCEPTION == msg.type) {
+                    TApplicationException x = TApplicationException.read(inputProtocol);
+                    inputProtocol.readMessageEnd();
+                    throw x;
+                } else if (context.getSeqid() != msg.seqid) {
+                    throw new TApplicationException(4, soaHeader.getMethodName() + " failed: out of sequence response");
+                } else {
+                    if ("0000".equals(soaHeader.getRespCode().get())) {
+                        // 接收返回包
+                        jsonSerializer.read(invocationInfo, inputProtocol);
+                        inputProtocol.readMessageEnd();
+                    } else {
+                        throw new SoaException(soaHeader.getRespCode().get(), soaHeader.getRespMessage().get());
+                    }
+
+                    return invocationInfo.getResponseData();
+                }
+
+            } else {
+                throw new SoaException(SoaBaseCode.TimeOut);
+            }
+
         } catch (SoaException e) {
+
+            LOGGER.error(e.getMsg());
             jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", e.getCode(), e.getMsg(), "{}");
+
         } catch (TException e) {
-            LOGGER.error(e.getMessage(), e);
 
+            LOGGER.error(e.getMessage(), e);
             jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", "9999", e.getMessage(), "{}");
+
         } catch (Exception e) {
+
             LOGGER.error(e.getMessage(), e);
-
-            LOGGER.warn("接口通讯异常" + host + ":" + port);
-
             jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", "9999", "系统繁忙，请稍后再试[9999]！", "{}");
+
+        } finally {
+            if (client != null){
+                client.close();
+                client.shutdown();
+            }
+
+            if (outputSoaTransport != null)
+                outputSoaTransport.close();
+
+            if (inputSoaTransport != null)
+                inputSoaTransport.close();
+
+            Context.Factory.removeCurrentInstance();
         }
 
         return jsonResponse;

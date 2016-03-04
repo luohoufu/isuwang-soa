@@ -27,7 +27,7 @@ import java.util.Set;
 public class JSONSerializer extends TBaseBeanSerializer {
 
     @Autowired
-    private  ServiceCache serviceCache;
+    private ServiceCache serviceCache;
 
     @Override
     public void read(InvocationInfo invocationInfo, TProtocol iprot) throws TException {
@@ -36,79 +36,72 @@ public class JSONSerializer extends TBaseBeanSerializer {
         Struct response = dataInfo.getMethod().getResponse();
 
         JsonObject responseJSON = new JsonObject();
+        JsonArray jsonArray = new JsonArray();
 
-        TMessage msg = iprot.readMessageBegin();
+        iprot.readStructBegin();
 
-        if (msg.type == 3) {// 返回异常
-            TApplicationException x = TApplicationException.read(iprot);
+        TField schemeField;
 
-            responseJSON.addProperty("responseCode", "9999");
-            responseJSON.addProperty("responseMsg", x.getMessage());
-        } else {
-            iprot.readStructBegin();
+        while (true) {
 
-            JsonArray jsonArray = new JsonArray();
-            TField schemeField = iprot.readFieldBegin();
+            schemeField = iprot.readFieldBegin();
+            if (schemeField.type == TType.STOP)
+                break;
 
-            if (schemeField.type == TType.STOP || schemeField.type == TType.VOID) {
-            } else {
-                if(schemeField.id == 1) {//Error
-                    //TODO 需要优化
-                    String errCode = "", errMsg = "";
+            if (schemeField.id == 0) {
 
-                    iprot.readStructBegin();
-                    while (true)
-                    {
-                        schemeField = iprot.readFieldBegin();
-                        if (schemeField.type == TType.STOP) {
-                            break;
-                        }
-                        switch (schemeField.id) {
-                            case 1: // ERR_CODE
-                                if (schemeField.type == TType.STRING) {
-                                    errCode = iprot.readString();
-                                } else {
-                                    TProtocolUtil.skip(iprot, schemeField.type);
-                                }
-                                break;
-                            case 2: // ERR_MSG
-                                if (schemeField.type == TType.STRING) {
-                                    errMsg = iprot.readString();
-                                } else {
-                                    TProtocolUtil.skip(iprot, schemeField.type);
-                                }
-                                break;
-                            default:
-                                TProtocolUtil.skip(iprot, schemeField.type);
-                        }
-                        iprot.readFieldEnd();
-                    }
-                    iprot.readStructEnd();
-
-                    throw new SoaException(errCode, errMsg);
+                List<Field> fields = response.getFields();
+                Field field = fields.isEmpty() ? null : fields.get(0);
+                if (field != null) {
+                    DataType dataType = field.getDataType();
+                    readField(iprot, null, dataType, jsonArray, schemeField, dataInfo.getService());
                 } else {
-                    List<Field> fields = response.getFields();
-                    Field field = fields.isEmpty() ? null : fields.get(0);
-                    //Field field = findField(schemeField.id, response);
-
-                    if(field != null) {
-                        DataType dataType = field.getDataType();
-
-                        readField(iprot, null, dataType, jsonArray, schemeField, dataInfo.getService());
-                    } else {
-                        TProtocolUtil.skip(iprot, schemeField.type);
-                    }
+                    TProtocolUtil.skip(iprot, schemeField.type);
                 }
+
+            } else if (schemeField.id == 1) {
+
+                String errCode = "", errMsg = "";
+                iprot.readStructBegin();
+                while (true) {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == TType.STOP) {
+                        break;
+                    }
+                    switch (schemeField.id) {
+                        case 1: // ERR_CODE
+                            if (schemeField.type == TType.STRING) {
+                                errCode = iprot.readString();
+                            } else {
+                                TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        case 2: // ERR_MSG
+                            if (schemeField.type == TType.STRING) {
+                                errMsg = iprot.readString();
+                            } else {
+                                TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+
+                throw new SoaException(errCode, errMsg);
+
+            } else {
+                TProtocolUtil.skip(iprot, schemeField.type);
             }
-
-            iprot.readStructEnd();
-
-            responseJSON.add("success", jsonArray.size() > 0 ? jsonArray.get(0) : null);
-            responseJSON.addProperty("responseCode", "0");
-            responseJSON.addProperty("responseMsg", "成功");
+            iprot.readFieldEnd();
         }
+        iprot.readStructEnd();
 
-        iprot.readMessageEnd();
+        responseJSON.add("success", jsonArray.size() > 0 ? jsonArray.get(0) : null);
+        responseJSON.addProperty("responseCode", "0");
+        responseJSON.addProperty("responseMsg", "成功");
 
         invocationInfo.setResponseData(responseJSON.toString());
     }
@@ -144,19 +137,19 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 break;
             case MAP:
                 //if(schemeField.type == TType.MAP) {
-                    TMap tMap = iprot.readMapBegin();
+                TMap tMap = iprot.readMapBegin();
 
-                    JsonObject jsonMap = new JsonObject();
-                    for (int i = 0; i < tMap.size; i++) {
-                        JsonElement keyElement = readField(iprot, null, dataType.getKeyType(), null, schemeField, service);
-                        JsonElement valueElement = readField(iprot, null, dataType.getValueType(), null, schemeField, service);
+                JsonObject jsonMap = new JsonObject();
+                for (int i = 0; i < tMap.size; i++) {
+                    JsonElement keyElement = readField(iprot, null, dataType.getKeyType(), null, schemeField, service);
+                    JsonElement valueElement = readField(iprot, null, dataType.getValueType(), null, schemeField, service);
 
-                        jsonMap.add(keyElement.getAsString(), valueElement);
-                    }
+                    jsonMap.add(keyElement.getAsString(), valueElement);
+                }
 
-                    iprot.readMapEnd();
+                iprot.readMapEnd();
 
-                    value = jsonMap;
+                value = jsonMap;
 //                } else {
 //                    TProtocolUtil.skip(iprot, schemeField.type);
 //
@@ -165,16 +158,16 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 break;
             case LIST:
 //                if(schemeField.type == TType.LIST) {
-                    TList tList = iprot.readListBegin();
+                TList tList = iprot.readListBegin();
 
-                    JsonArray jsonElements = new JsonArray();
-                    for (int i = 0; i < tList.size; i++) {
-                        readField(iprot, null, dataType.getValueType(), jsonElements, null, service);
-                    }
+                JsonArray jsonElements = new JsonArray();
+                for (int i = 0; i < tList.size; i++) {
+                    readField(iprot, null, dataType.getValueType(), jsonElements, null, service);
+                }
 
-                    iprot.readListEnd();
+                iprot.readListEnd();
 
-                    value = jsonElements;
+                value = jsonElements;
 //                } else {
 //                    TProtocolUtil.skip(iprot, schemeField.type);
 //
@@ -183,16 +176,16 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 break;
             case SET:
 //                if(schemeField.type == TType.SET) {
-                    TSet tSet = iprot.readSetBegin();
+                TSet tSet = iprot.readSetBegin();
 
-                    JsonArray jsonElements1 = new JsonArray();
-                    for (int i = 0; i < tSet.size; i++) {
-                        readField(iprot, null, dataType.getValueType(), jsonElements1, schemeField, service);
-                    }
+                JsonArray jsonElements1 = new JsonArray();
+                for (int i = 0; i < tSet.size; i++) {
+                    readField(iprot, null, dataType.getValueType(), jsonElements1, schemeField, service);
+                }
 
-                    iprot.readSetEnd();
+                iprot.readSetEnd();
 
-                    value = jsonElements1;
+                value = jsonElements1;
 //                } else {
 //                    TProtocolUtil.skip(iprot, schemeField.type);
 //
@@ -208,26 +201,26 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 break;
             case STRUCT:
 //                if(schemeField.type == TType.STRUCT) {
-                    iprot.readStructBegin();
+                iprot.readStructBegin();
 
-                    Struct struct = findStruct(dataType.getQualifiedName(), service);
+                Struct struct = findStruct(dataType.getQualifiedName(), service);
 
-                    JsonObject jsonObject = new JsonObject();
+                JsonObject jsonObject = new JsonObject();
 
-                    do {
-                        TField tField = iprot.readFieldBegin();
+                do {
+                    TField tField = iprot.readFieldBegin();
 
-                        if(tField.type == TType.STOP)
-                            break;
+                    if (tField.type == TType.STOP)
+                        break;
 
-                        Field field1 = findField(tField.id, struct);
+                    Field field1 = findField(tField.id, struct);
 
-                        readField(iprot, field1, field1.getDataType(), jsonObject, tField, service);
-                    } while (true);
+                    readField(iprot, field1, field1.getDataType(), jsonObject, tField, service);
+                } while (true);
 
-                    iprot.readStructEnd();
+                iprot.readStructEnd();
 
-                    value = jsonObject;
+                value = jsonObject;
 //                } else {
 //                    TProtocolUtil.skip(iprot, schemeField.type);
 //
@@ -236,21 +229,19 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 break;
         }
 
-        if(jsonElement != null) {
-            if(jsonElement.isJsonArray()) {
-                ((JsonArray)jsonElement).add(value);
-            } else if(jsonElement.isJsonObject() && field != null) {
-                ((JsonObject)jsonElement).add(field.getName(), value);
+        if (jsonElement != null) {
+            if (jsonElement.isJsonArray()) {
+                ((JsonArray) jsonElement).add(value);
+            } else if (jsonElement.isJsonObject() && field != null) {
+                ((JsonObject) jsonElement).add(field.getName(), value);
             }
         }
-
         return value;
     }
 
     @Override
     public void write(InvocationInfo invocationInfo, TProtocol oprot) throws TException {
         DataInfo dataInfo = invocationInfo.getDataInfo();
-
         // consumesValue like { serviceName: , version:, methodName:, params: { arg1:, arg2, }}
         String consumesValue = dataInfo.getConsumesValue();
 
@@ -262,57 +253,29 @@ public class JSONSerializer extends TBaseBeanSerializer {
         JsonElement params = jsonObject.get("params");
         JsonObject methodParamers = new JsonObject();
 
-        if(dataInfo.getHeaders() != null) {
-            final Map<String, Object> headers = dataInfo.getHeaders();
-            final JsonObject requestHeader = new JsonObject();
-
-            for (String key : headers.keySet()) {
-                Object val = headers.get(key);
-
-                if(val instanceof String) {
-                    requestHeader.addProperty(key, (String)val);
-                } else if(val instanceof Number) {
-                    requestHeader.addProperty(key, (Number)val);
-                } else if(val instanceof Boolean) {
-                    requestHeader.addProperty(key, (Boolean)val);
-                } else if(val instanceof Character) {
-                    requestHeader.addProperty(key, (Character)val);
-                } else {
-                    requestHeader.addProperty(key, val.toString());
-                }
-            }
-
-            methodParamers.add("requestHeader", requestHeader);
-        }
-
-        if(serviceName == null)
+        if (serviceName == null)
             throw new TException("not fund service name in request.");
 
-        if(version == null)
+        if (version == null)
             throw new TException("not fund service version in request.");
 
-        if(methodName == null)
+        if (methodName == null)
             throw new TException("not fund method name in request.");
 
         Service service = serviceCache.getService(serviceName.getAsString(), version.getAsString());
 
-        if(service == null)
+        if (service == null)
             throw new TException("not fund service(" + serviceName.getAsString() + "," + version.getAsString() + ") in cache.");
 
         dataInfo.setService(service);
         dataInfo.setMethod(findMethod(methodName.getAsString(), service));
 
-        if(dataInfo.getMethod() == null)
+        if (dataInfo.getMethod() == null)
             throw new TException("not fund method(" + methodName.getAsString() + ") in service.");
 
-        if(!invocationInfo.isMultiplexed())
-            oprot.writeMessageBegin(new TMessage(methodName.getAsString(), (byte) 1, dataInfo.getSeqid()));
-        else
-            oprot.writeMessageBegin(new TMessage(serviceName.getAsString() + ":" + methodName.getAsString(), (byte) 1, dataInfo.getSeqid()));
 
         oprot.writeStructBegin(new TStruct(dataInfo.getMethod().getRequest().getName()));
-
-        if(params == null)
+        if (params == null)
             throw new TException("not fund params in request.");
 
         Set<Map.Entry<String, JsonElement>> entries = new LinkedHashSet<>(methodParamers.entrySet());
@@ -326,7 +289,7 @@ public class JSONSerializer extends TBaseBeanSerializer {
 
             Field field = findField(key, dataInfo.getMethod().getRequest());
 
-            if(field == null)
+            if (field == null)
                 throw new TException("not fund " + key + " in request's method.");
 
             oprot.writeFieldBegin(new TField(field.getName(), dataType2Byte(field.getDataType()), (short) field.getTag()));
@@ -338,10 +301,6 @@ public class JSONSerializer extends TBaseBeanSerializer {
 
         oprot.writeFieldStop();
         oprot.writeStructEnd();
-
-        oprot.writeMessageEnd();
-
-        oprot.getTransport().flush();
     }
 
 
