@@ -39,8 +39,11 @@ public class RegistryAgentImpl implements RegistryAgent {
 
     @Override
     public void start() {
-        zooKeeperHelper.setZookeeperHost(SoaSystemEnvProperties.SOA_ZOOKEEPER_HOST);
-        zooKeeperHelper.connect();
+
+        if (!isClient) {
+            zooKeeperHelper.setZookeeperHost(SoaSystemEnvProperties.SOA_ZOOKEEPER_HOST);
+            zooKeeperHelper.connect();
+        }
 
         siw = new ZookeeperWatcher(isClient);
         siw.init();
