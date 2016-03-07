@@ -21,7 +21,7 @@ public class ApidocContainer implements Container {
 
     @Override
     public void start() {
-        new Thread("api-doc-thread") {
+        Thread thread = new Thread("api-doc-thread") {
             @Override
             public void run() {
                 try {
@@ -34,7 +34,9 @@ public class ApidocContainer implements Container {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
-        }.start();
+        };
+        thread.setContextClassLoader(ApidocContainer.class.getClassLoader());
+        thread.start();
     }
 
     @Override

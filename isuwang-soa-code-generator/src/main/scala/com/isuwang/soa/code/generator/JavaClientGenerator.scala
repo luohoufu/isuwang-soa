@@ -2,13 +2,14 @@ package com.isuwang.soa.code.generator
 
 import java.util
 
-import com.isuwang.soa.code.generator.metadata.DataType.KIND
-import com.isuwang.soa.code.generator.metadata._
+import com.isuwang.soa.core.metadata._
+import DataType.KIND
 
 import scala.xml.Elem
 
 /**
  * JAVA生成器
+ *
  * @author tangliu
  * @date 15/9/8
  */

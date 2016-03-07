@@ -1,10 +1,10 @@
 package com.isuwang.soa.doc;
 
 
-import com.isuwang.soa.code.generator.metadata.Method;
-import com.isuwang.soa.code.generator.metadata.Service;
-import com.isuwang.soa.code.generator.metadata.Struct;
-import com.isuwang.soa.code.generator.metadata.TEnum;
+import com.isuwang.soa.core.metadata.Method;
+import com.isuwang.soa.core.metadata.Service;
+import com.isuwang.soa.core.metadata.Struct;
+import com.isuwang.soa.core.metadata.TEnum;
 import com.isuwang.soa.doc.cache.ServiceCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

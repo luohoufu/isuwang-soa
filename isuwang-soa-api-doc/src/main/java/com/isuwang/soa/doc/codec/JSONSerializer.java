@@ -1,12 +1,11 @@
 package com.isuwang.soa.doc.codec;
 
 import com.google.gson.*;
-import com.isuwang.soa.code.generator.metadata.*;
 import com.isuwang.soa.core.SoaException;
+import com.isuwang.soa.core.metadata.*;
 import com.isuwang.soa.doc.cache.ServiceCache;
 import com.isuwang.soa.doc.restful.DataInfo;
 import com.isuwang.soa.doc.restful.InvocationInfo;
-import org.apache.thrift.TApplicationException;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.*;
 import org.springframework.beans.factory.annotation.Autowired;

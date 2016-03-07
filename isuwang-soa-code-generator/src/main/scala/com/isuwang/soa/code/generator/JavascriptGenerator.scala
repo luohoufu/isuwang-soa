@@ -3,14 +3,15 @@ package com.isuwang.soa.code.generator
 import java.io.{File, PrintWriter}
 import java.util
 
-import com.isuwang.soa.code.generator.metadata.DataType.KIND
-import com.isuwang.soa.code.generator.metadata.TEnum.EnumItem
-import com.isuwang.soa.code.generator.metadata._
+import com.isuwang.soa.core.metadata._
+import DataType.KIND
+import TEnum.EnumItem
 
 import scala.xml.Elem
 
 /**
   * Javascript生成器
+ *
   * @author craneding
   * @date 15/7/22
   */

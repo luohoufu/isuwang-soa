@@ -1,8 +1,8 @@
 package com.isuwang.soa.doc.restful;
 
 
-import com.isuwang.soa.code.generator.metadata.Method;
-import com.isuwang.soa.code.generator.metadata.Service;
+import com.isuwang.soa.core.metadata.Method;
+import com.isuwang.soa.core.metadata.Service;
 
 import java.io.Serializable;
 import java.util.Map;

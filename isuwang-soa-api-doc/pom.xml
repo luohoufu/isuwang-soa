@@ -137,12 +137,6 @@
         <!-- isuwang-soa-->
         <dependency>
             <groupId>com.isuwang</groupId>
-            <artifactId>isuwang-soa-code-generator</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.isuwang</groupId>
             <artifactId>isuwang-soa-remoting-netty</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
@@ -158,6 +152,11 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>16.0.1</version>
         </dependency>
 
     </dependencies>

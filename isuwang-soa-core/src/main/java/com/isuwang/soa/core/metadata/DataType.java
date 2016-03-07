@@ -1,4 +1,4 @@
-package com.isuwang.soa.code.generator.metadata;
+package com.isuwang.soa.core.metadata;
 
 import javax.xml.bind.annotation.*;
 

@@ -2,14 +2,15 @@ package com.isuwang.soa.code.generator
 
 import java.util
 
-import com.isuwang.soa.code.generator.metadata.TEnum.EnumItem
-import com.isuwang.soa.code.generator.metadata._
+import com.isuwang.soa.core.metadata._
+import TEnum.EnumItem
 
 import scala.collection.mutable.ArrayBuffer
 import scala.xml.{Atom, Elem, Node, Text}
 
 /**
   * 代码生成器
+ *
   * @author craneding
   * @date 15/7/23
   */

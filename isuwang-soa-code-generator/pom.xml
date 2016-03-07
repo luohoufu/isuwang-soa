@@ -78,7 +78,6 @@
         <dependency>
             <groupId>com.isuwang</groupId>
             <artifactId>isuwang-soa-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <!--thrift-->

@@ -4,10 +4,11 @@ import java.io._
 import java.util
 import javax.xml.bind.JAXB
 
-import com.isuwang.soa.code.generator.metadata.Service
+import com.isuwang.soa.core.metadata.Service
 
 /**
   * 源信息生成器
+ *
   * @author craneding
   * @date 15/5/10
   */

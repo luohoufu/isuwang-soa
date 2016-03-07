@@ -6,9 +6,9 @@ import java.util
 import com.github.mustachejava.Mustache
 import com.google.common.base.Charsets
 import com.google.common.io.CharStreams
-import com.isuwang.soa.code.generator.metadata
-import com.isuwang.soa.code.generator.metadata.TEnum.EnumItem
-import com.isuwang.soa.code.generator.metadata.{Service, Struct, _}
+import com.isuwang.soa.core
+import com.isuwang.soa.core.metadata.{Method, DataType, TEnum}
+import TEnum.EnumItem
 import com.twitter.scrooge.ast._
 import com.twitter.scrooge.frontend.{Importer, ResolvedDocument, ThriftParser, TypeResolver}
 import com.twitter.scrooge.java_generator._
@@ -22,6 +22,7 @@ import scala.util.control.Breaks._
 
 /**
   * Thrift Code 解析器
+ *
   * @author craneding
   * @date 15/7/22
   */
@@ -30,11 +31,12 @@ class ThriftCodeParser {
   private val templateCache = new TrieMap[String, Mustache]
   private val docCache = new mutable.HashMap[String, Document]()
   private val enumCache = new util.ArrayList[TEnum]()
-  private val structCache = new util.ArrayList[Struct]()
-  private val serviceCache = new util.ArrayList[Service]()
+  private val structCache = new util.ArrayList[core.metadata.Struct]()
+  private val serviceCache = new util.ArrayList[core.metadata.Service]()
 
   /**
     * 生成文档
+ *
     * @param resource 源文件
     * @return 文档
     */
@@ -58,6 +60,7 @@ class ThriftCodeParser {
 
   /**
     * 获取生成器
+ *
     * @param doc0 文档结构
     * @param genHashcode 是否生成HashCode
     * @return 生成器
@@ -213,11 +216,11 @@ class ThriftCodeParser {
     results
   }
 
-  private def findStructs(doc0: Document, generator: ApacheJavaGenerator): List[Struct] =
+  private def findStructs(doc0: Document, generator: ApacheJavaGenerator): List[core.metadata.Struct] =
     doc0.structs.toList.map { (struct: StructLike) =>
       val controller = new StructController(struct, false, generator, doc0.namespace("java"))
 
-      new Struct {
+      new core.metadata.Struct {
         //this.setNamespace(if (controller.has_non_nullable_fields) controller.namespace else null)
         this.setNamespace(controller.namespace)
         this.setName(controller.name)
@@ -237,7 +240,7 @@ class ThriftCodeParser {
             dataType0 = toDataType(field.fieldType, doc0, docSrting0)
           }
 
-          new metadata.Field {
+          new core.metadata.Field {
             this.setTag(tag0)
             this.setName(name0)
             this.setOptional(optional0)
@@ -251,13 +254,13 @@ class ThriftCodeParser {
     }
 
 
-  private def findServices(doc: Document, generator: ApacheJavaGenerator): util.List[Service] = {
-    val results = new util.ArrayList[Service]()
+  private def findServices(doc: Document, generator: ApacheJavaGenerator): util.List[core.metadata.Service] = {
+    val results = new util.ArrayList[core.metadata.Service]()
 
     doc.services.foreach(s => {
       val controller = new ServiceController(s, generator, doc.namespace("java"))
 
-      val service = new Service()
+      val service = new core.metadata.Service()
 
       service.setNamespace(if (controller.has_namespace) controller.namespace else null)
       service.setName(controller.name)
@@ -267,8 +270,8 @@ class ThriftCodeParser {
       for (tmpIndex <- (0 until controller.functions.size)) {
         val functionField = controller.functions(tmpIndex)
         //controller.functions.foreach(functionField => {
-        val request = new Struct()
-        val response = new Struct()
+        val request = new core.metadata.Struct()
+        val response = new core.metadata.Struct()
 
         request.setName(functionField.name + "_args")
         response.setName(functionField.name + "_result")
@@ -280,8 +283,8 @@ class ThriftCodeParser {
         method.setDoc(toDocString(s.functions(tmpIndex).docstring))
         //method.setDoc()
 
-        request.setFields(new util.ArrayList[metadata.Field]())
-        response.setFields(new util.ArrayList[metadata.Field]())
+        request.setFields(new util.ArrayList[core.metadata.Field]())
+        response.setFields(new util.ArrayList[core.metadata.Field]())
 
         for (index <- (0 until functionField.fields.size)) {
           val field = functionField.fields(index)
@@ -295,7 +298,7 @@ class ThriftCodeParser {
           if (dataType.getKind == DataType.KIND.LONG && name.startsWith("_date_")) {
             dataType.setKind(DataType.KIND.DATE);
           }
-          val tfiled = new metadata.Field()
+          val tfiled = new core.metadata.Field()
           tfiled.setTag(tag)
           tfiled.setName(name)
           tfiled.setDoc(docSrting)
@@ -316,7 +319,7 @@ class ThriftCodeParser {
           dataType = toDataType(f.get(functionField.return_type).asInstanceOf[FieldType], doc, docSrting)
         }
 
-        val tfiled = new metadata.Field()
+        val tfiled = new core.metadata.Field()
         tfiled.setTag(0)
         tfiled.setName("success")
         tfiled.setDoc(docSrting)
@@ -335,7 +338,7 @@ class ThriftCodeParser {
     results
   }
 
-  def toServices(resources: Array[String]): util.List[Service] = {
+  def toServices(resources: Array[String]): util.List[core.metadata.Service] = {
     resources.foreach(resource => {
       val doc = generateDoc(resource)
 
@@ -357,7 +360,7 @@ class ThriftCodeParser {
 
       service.setEnumDefinitions(enumCache)
       service.setStructDefinitions(structCache)
-      service.setMeta(new Service.ServiceMeta {
+      service.setMeta(new core.metadata.Service.ServiceMeta {
         this.version = "1.0.0"
         this.timeout = 30000
       })

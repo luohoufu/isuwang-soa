@@ -2,8 +2,8 @@ package com.isuwang.soa.doc.cache;
 
 
 import com.google.common.collect.TreeMultimap;
-import com.isuwang.soa.code.generator.metadata.*;
 import com.isuwang.soa.core.SoaBaseProcessor;
+import com.isuwang.soa.core.metadata.*;
 import com.isuwang.soa.registry.RegistryAgentProxy;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class ServiceCache {
                 }
 
                 try (StringReader reader = new StringReader(metadata)) {
-                    Service serviceData = JAXB.unmarshal(reader, com.isuwang.soa.code.generator.metadata.Service.class);
+                    Service serviceData = JAXB.unmarshal(reader, Service.class);
                     loadResource(serviceData, services);
                 } catch (Exception e) {
                     LOGGER.error("生成SERVICE出错", e);
