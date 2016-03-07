@@ -49,7 +49,7 @@ module api {
                 case api.model.KIND.BINARY:
                     return "byte[]"
                 case api.model.KIND.MAP:
-                    return "Map&lt;" + this.dataTypeToHTML(dataType.keyType) + ", " + this.dataTypeToHTML(dataType.valueType) +"&gt;"
+                    return "Map&lt;" + this.dataTypeToHTML(dataType.keyType) + ", " + this.dataTypeToHTML(dataType.valueType) + "&gt;"
                 case api.model.KIND.LIST:
                     return "List&lt;" + this.dataTypeToHTML(dataType.valueType) + "&gt;"
                 case api.model.KIND.SET:
@@ -62,6 +62,8 @@ module api {
                     var structurl = window.basePath + "/api/struct/" + this.serviceName + "/" + this.version + "/" + dataType.qualifiedName + ".htm"
 
                     return "<a href='" + structurl + "'>" + dataType.qualifiedName.substring(dataType.qualifiedName.lastIndexOf(".") + 1) + "</a>"
+                case api.model.KIND.DATE:
+                    return "Date"
                 default:
                     return "Unknown"
             }

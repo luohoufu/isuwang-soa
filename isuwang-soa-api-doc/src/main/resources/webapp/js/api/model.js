@@ -19,6 +19,7 @@ var api;
             KIND.SET = "SET";
             KIND.ENUM = "ENUM";
             KIND.STRUCT = "STRUCT";
+            KIND.DATE = "DATE";
             return KIND;
         })();
         model.KIND = KIND;
