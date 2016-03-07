@@ -20,21 +20,29 @@
         <li class="${tagName == 'index' ? 'active' : ''}">
           <a href="${basePath}/">首页</a>
         </li>
+        <!--
         <li class="${tagName == 'doc' ? 'active' : ''}">
           <a href="${basePath}/doc.htm">文档中心</a>
         </li>
+        -->
         <li class="${tagName == 'api' ? 'active' : ''}">
           <a href="${basePath}/api/index.htm">API</a>
         </li>
+        <!--
         <li class="${tagName == 'deploy' ? 'active' : ''}">
           <a href="${basePath}/deploy.htm">在线部署</a>
         </li>
+        -->
+        <!--
         <li class="${tagName == 'markdown' ? 'active' : ''}">
           <a href="${basePath}/markdown.htm">markdown</a>
         </li>
+        -->
+        <!--
         <li class="${tagName == 'contact' ? 'active' : ''}">
           <a href="${basePath}/contact.htm">关于</a>
         </li>
+        -->
       </ul>
 
       <form action="${basePath}/search.htm" method="POST" class="navbar-form navbar-right" role="search">

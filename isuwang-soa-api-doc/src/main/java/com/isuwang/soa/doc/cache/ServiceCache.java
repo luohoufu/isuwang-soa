@@ -54,15 +54,14 @@ public class ServiceCache {
                 try {
                     metadata = new MetadataClient(serviceName, version).getServiceMetadata();
                 } catch (TException e) {
-                    e.printStackTrace();
+                    LOGGER.error(e.getMessage(), e);
                 }
 
                 try (StringReader reader = new StringReader(metadata)) {
                     Service serviceData = JAXB.unmarshal(reader, com.isuwang.soa.code.generator.metadata.Service.class);
                     loadResource(serviceData, services);
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    LOGGER.error("生成SERVICE出错");
+                    LOGGER.error("生成SERVICE出错", e);
                 }
             }
         }
