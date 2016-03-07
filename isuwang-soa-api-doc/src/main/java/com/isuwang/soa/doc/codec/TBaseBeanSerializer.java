@@ -9,9 +9,12 @@ import com.isuwang.soa.doc.restful.InvocationInfo;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * 基础序列化
@@ -50,6 +53,18 @@ public abstract class TBaseBeanSerializer implements TBeanSerializer<InvocationI
                 oprot.writeString(isJsonElement ? jsonElement.getAsString() : value.toString());
                 break;
             case BINARY:
+                break;
+            case DATE:
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+                Long time = 0L;
+                try {
+                    if (isJsonElement)
+                        time = sdf.parse(jsonElement.getAsString()).getTime();
+                    else
+                        time = sdf.parse(value.toString()).getTime();
+                } catch (ParseException e) {
+                }
+                oprot.writeI64(time);
                 break;
             case MAP: {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -289,6 +304,9 @@ public abstract class TBaseBeanSerializer implements TBeanSerializer<InvocationI
 
             case VOID:
                 return TType.VOID;
+
+            case DATE:
+                return TType.I64;
 
             default:
                 break;

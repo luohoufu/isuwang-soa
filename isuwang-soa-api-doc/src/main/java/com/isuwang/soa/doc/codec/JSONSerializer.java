@@ -11,6 +11,7 @@ import org.apache.thrift.protocol.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -134,6 +135,12 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 break;
             case BINARY:
                 break;
+            case DATE:
+                Long time = iprot.readI64();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                java.util.Date date = new java.util.Date(time);
+                value = new JsonPrimitive(sdf.format(date));
+                break;
             case MAP:
                 //if(schemeField.type == TType.MAP) {
                 TMap tMap = iprot.readMapBegin();
@@ -217,6 +224,7 @@ public class JSONSerializer extends TBaseBeanSerializer {
                     readField(iprot, field1, field1.getDataType(), jsonObject, tField, service);
                 } while (true);
 
+                iprot.readFieldEnd();
                 iprot.readStructEnd();
 
                 value = jsonObject;

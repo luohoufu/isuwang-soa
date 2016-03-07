@@ -10,9 +10,12 @@
         }
     </style>
     <link rel="stylesheet" href="${basePath}/js/json/json.format.css">
+    <link rel="stylesheet" href="${basePath}/css/jquery.datetimepicker.css">
     <script src="${basePath}/js/api/test.js"></script>
     <script src="${basePath}/js/json/json.format.js"></script>
     <script src="${basePath}/js/formatmarked.js"></script>
+    <script src="${basePath}/js/jquery.datetimepicker.full.min.js"></script>
+
     <script>
         $(function () {
 
@@ -44,6 +47,8 @@
                         Process(parameter);
                     }
                 }
+
+                $('input.datetimepicker').datetimepicker();
             });
         });
     </script>
@@ -126,7 +131,8 @@
 
             <br>
             <button type="button" class="btn btn-info"
-                    onclick="applyTest('${service.namespace}.${service.name}', '${service.meta.version}', '${method.name}');">提交请求
+                    onclick="applyTest('${service.namespace}.${service.name}', '${service.meta.version}', '${method.name}');">
+                提交请求
             </button>
             <br>
             <hr>

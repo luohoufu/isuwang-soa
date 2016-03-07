@@ -27,10 +27,10 @@ function createInputGroup(label, type, optional, fieldDoc, input) {
     $(labelElem).addClass("input-group-addon");
     $(labelElem).addClass("parameterName");
 
-    if(fieldDoc == null || fieldDoc == ''){
+    if (fieldDoc == null || fieldDoc == '') {
         fieldDoc = '暂无说明';
     }
-    var attr = '<abbr title="'+ fieldDoc + '">' + label + '</abbr>';
+    var attr = '<abbr title="' + fieldDoc + '">' + label + '</abbr>';
     $(labelElem).html(attr);
 
     $(labelElem).css("width", "125px");
@@ -39,6 +39,9 @@ function createInputGroup(label, type, optional, fieldDoc, input) {
     var inputElem = (input == undefined) ? $doc.createElement("input") : input;
     $(inputElem).addClass("form-control");
     $(inputElem).addClass("parameterValue");
+    if(type == "Date"){
+        $(inputElem).addClass("datetimepicker");
+    }
     $(inputElem).attr("type", inputType);
     $(inputElem).attr("placeholder", placeholder);
     divElem.appendChild(inputElem);
@@ -77,11 +80,11 @@ function createInputGroup(label, type, optional, fieldDoc, input) {
     return liElem;
 }
 
-function createSelector(values){
+function createSelector(values) {
 
     var select = document.createElement('select');
 
-    for(var i = 0; i < values.length; i ++){
+    for (var i = 0; i < values.length; i++) {
         var value = values[i];
         var option = document.createElement('option');
         option.value = value;
@@ -91,9 +94,13 @@ function createSelector(values){
     return select;
 }
 
-function getDataTypeElement(dataType, name, service, optional, doc){
+function getDataTypeElement(dataType, name, service, optional, doc) {
 
-    switch(dataType.kind){
+    switch (dataType.kind) {
+
+        case 'DATE':
+            return createInputGroup(name, "Date", optional, doc);
+
         case 'SHORT':
             return createInputGroup(name, 'Short', optional, doc);
 
@@ -125,10 +132,10 @@ function getDataTypeElement(dataType, name, service, optional, doc){
             var qualifiedName = dataType.qualifiedName;
             var enumName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
             var values = new Array();
-            for(var index = 0; index < service.enumDefinitions.length; index ++){
+            for (var index = 0; index < service.enumDefinitions.length; index++) {
                 var tenum = service.enumDefinitions[index];
-                if(tenum.name == enumName){
-                    for(var j = 0; j < tenum.enumItems.length; j ++){
+                if (tenum.name == enumName) {
+                    for (var j = 0; j < tenum.enumItems.length; j++) {
                         var item = tenum.enumItems[j];
                         values[j] = item.label;
                     }
@@ -139,21 +146,23 @@ function getDataTypeElement(dataType, name, service, optional, doc){
         case 'MAP':
             var li = $("<li style='padding: 1px'><div class='input-group'><span class='input-group-addon parameterName'></span><input class='form-control' style='display: none'/><span class='input-group-addon'><button class='btn btn-success btn-xs'>+</button></span></div></li>");
             var span = li.find('span.parameterName');
-            if(doc == null || doc == ''){
+            if (doc == null || doc == '') {
                 doc = '暂无说明';
             }
-            var attr = '<abbr title="'+ doc + '">' + name + '(Map)</abbr>';
+            var attr = '<abbr title="' + doc + '">' + name + '(Map)</abbr>';
             span.html(attr);
 
             var addButton = li.find('button');
 
             addButton.type = 'button';
-            addButton.click(function(){
+            addButton.click(function () {
 
                 var targetUl = $(this).parent().parent().parent().children('ul');
                 var li2 = $("<li style='padding: 1px'><div class='input-group'><span class='input-group-addon'>key-value</span><input class='form-control' style='display: none'/><span class='input-group-addon'><button class='btn btn-danger btn-xs'>-</button></span></div></li>");
                 var delButton = li2.find('button.btn-danger');
-                delButton.click(function(){li2.remove()}
+                delButton.click(function () {
+                        li2.remove()
+                    }
                 );
 
                 var ul2 = document.createElement('ul');
@@ -166,7 +175,7 @@ function getDataTypeElement(dataType, name, service, optional, doc){
                 targetUl.append(li2);
             });
 
-            if(optional){
+            if (optional) {
 
                 addButton.css('display', 'none');
                 var checkBox = document.createElement('input');
@@ -174,11 +183,11 @@ function getDataTypeElement(dataType, name, service, optional, doc){
                 checkBox.className = 'checkbox';
                 checkBox.style.display = 'inline';
                 checkBox.style.marginLeft = '5px';
-                checkBox.onclick = function(){
+                checkBox.onclick = function () {
 
-                    if(this.checked){
+                    if (this.checked) {
                         addButton.css('display', '');
-                    }else{
+                    } else {
                         addButton.css('display', 'none');
                         li.children('ul').empty();
                     }
@@ -194,14 +203,14 @@ function getDataTypeElement(dataType, name, service, optional, doc){
 
             var li = $("<li style='padding: 1px'><div class='input-group'><span class='input-group-addon parameterName'></span><input class='form-control' style='display: none'/><span class='input-group-addon'><button class='btn btn-success btn-xs'>+</button></span></div></li>");
             var span = li.find('span.parameterName');
-            if(doc == null || doc == ''){
+            if (doc == null || doc == '') {
                 doc = '暂无说明';
             }
-            var attr = '<abbr title="'+ doc + '">' + name + '(List)</abbr>';
+            var attr = '<abbr title="' + doc + '">' + name + '(List)</abbr>';
             span.html(attr);
 
             var addButton = li.find('button');
-            addButton.click(function(){
+            addButton.click(function () {
 
                 var targetUl = $(this).parent().parent().parent().children('ul');
                 var targetLi = getDataTypeElement(dataType.valueType, 'value', service, false, doc);
@@ -210,7 +219,7 @@ function getDataTypeElement(dataType, name, service, optional, doc){
                 deleteButton.type = 'button';
                 deleteButton.className = 'btn btn-danger btn-xs';
                 deleteButton.innerHTML = '-'
-                deleteButton.onclick = function(){
+                deleteButton.onclick = function () {
                     targetLi.remove();
                 };
                 $(targetLi).children('div').find('span')[1].appendChild(deleteButton);
@@ -218,7 +227,7 @@ function getDataTypeElement(dataType, name, service, optional, doc){
                 targetUl.append(targetLi);
             });
 
-            if(optional){
+            if (optional) {
 
                 addButton.css('display', 'none');
                 var checkBox = document.createElement('input');
@@ -226,11 +235,11 @@ function getDataTypeElement(dataType, name, service, optional, doc){
                 checkBox.className = 'checkbox';
                 checkBox.style.display = 'inline';
                 checkBox.style.marginLeft = '5px';
-                checkBox.onclick = function(){
+                checkBox.onclick = function () {
 
-                    if(this.checked){
+                    if (this.checked) {
                         addButton.css('display', 'inline');
-                    }else{
+                    } else {
                         addButton.css('display', 'none');
                         $(li).children('ul').empty();
                     }
@@ -246,14 +255,14 @@ function getDataTypeElement(dataType, name, service, optional, doc){
         case 'SET':
             var li = $("<li style='padding: 1px'><div class='input-group'><span class='input-group-addon parameterName'></span><input class='form-control' style='display: none'/><span class='input-group-addon'><button class='btn btn-success btn-xs'>+</button></span></div></li>");
             var span = li.find('span.parameterName');
-            if(doc == null || doc == ''){
+            if (doc == null || doc == '') {
                 doc = '暂无说明';
             }
-            var attr = '<abbr title="'+ doc + '">' + name + '(Set)</abbr>';
+            var attr = '<abbr title="' + doc + '">' + name + '(Set)</abbr>';
             span.html(attr);
 
             var addButton = li.find('button');
-            addButton.click(function(){
+            addButton.click(function () {
 
                 var targetUl = $(this).parent().parent().parent().children('ul');
                 var targetLi = getDataTypeElement(dataType.valueType, 'value', service);
@@ -262,7 +271,7 @@ function getDataTypeElement(dataType, name, service, optional, doc){
                 deleteButton.type = 'button';
                 deleteButton.className = 'btn btn-danger btn-xs';
                 deleteButton.innerHTML = '-'
-                deleteButton.onclick = function(){
+                deleteButton.onclick = function () {
                     targetLi.remove();
                 };
                 $(targetLi).children('div').find('span')[1].appendChild(deleteButton);
@@ -270,7 +279,7 @@ function getDataTypeElement(dataType, name, service, optional, doc){
                 targetUl.append(targetLi);
             });
 
-            if(optional){
+            if (optional) {
 
                 addButton.css('display', 'none');
                 var checkBox = document.createElement('input');
@@ -278,11 +287,11 @@ function getDataTypeElement(dataType, name, service, optional, doc){
                 checkBox.className = 'checkbox';
                 checkBox.style.display = 'inline';
                 checkBox.style.marginLeft = '5px';
-                checkBox.onclick = function(){
+                checkBox.onclick = function () {
 
-                    if(this.checked){
+                    if (this.checked) {
                         addButton.css('display', 'inline');
-                    }else{
+                    } else {
                         addButton.css('display', 'none');
                         $(li).children('ul').empty();
                     }
@@ -298,24 +307,24 @@ function getDataTypeElement(dataType, name, service, optional, doc){
         case 'STRUCT':
             var li = $("<li><div class='input-group'><span class='input-group-addon parameterName'></span><input class='form-control' style='display: none'/><span class='input-group-addon'></span></div></li>");
             var span = li.find('span.parameterName');
-            if(doc == null || doc == ''){
+            if (doc == null || doc == '') {
                 doc = '暂无说明';
             }
-            var attr = '<abbr title="'+ doc + '">' + name + '(' + dataType.qualifiedName + ')</abbr>';
+            var attr = '<abbr title="' + doc + '">' + name + '(' + dataType.qualifiedName + ')</abbr>';
             span.html(attr);
 
-            if(optional){
+            if (optional) {
 
                 var checkSpan = li.find('span')[1];
                 var checkBox = document.createElement('input');
                 checkBox.type = 'checkbox';
                 checkBox.className = 'checkbox';
                 checkBox.style.display = 'inline';
-                checkBox.onclick = function(){
+                checkBox.onclick = function () {
 
-                    if(this.checked){
+                    if (this.checked) {
                         ul.style.display = 'block';
-                    }else{
+                    } else {
                         ul.style.display = 'none';
                     }
                 };
@@ -325,10 +334,10 @@ function getDataTypeElement(dataType, name, service, optional, doc){
             var ul = document.createElement('ul');
             var qualifiedName = dataType.qualifiedName;
             var structName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
-            for(var index = 0; index < service.structDefinitions.length; index ++){
+            for (var index = 0; index < service.structDefinitions.length; index++) {
                 var struct = service.structDefinitions[index];
-                if(struct.name == structName){
-                    for(var j = 0; j < struct.fields.length; j ++){
+                if (struct.name == structName) {
+                    for (var j = 0; j < struct.fields.length; j++) {
                         var field = struct.fields[j];
                         var li2 = getDataTypeElement(field.dataType, field.name, service, field.optional, field.doc);
                         ul.appendChild(li2);
@@ -337,7 +346,7 @@ function getDataTypeElement(dataType, name, service, optional, doc){
             }
             li.append(ul);
 
-            if(optional){
+            if (optional) {
                 ul.style.display = 'none';
             }
             return li[0];
@@ -348,42 +357,49 @@ function getDataTypeElement(dataType, name, service, optional, doc){
 }
 
 
-function applyTest(serviceName, version, methodName){
+function applyTest(serviceName, version, methodName) {
 
     inputError = false;
     var jsonParameter = getJsonParameter();
-    if(inputError){return; }
+    if (inputError) {
+        return;
+    }
 
     $("#json-request").html(getFormatedJsonHTML(jsonParameter));
 
     var stringParameter = JSON.stringify(jsonParameter);
     var url = window.basePath + "/test.htm";
-    $.post(url, {serviceName: serviceName, version: version, methodName: methodName, parameter:stringParameter},function(result){
+    $.post(url, {
+        serviceName: serviceName,
+        version: version,
+        methodName: methodName,
+        parameter: stringParameter
+    }, function (result) {
 
         $("#json-result").html(getFormatedJsonHTML(eval('(' + result + ')')));
 
     }, 'json');
 }
 
-function getJsonParameter(){
+function getJsonParameter() {
 
     var parameter = {};
 
-    $('#tree').children('li').each(function(){
+    $('#tree').children('li').each(function () {
 
         var tN = $(this).find('span.parameterName').children('abbr').html();
-        if(tN.indexOf('(') > 0){
+        if (tN.indexOf('(') > 0) {
             tN = tN.substring(0, tN.indexOf("("));
         }
         //过滤非必填且为选填的
-        if($(this).children().children().children("input[type='checkbox']").length > 0){
+        if ($(this).children().children().children("input[type='checkbox']").length > 0) {
 
             var checkbox = $(this).children().children().children("input[type='checkbox']")[0];
-            if(checkbox.checked){
+            if (checkbox.checked) {
                 var tJSON = getJsonObject($(this));
                 parameter[tN] = tJSON;
             }
-        }else{
+        } else {
             var tJSON = getJsonObject($(this));
             parameter[tN] = tJSON;
         }
@@ -391,15 +407,15 @@ function getJsonParameter(){
     return parameter;
 }
 
-function getJsonObject(li){
+function getJsonObject(li) {
 
     var name = $(li).find('span.parameterName').children('abbr').html();
 
-    if(name.indexOf('(Map)') > 0){
+    if (name.indexOf('(Map)') > 0) {
 
         var map = {};
         var ul = $(li).children('ul');
-        $(ul).children('li').each(function(){
+        $(ul).children('li').each(function () {
 
             var ul2 = $(this).children('ul');
             var li_key = $(ul2).children('li')[0];
@@ -411,72 +427,72 @@ function getJsonObject(li){
         });
         return map;
 
-    }else if(name.indexOf('(List)') > 0){
+    } else if (name.indexOf('(List)') > 0) {
 
         var list = [];
         var ul = $(li).children('ul');
-        $(ul).children('li').each(function(){
+        $(ul).children('li').each(function () {
             list.push(getJsonObject($(this)));
         });
         return list;
 
-    }else if(name.indexOf('(Set)') > 0){
+    } else if (name.indexOf('(Set)') > 0) {
 
         var aSet = [];
         var ul = $(li).children('ul');
-        $(ul).children('li').each(function(){
+        $(ul).children('li').each(function () {
             aSet.push(getJsonObject($(this)));
         });
 
         return aSet;
 
-    }else if(name.indexOf('(') > 0){
+    } else if (name.indexOf('(') > 0) {
 
         var struct = {};
         var ul = $(li).children('ul');
-        $(ul).children('li').each(function(){
+        $(ul).children('li').each(function () {
 
             var tN = $(this).find('span.parameterName').children('abbr').html();
-            if(tN.indexOf('(') > 0){
+            if (tN.indexOf('(') > 0) {
                 tN = tN.substring(0, tN.indexOf("("));
             }
-            if($(this).children().children().children("input[type='checkbox']").length > 0){
+            if ($(this).children().children().children("input[type='checkbox']").length > 0) {
 
                 var checkbox = $(this).children().children().children("input[type='checkbox']")[0];
-                if(checkbox.checked){
+                if (checkbox.checked) {
                     struct[tN] = getJsonObject($(this));
                 }
-            }else{
+            } else {
                 struct[tN] = getJsonObject($(this));
             }
 
         });
         return struct;
 
-    }else if($(li).find('select').length > 0){
+    } else if ($(li).find('select').length > 0) {
 
         return $(li).find('select').val();
 
-    }else{
+    } else {
 
         var v = $(li).find('input')[0].value.trim();
 
-        if($(li).find('input')[0].type == 'number'){
+        if ($(li).find('input')[0].type == 'number') {
 
-            if(v == ''){
+            if (v == '') {
                 $(li).find('span.warninfo').css("display", "");
                 inputError = true;
-            }else{
+            } else {
                 $(li).find('span.warninfo').css("display", "none");
                 return parseInt(v);
             }
-        }else{
+        } else {
 
-            if(v == ''){
+            if (v == '') {
                 $(li).find('span.warninfo').html('输入内容不能为空');
                 $(li).find('span.warninfo').css("display", "");
                 inputError = true;
-            }else{
+            } else {
                 $(li).find('span.warninfo').css("display", "none");
             }
         }
@@ -487,32 +503,32 @@ function getJsonObject(li){
 
 var inputError = false;
 
-function getJsonSample(dataType, service){
+function getJsonSample(dataType, service) {
 
-    switch(dataType.kind){
+    switch (dataType.kind) {
         case 'STRING':
             return "sampleDataString";
         case 'INTEGER':
-            return Math.round(Math.random()*1000);
+            return Math.round(Math.random() * 1000);
         case 'DOUBLE':
-            return Math.random()*100;
+            return Math.random() * 100;
         case 'BOOLEAN':
-            return Math.round(Math.random()) == 1 ? "true": "false";
+            return Math.round(Math.random()) == 1 ? "true" : "false";
         case 'BYTE':
-            return parseInt(Math.random()*256 - 128).toString;
+            return parseInt(Math.random() * 256 - 128).toString;
         case 'BINARY':
             return "546869732049732041205465737420427974652041727261792E";
         case 'Short':
-            return Math.round(Math.random()*100);
+            return Math.round(Math.random() * 100);
         case 'LONG':
-            return Math.round(Math.random()*1000);
+            return Math.round(Math.random() * 1000);
         case 'ENUM':
-            for(var i = 0; i < service.enumDefinitions.length; i ++){
+            for (var i = 0; i < service.enumDefinitions.length; i++) {
 
                 var tenum = service.enumDefinitions[i];
-                if((tenum.namespace + "." + tenum.name) == dataType.qualifiedName){
+                if ((tenum.namespace + "." + tenum.name) == dataType.qualifiedName) {
                     var size = tenum.enumItems.length;
-                    var index = parseInt(Math.random()*size);
+                    var index = parseInt(Math.random() * size);
                     return tenum.enumItems[index].label;
                 }
             }
@@ -535,10 +551,10 @@ function getJsonSample(dataType, service){
             return list;
         case 'STRUCT':
             var p = {};
-            for(var i = 0; i < service.structDefinitions.length; i ++){
+            for (var i = 0; i < service.structDefinitions.length; i++) {
                 var struct = service.structDefinitions[i];
-                if((struct.namespace + '.' + struct.name) == dataType.qualifiedName){
-                    for(var index = 0; index < struct.fields.length; index ++) {
+                if ((struct.namespace + '.' + struct.name) == dataType.qualifiedName) {
+                    for (var index = 0; index < struct.fields.length; index++) {
                         var field = struct.fields[index];
                         p[field.name] = getJsonSample(field.dataType, service);
                     }
