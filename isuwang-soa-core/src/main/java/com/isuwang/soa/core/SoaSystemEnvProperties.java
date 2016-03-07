@@ -14,6 +14,7 @@ public class SoaSystemEnvProperties {
     private static final String KEY_SOA_CONTAINER_USETHREADPOOL = "soa.container.usethreadpool";
     //public static final String KEY_ZOOKEEPER_JMX_LOG4J_DISABLE = "zookeeper.jmx.log4j.disable";
     private static final String KEY_SOA_CONTAINER_PORT = "soa.container.port";
+    private static final String KEY_SOA_APIDOC_PORT = "soa.apidoc.port";
 
     public static final String SOA_SERVICE_IP = get(KEY_SOA_SERVICE_IP);
     public static final Integer SOA_SERVICE_PORT = isNotBlank(get(KEY_SOA_SERVICE_PORT)) ? Integer.valueOf(get(KEY_SOA_SERVICE_PORT)) : null;
@@ -21,6 +22,7 @@ public class SoaSystemEnvProperties {
     public static final boolean SOA_CONTAINER_USETHREADPOOL = Boolean.valueOf(get(KEY_SOA_CONTAINER_USETHREADPOOL, Boolean.TRUE.toString()));
     //public static final boolean ZOOKEEPER_JMX_LOG4J_DISABLE = Boolean.valueOf(get(KEY_ZOOKEEPER_JMX_LOG4J_DISABLE, Boolean.FALSE.toString()));
     public static final Integer SOA_CONTAINER_PORT = Integer.valueOf(get(KEY_SOA_CONTAINER_PORT, "9090"));
+    public static final Integer SOA_APIDOC_PORT = Integer.valueOf(get(KEY_SOA_APIDOC_PORT, "8080"));
 
     public static String get(String key) {
         return get(key, null);

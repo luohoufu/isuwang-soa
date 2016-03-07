@@ -3,7 +3,6 @@
 <web-app
         version="3.0"
         xmlns="http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/javaee/index.html"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 >
     <display-name>快塑网api文档</display-name>
 
@@ -47,12 +46,14 @@
     </servlet-mapping>
 
     <welcome-file-list>
-        <welcome-file>index</welcome-file>
+        <welcome-file>index.htm</welcome-file>
     </welcome-file-list>
 
+    <!--
     <listener>
         <listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
     </listener>
+    -->
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

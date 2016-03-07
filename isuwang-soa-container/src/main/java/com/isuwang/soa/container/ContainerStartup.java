@@ -1,8 +1,8 @@
 package com.isuwang.soa.container;
 
+import com.isuwang.soa.container.apidoc.ApidocContainer;
 import com.isuwang.soa.container.conf.SoaServer;
 import com.isuwang.soa.container.conf.SoaServerContainer;
-import com.isuwang.soa.doc.ApiWebSite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +44,15 @@ public class ContainerStartup {
             e.printStackTrace();
         }
 
+        final boolean hasApidocContainer = soaServer.getSoaServerContainers()
+                .getSoaServerContainer()
+                .stream()
+                .filter(soaContainer -> soaContainer.getRef().equals(ApidocContainer.class.getName()))
+                .count() > 0;
+
+        if("maven".equals(SOA_RUN_MODE) && !hasApidocContainer)
+            containers.add(new ApidocContainer());
+
         try {
             containers.forEach(Container::start);
         } catch (Throwable e) {
@@ -53,16 +62,6 @@ public class ContainerStartup {
         }
 
         final Logger logger = LoggerFactory.getLogger(ContainerStartup.class);
-
-        if ("maven".equals(SOA_RUN_MODE)) {
-            try {
-                ApiWebSite.main(new String[]{});
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                logger.error("api站点启动失败");
-            }
-        }
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

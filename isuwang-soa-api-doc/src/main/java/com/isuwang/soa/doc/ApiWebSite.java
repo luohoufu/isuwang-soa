@@ -15,11 +15,11 @@ import java.net.URL;
  */
 public class ApiWebSite {
 
-    private static final int port = 8080;
+    //private static final int port = 8080;
 
     private static final String CONTEXT = "/";
 
-    private static Server createServer() throws MalformedURLException, URISyntaxException {
+    public static Server createServer(int port) throws MalformedURLException, URISyntaxException {
         Server server = new Server();
         server.setStopAtShutdown(true);
 
@@ -38,9 +38,9 @@ public class ApiWebSite {
         return server;
     }
 
+    /*
     public static void main(String[] args) throws Exception {
-
-        Server server = ApiWebSite.createServer();
+        Server server = ApiWebSite.createServer(ApiWebSite.port);
 
         try {
             server.stop();
@@ -52,6 +52,6 @@ public class ApiWebSite {
             e.printStackTrace();
             System.out.println("API站点启动失败...");
         }
-
     }
+    */
 }
