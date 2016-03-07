@@ -15,6 +15,7 @@ module api.model {
         public static SET = "SET"
         public static ENUM = "ENUM"
         public static STRUCT = "STRUCT"
+        public static DATE = "DATE"
     }
 
     export class DataType {

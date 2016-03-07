@@ -66,6 +66,8 @@ module api {
                     var structurl = window.basePath + "/api/struct/" + this.serviceName + "/" + this.version + "/" + dataType.qualifiedName + ".htm"
 
                     return "<a href='" + structurl + "'>" + dataType.qualifiedName.substring(dataType.qualifiedName.lastIndexOf(".") + 1) + "</a>"
+                case api.model.KIND.DATE:
+                    return "Date"
                 default:
                     return "Unknown"
             }
