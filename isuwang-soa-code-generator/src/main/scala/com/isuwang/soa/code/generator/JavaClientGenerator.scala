@@ -712,25 +712,21 @@ class JavaClientGenerator extends CodeGenerator {
     <div>
     public void validate({toStructName(struct)} bean) throws TException<block>
       {
-         toFieldArrayBuffer(struct.fields).map{(field : Field) => {
-
-           if (field.getDataType.getKind == DataType.KIND.VOID) {
-             <div></div>
-           } else {
-               {if (!field.isOptional) {
-               <div>
-                 if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}() == null) throw new SoaException(SoaBaseCode.NotNull, "{field.name}字段不允许为空");
-               </div>
-             }}
-                 {if (field.dataType.kind == KIND.STRUCT) {
-                 <div>
-                   if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}() != null)
-                   new {field.dataType.qualifiedName.substring(field.dataType.qualifiedName.lastIndexOf(".") + 1)}Serializer().validate(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}());
-                 </div>
-               }}
-           }
-         }
-         }
+      toFieldArrayBuffer(struct.fields).map{(field : Field) =>{
+        <div>{
+          if(!field.isOptional && field.dataType.kind != DataType.KIND.VOID){
+            <div>
+              if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}() == null)
+              throw new SoaException(SoaBaseCode.NotNull, "{field.name}字段不允许为空");
+            </div>}}</div>
+          <div>{
+            if(field.dataType.kind == KIND.STRUCT && field.dataType.kind != DataType.KIND.VOID){
+              <div>
+                if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}() != null)
+                new {field.dataType.qualifiedName.substring(field.dataType.qualifiedName.lastIndexOf(".")+1)}Serializer().validate(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}());
+              </div>}}</div>
+      }
+      }
       }
     </block>
     </div>

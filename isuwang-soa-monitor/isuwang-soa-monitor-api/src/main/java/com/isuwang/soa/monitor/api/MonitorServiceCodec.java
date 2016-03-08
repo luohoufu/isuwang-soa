@@ -111,6 +111,21 @@ public class MonitorServiceCodec {
 
         public void validate(com.isuwang.soa.monitor.api.domain.QPSStat bean) throws TException {
 
+            if (bean.getPeriod() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "period字段不允许为空");
+
+            if (bean.getAnalysisTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "analysisTime字段不允许为空");
+
+            if (bean.getServerIP() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "serverIP字段不允许为空");
+
+            if (bean.getServerPort() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "serverPort字段不允许为空");
+
+            if (bean.getCallCount() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "callCount字段不允许为空");
+
         }
 
         @Override
@@ -400,6 +415,66 @@ public class MonitorServiceCodec {
 
         public void validate(com.isuwang.soa.monitor.api.domain.PlatformProcessData bean) throws TException {
 
+            if (bean.getPeriod() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "period字段不允许为空");
+
+            if (bean.getAnalysisTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "analysisTime字段不允许为空");
+
+            if (bean.getServiceName() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "serviceName字段不允许为空");
+
+            if (bean.getMethodName() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "methodName字段不允许为空");
+
+            if (bean.getVersionName() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "versionName字段不允许为空");
+
+            if (bean.getServerIP() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "serverIP字段不允许为空");
+
+            if (bean.getServerPort() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "serverPort字段不允许为空");
+
+            if (bean.getPMinTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "pMinTime字段不允许为空");
+
+            if (bean.getPMaxTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "pMaxTime字段不允许为空");
+
+            if (bean.getPAverageTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "pAverageTime字段不允许为空");
+
+            if (bean.getPTotalTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "pTotalTime字段不允许为空");
+
+            if (bean.getIMinTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "iMinTime字段不允许为空");
+
+            if (bean.getIMaxTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "iMaxTime字段不允许为空");
+
+            if (bean.getIAverageTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "iAverageTime字段不允许为空");
+
+            if (bean.getITotalTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "iTotalTime字段不允许为空");
+
+            if (bean.getTotalCalls() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "totalCalls字段不允许为空");
+
+            if (bean.getSucceedCalls() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "succeedCalls字段不允许为空");
+
+            if (bean.getFailCalls() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "failCalls字段不允许为空");
+
+            if (bean.getRequestFlow() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "requestFlow字段不允许为空");
+
+            if (bean.getResponseFlow() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "responseFlow字段不允许为空");
+
         }
 
         @Override
@@ -500,6 +575,9 @@ public class MonitorServiceCodec {
 
 
         public void validate(uploadQPSStat_args bean) throws TException {
+
+            if (bean.getQpsStat() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "qpsStat字段不允许为空");
 
             if (bean.getQpsStat() != null)
                 new QPSStatSerializer().validate(bean.getQpsStat());
@@ -702,6 +780,9 @@ public class MonitorServiceCodec {
 
 
         public void validate(uploadPlatformProcessData_args bean) throws TException {
+
+            if (bean.getPlatformProcessDatas() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "platformProcessDatas字段不允许为空");
 
         }
 
