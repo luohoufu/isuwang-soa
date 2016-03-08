@@ -35,6 +35,12 @@ public class FilterContainer implements Container {
 
                 filters.add(filter);
             }
+
+            filters.stream()
+                    .filter(soaFilter -> soaFilter instanceof StatusFilter)
+                    .forEach(soaFilter -> {
+                        ((StatusFilter) soaFilter).init();
+                    });
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
@@ -42,6 +48,12 @@ public class FilterContainer implements Container {
 
     @Override
     public void stop() {
+        filters.stream()
+                .filter(soaFilter -> soaFilter instanceof StatusFilter)
+                .forEach(soaFilter -> {
+                    ((StatusFilter) soaFilter).destory();
+                });
+
         filters.forEach(ContainerFilterChain::removeFilter);
 
         filters.clear();

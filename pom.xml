@@ -19,6 +19,7 @@
         <module>isuwang-soa-remoting</module>
         <module>isuwang-soa-bootstrap</module>
         <module>isuwang-soa-api-doc</module>
+        <module>isuwang-soa-monitor</module>
     </modules>
 
     <properties>

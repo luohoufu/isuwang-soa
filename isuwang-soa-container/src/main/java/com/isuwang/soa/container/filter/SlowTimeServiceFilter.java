@@ -1,24 +1,24 @@
 package com.isuwang.soa.container.filter;
 
 import com.isuwang.soa.core.Context;
-import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
 import org.apache.thrift.TException;
 
 /**
  * Created by tangliu on 2016/2/1.
  */
-public class SlowTimeServiceFilter implements Filter {
+public class SlowTimeServiceFilter implements StatusFilter {
 
     private final TaskManager taskManager = new TaskManager();
 
     @Override
-    public void doFilter(FilterChain chain) throws TException {
-
-        if (!taskManager.hasStarted()) {
+    public void init() {
+        if (!taskManager.hasStarted())
             taskManager.start();
-        }
+    }
 
+    @Override
+    public void doFilter(FilterChain chain) throws TException {
         Context context = Context.Factory.getCurrentInstance();
         Task task = new Task(context);
         taskManager.addTask(task);
@@ -30,4 +30,9 @@ public class SlowTimeServiceFilter implements Filter {
         }
     }
 
+    @Override
+    public void destory() {
+        if (taskManager.hasStarted())
+            taskManager.stop();
+    }
 }
