@@ -1,8 +1,9 @@
 package com.isuwang.soa.monitor.api;
 
-import com.isuwang.soa.monitor.api.MonitorServiceCodec.*;
+import com.isuwang.soa.core.*;
+import org.apache.thrift.*;
 import com.isuwang.soa.remoting.BaseServiceClient;
-import org.apache.thrift.TException;
+import com.isuwang.soa.monitor.api.MonitorServiceCodec.*;
 
 public class MonitorServiceClient extends BaseServiceClient {
 
@@ -24,8 +25,6 @@ public class MonitorServiceClient extends BaseServiceClient {
 
             uploadQPSStat_result response = sendBase(uploadQPSStat_args, new uploadQPSStat_result(), new UploadQPSStat_argsSerializer(), new UploadQPSStat_resultSerializer());
 
-               
-                    /*if (response.getSoaException() != null) throw response.getSoaException();*/
 
         } finally {
             destoryContext();
@@ -45,8 +44,6 @@ public class MonitorServiceClient extends BaseServiceClient {
 
             uploadPlatformProcessData_result response = sendBase(uploadPlatformProcessData_args, new uploadPlatformProcessData_result(), new UploadPlatformProcessData_argsSerializer(), new UploadPlatformProcessData_resultSerializer());
 
-               
-                    /*if (response.getSoaException() != null) throw response.getSoaException();*/
 
         } finally {
             destoryContext();

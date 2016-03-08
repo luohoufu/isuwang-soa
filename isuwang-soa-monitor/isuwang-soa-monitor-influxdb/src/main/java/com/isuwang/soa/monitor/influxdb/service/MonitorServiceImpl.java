@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MonitorServiceImpl implements MonitorService {
 
-    private String url = "http://192.168.99.100:8886";
+    private String url = "http://192.168.99.100:8086";
     private String userName = "root";
     private String password = "root";
 
@@ -40,7 +40,7 @@ public class MonitorServiceImpl implements MonitorService {
 
         Point point = Point.measurement("qps")
                 .time(qpsStat.getAnalysisTime(), TimeUnit.MILLISECONDS)
-                .field("value", qpsStat.getCallCount())
+                .field("value", qpsStat.getCallCount() / qpsStat.getPeriod())
                 .build();
 
         batchPoints.point(point);
