@@ -10,11 +10,11 @@ service MonitorService {
     /**
     * 上送QPS信息
     **/
-    void uploadQPSStat(monitor_domain.QPSStat qpsStat),
+    void uploadQPSStat(1:monitor_domain.QPSStat qpsStat),
 
     /**
     * 上送平台处理数据
     **/
-    void uploadPlatformProcessData(monitor_domain.PlatformProcessData platformProcessData)
+    void uploadPlatformProcessData(1:monitor_domain.PlatformProcessData platformProcessData)
 
 }

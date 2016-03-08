@@ -169,17 +169,9 @@ class JavaGenerator extends CodeGenerator {
                   <div>
                     {
                       if(field.getDataType.getKind == DataType.KIND.VOID) {
-                        <div>if (response.getSoaException() != null) throw response.getSoaException();</div>
+                        <div></div>
                       } else {
                         <div>
-                          /*
-                          if(response.getSuccess() == null)<block>
-                            if(response.getSoaException() == null)
-                            throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "{method.name} failed: unknown result");
-                            else
-                            throw response.getSoaException();
-                          </block>
-                          */
                           return response.getSuccess();
                         </div>
                       }

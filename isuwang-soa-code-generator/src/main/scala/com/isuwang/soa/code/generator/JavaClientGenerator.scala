@@ -87,18 +87,6 @@ class JavaClientGenerator extends CodeGenerator {
 
             public static class {method.name}_result <block>
 
-              /*
-              private SoaException soaException;
-
-              public SoaException getSoaException()<block>
-                return soaException;
-              </block>
-
-              public void setSoaException(SoaException soaException)<block>
-                this.soaException = soaException;
-              </block>
-              */
-
             {toFieldArrayBuffer(method.response.getFields()).map{(field:Field)=>
               if(field.getDataType().getKind() == DataType.KIND.VOID) {
                 <div></div>
@@ -112,22 +100,23 @@ class JavaClientGenerator extends CodeGenerator {
                   public void setSuccess({toDataTypeTemplate(method.response.getFields.get(0).getDataType)} success)<block>
                     this.success = success;
                   </block>
+
+
+                  @Override
+                  public String toString()<block>
+                  StringBuilder stringBuilder = new StringBuilder("<block>");
+                    {toFieldArrayBuffer(method.response.getFields).map{(field : Field) =>{
+                      getToStringElement(field);
+                    }}}
+                    stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));
+                    stringBuilder.append("</block>");
+
+                  return stringBuilder.toString();
+                </block>
+
                 </div>
               }
             }}
-
-            @Override
-            public String toString()<block>
-              StringBuilder stringBuilder = new StringBuilder("<block>");
-                {toFieldArrayBuffer(method.response.getFields).map{(field : Field) =>{
-                  getToStringElement(field);
-                }}}
-              stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));
-              stringBuilder.append("</block>");
-
-              return stringBuilder.toString();
-            </block>
-
             </block>
 
             public static class {method.name.charAt(0).toUpper + method.name.substring(1)}_argsSerializer implements TBeanSerializer{lt}{method.name}_args{gt}<block>
@@ -395,76 +384,6 @@ class JavaClientGenerator extends CodeGenerator {
           </block>
         </block>
 
-
-        public static class SoaExceptionSerializer implements TBeanSerializer{lt}SoaException{gt}<block>
-
-          @Override
-          public void read(SoaException bean, TProtocol iprot) throws TException<block>
-            org.apache.thrift.protocol.TField schemeField;
-            iprot.readStructBegin();
-
-            while (true) <block>
-              schemeField = iprot.readFieldBegin();
-              if (schemeField.type == org.apache.thrift.protocol.TType.STOP) <block>
-                break;
-              </block>
-              switch (schemeField.id) <block>
-                case 1: // code
-                if (schemeField.type == org.apache.thrift.protocol.TType.STRING) <block>
-                  bean.setCode(iprot.readString());
-                </block> else <block>
-                  org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-                </block>
-                break;
-                case 2: // msg
-                if (schemeField.type == org.apache.thrift.protocol.TType.STRING) <block>
-                  bean.setMsg(iprot.readString());
-                </block> else <block>
-                  org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-                </block>
-                break;
-                default:
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-              </block>
-              iprot.readFieldEnd();
-            </block>
-            iprot.readStructEnd();
-
-            // check for required fields of primitive type, which can't be checked in the validate method
-            validate(bean);
-          </block>
-
-
-          @Override
-          public void write(SoaException bean, TProtocol oprot) throws TException <block>
-            validate(bean);
-
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("SoaException"));
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("code", org.apache.thrift.protocol.TType.STRING, (short) 1));
-            oprot.writeString(bean.getCode());
-            oprot.writeFieldEnd();
-
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("msg", org.apache.thrift.protocol.TType.STRING, (short) 2));
-            oprot.writeString(bean.getMsg());
-            oprot.writeFieldEnd();
-
-            oprot.writeFieldStop();
-            oprot.writeStructEnd();
-          </block>
-
-          @Override
-          public void validate(SoaException bean) throws TException <block>
-            if (bean.getCode() == null)
-            throw new SoaException(SoaBaseCode.NotNull, "code字段不允许为空");
-
-            if (bean.getMsg() == null)
-            throw new SoaException(SoaBaseCode.NotNull, "msg字段不允许为空");
-          </block>
-
-          @Override
-          public String toString(SoaException bean) <block> return bean == null ? "null" : bean.toString(); </block>
-
-        </block>
 
         public static class Processor{lt}I extends {service.getNamespace + "." + service.name}{gt} extends SoaBaseProcessor<block>
           public Processor(I iface)<block>
@@ -793,19 +712,23 @@ class JavaClientGenerator extends CodeGenerator {
     <div>
     public void validate({toStructName(struct)} bean) throws TException<block>
       {
-         toFieldArrayBuffer(struct.fields).map{(field : Field) =>{
-           <div>{
-             if(!field.isOptional){
+         toFieldArrayBuffer(struct.fields).map{(field : Field) => {
+
+           if (field.getDataType.getKind == DataType.KIND.VOID) {
+             <div></div>
+           } else {
+               {if (!field.isOptional) {
                <div>
-                 if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}() == null)
-                    throw new SoaException(SoaBaseCode.NotNull, "{field.name}字段不允许为空");
-               </div>}}</div>
-           <div>{
-             if(field.dataType.kind == KIND.STRUCT){
-               <div>
-                 if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}() != null)
-                    new {field.dataType.qualifiedName.substring(field.dataType.qualifiedName.lastIndexOf(".")+1)}Serializer().validate(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}());
-               </div>}}</div>
+                 if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}() == null) throw new SoaException(SoaBaseCode.NotNull, "{field.name}字段不允许为空");
+               </div>
+             }}
+                 {if (field.dataType.kind == KIND.STRUCT) {
+                 <div>
+                   if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}() != null)
+                   new {field.dataType.qualifiedName.substring(field.dataType.qualifiedName.lastIndexOf(".") + 1)}Serializer().validate(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}());
+                 </div>
+               }}
+           }
          }
          }
       }
