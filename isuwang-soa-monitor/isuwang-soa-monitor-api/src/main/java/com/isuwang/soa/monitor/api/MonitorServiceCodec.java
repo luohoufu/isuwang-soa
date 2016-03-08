@@ -33,6 +33,30 @@ public class MonitorServiceCodec {
                         break;
 
                     case 2:
+                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                            bean.setAnalysisTime(iprot.readI64());
+                        } else {
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        }
+                        break;
+
+                    case 3:
+                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                            bean.setServerIP(iprot.readString());
+                        } else {
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        }
+                        break;
+
+                    case 4:
+                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                            bean.setServerPort(iprot.readI32());
+                        } else {
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        }
+                        break;
+
+                    case 5:
                         if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
                             bean.setCallCount(iprot.readI32());
                         } else {
@@ -63,7 +87,19 @@ public class MonitorServiceCodec {
             oprot.writeI32(bean.getPeriod());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("callCount", org.apache.thrift.protocol.TType.I32, (short) 2));
+            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("analysisTime", org.apache.thrift.protocol.TType.I64, (short) 2));
+            oprot.writeI64(bean.getAnalysisTime());
+            oprot.writeFieldEnd();
+
+            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("serverIP", org.apache.thrift.protocol.TType.STRING, (short) 3));
+            oprot.writeString(bean.getServerIP());
+            oprot.writeFieldEnd();
+
+            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("serverPort", org.apache.thrift.protocol.TType.I32, (short) 4));
+            oprot.writeI32(bean.getServerPort());
+            oprot.writeFieldEnd();
+
+            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("callCount", org.apache.thrift.protocol.TType.I32, (short) 5));
             oprot.writeI32(bean.getCallCount());
             oprot.writeFieldEnd();
 
@@ -75,6 +111,15 @@ public class MonitorServiceCodec {
 
             if (bean.getPeriod() == null)
                 throw new SoaException(SoaBaseCode.NotNull, "period字段不允许为空");
+
+            if (bean.getAnalysisTime() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "analysisTime字段不允许为空");
+
+            if (bean.getServerIP() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "serverIP字段不允许为空");
+
+            if (bean.getServerPort() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "serverPort字段不允许为空");
 
             if (bean.getCallCount() == null)
                 throw new SoaException(SoaBaseCode.NotNull, "callCount字段不允许为空");
@@ -654,14 +699,14 @@ public class MonitorServiceCodec {
 
     public static class uploadPlatformProcessData_args {
 
-        private com.isuwang.soa.monitor.api.domain.PlatformProcessData platformProcessData;
+        private java.util.List<com.isuwang.soa.monitor.api.domain.PlatformProcessData> platformProcessDatas;
 
-        public com.isuwang.soa.monitor.api.domain.PlatformProcessData getPlatformProcessData() {
-            return this.platformProcessData;
+        public java.util.List<com.isuwang.soa.monitor.api.domain.PlatformProcessData> getPlatformProcessDatas() {
+            return this.platformProcessDatas;
         }
 
-        public void setPlatformProcessData(com.isuwang.soa.monitor.api.domain.PlatformProcessData platformProcessData) {
-            this.platformProcessData = platformProcessData;
+        public void setPlatformProcessDatas(java.util.List<com.isuwang.soa.monitor.api.domain.PlatformProcessData> platformProcessDatas) {
+            this.platformProcessDatas = platformProcessDatas;
         }
 
 
@@ -669,7 +714,7 @@ public class MonitorServiceCodec {
         public String toString() {
             StringBuilder stringBuilder = new StringBuilder("{");
 
-            stringBuilder.append("\"").append("platformProcessData").append("\":").append(this.platformProcessData.toString()).append(",");
+            stringBuilder.append("\"").append("platformProcessDatas").append("\":").append(this.platformProcessDatas).append(",");
 
             if (stringBuilder.lastIndexOf(",") > 0)
                 stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));
@@ -725,10 +770,17 @@ public class MonitorServiceCodec {
                 switch (schemeField.id) {
 
                     case 1:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-
-                            bean.setPlatformProcessData(new com.isuwang.soa.monitor.api.domain.PlatformProcessData());
-                            new PlatformProcessDataSerializer().read(bean.getPlatformProcessData(), iprot);
+                        if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+                            {
+                                org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
+                                bean.setPlatformProcessDatas(new java.util.ArrayList<>(_list0.size));
+                                for (int _i2 = 0; _i2 < _list0.size; ++_i2) {
+                                    com.isuwang.soa.monitor.api.domain.PlatformProcessData _elem1 = new com.isuwang.soa.monitor.api.domain.PlatformProcessData();
+                                    new PlatformProcessDataSerializer().read(_elem1, iprot);
+                                    bean.getPlatformProcessDatas().add(_elem1);
+                                }
+                                iprot.readListEnd();
+                            }
 
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
@@ -755,8 +807,13 @@ public class MonitorServiceCodec {
             oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("uploadPlatformProcessData_args"));
 
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("platformProcessData", org.apache.thrift.protocol.TType.STRUCT, (short) 1));
-            new PlatformProcessDataSerializer().write(bean.getPlatformProcessData(), oprot);
+            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("platformProcessDatas", org.apache.thrift.protocol.TType.LIST, (short) 1));
+            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, bean.getPlatformProcessDatas().size()));
+            for (com.isuwang.soa.monitor.api.domain.PlatformProcessData item : bean.getPlatformProcessDatas()) {
+                new PlatformProcessDataSerializer().write(item, oprot);
+            }
+            oprot.writeListEnd();
+
             oprot.writeFieldEnd();
 
             oprot.writeFieldStop();
@@ -766,11 +823,8 @@ public class MonitorServiceCodec {
 
         public void validate(uploadPlatformProcessData_args bean) throws TException {
 
-            if (bean.getPlatformProcessData() == null)
-                throw new SoaException(SoaBaseCode.NotNull, "platformProcessData字段不允许为空");
-
-            if (bean.getPlatformProcessData() != null)
-                new PlatformProcessDataSerializer().validate(bean.getPlatformProcessData());
+            if (bean.getPlatformProcessDatas() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "platformProcessDatas字段不允许为空");
 
         }
 
@@ -851,7 +905,7 @@ public class MonitorServiceCodec {
         public uploadPlatformProcessData_result getResult(I iface, uploadPlatformProcessData_args args) throws TException {
             uploadPlatformProcessData_result result = new uploadPlatformProcessData_result();
 
-            iface.uploadPlatformProcessData(args.platformProcessData);
+            iface.uploadPlatformProcessData(args.platformProcessDatas);
 
             return result;
         }

@@ -15,6 +15,6 @@ service MonitorService {
     /**
     * 上送平台处理数据
     **/
-    void uploadPlatformProcessData(1:monitor_domain.PlatformProcessData platformProcessData)
+    void uploadPlatformProcessData(1:list<monitor_domain.PlatformProcessData> platformProcessDatas)
 
 }

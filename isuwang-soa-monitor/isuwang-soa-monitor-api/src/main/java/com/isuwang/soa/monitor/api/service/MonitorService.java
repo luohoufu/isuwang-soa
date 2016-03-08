@@ -19,7 +19,7 @@ public interface MonitorService {
     /**
      * 上送平台处理数据
      **/
-    void uploadPlatformProcessData(com.isuwang.soa.monitor.api.domain.PlatformProcessData platformProcessData) throws com.isuwang.soa.core.SoaException;
+    void uploadPlatformProcessData(java.util.List<com.isuwang.soa.monitor.api.domain.PlatformProcessData> platformProcessDatas) throws com.isuwang.soa.core.SoaException;
 
 }
         

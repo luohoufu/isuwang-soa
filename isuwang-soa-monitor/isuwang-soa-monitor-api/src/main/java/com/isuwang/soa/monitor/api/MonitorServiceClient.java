@@ -35,12 +35,12 @@ public class MonitorServiceClient extends BaseServiceClient {
     /**
      * 上送平台处理数据
      **/
-    public void uploadPlatformProcessData(com.isuwang.soa.monitor.api.domain.PlatformProcessData platformProcessData) throws TException {
+    public void uploadPlatformProcessData(java.util.List<com.isuwang.soa.monitor.api.domain.PlatformProcessData> platformProcessDatas) throws TException {
         initContext("uploadPlatformProcessData");
 
         try {
             uploadPlatformProcessData_args uploadPlatformProcessData_args = new uploadPlatformProcessData_args();
-            uploadPlatformProcessData_args.setPlatformProcessData(platformProcessData);
+            uploadPlatformProcessData_args.setPlatformProcessDatas(platformProcessDatas);
 
 
             uploadPlatformProcessData_result response = sendBase(uploadPlatformProcessData_args, new uploadPlatformProcessData_result(), new UploadPlatformProcessData_argsSerializer(), new UploadPlatformProcessData_resultSerializer());

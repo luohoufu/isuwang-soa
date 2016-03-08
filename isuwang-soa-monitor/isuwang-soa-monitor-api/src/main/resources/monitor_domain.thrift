@@ -11,9 +11,24 @@ struct QPSStat {
     1:i32 period,
 
     /**
+    * 统计分析时间(时间戳)
+    **/
+    2:i64 analysisTime,
+
+    /**
+    * 服务器IP
+    **/
+    3:string serverIP,
+
+    /**
+    * 服务器端口
+    **/
+    4:i32 serverPort,
+
+    /**
     * 调用次数
     **/
-    2:i32 callCount
+    5:i32 callCount
 
 }
 
