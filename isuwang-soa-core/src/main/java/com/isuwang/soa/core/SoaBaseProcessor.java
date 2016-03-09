@@ -57,9 +57,11 @@ public class SoaBaseProcessor<I> implements TProcessor {
             in.readMessageEnd();
 
             LOGGER.info("{} request:{}", logId, soaProcessFunction.getReqSerializer().toString(args));
+            long startTime = System.currentTimeMillis();
 
             Object result = soaProcessFunction.getResult(iface, args);
 
+            chain.setAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME, System.currentTimeMillis() - startTime);
             LOGGER.info("{} response:{}", logId, soaProcessFunction.getResSerializer().toString(result));
 
             // write

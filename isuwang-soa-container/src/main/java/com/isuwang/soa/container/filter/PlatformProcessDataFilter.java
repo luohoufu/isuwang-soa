@@ -5,6 +5,7 @@ import com.isuwang.soa.core.IPUtils;
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.filter.FilterChain;
+import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import com.isuwang.soa.monitor.api.MonitorServiceClient;
 import com.isuwang.soa.monitor.api.domain.PlatformProcessData;
 import org.apache.thrift.TException;
@@ -13,15 +14,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by tangliu on 2016/3/9.
  */
 public class PlatformProcessDataFilter implements StatusFilter {
 
-    private final long period = 3 * 60 * 1000L;
-    private final AtomicInteger callCount = new AtomicInteger(0);
+    private final static long period = 3 * 60 * 1000L;
     private final Timer timer = new Timer("PlatformProcessDataFilter-Timer");
     private static final Logger LOGGER = LoggerFactory.getLogger(PlatformProcessDataFilter.class);
 
@@ -41,6 +40,10 @@ public class PlatformProcessDataFilter implements StatusFilter {
             public void run() {
                 try {
                     List<PlatformProcessData> dataList = new ArrayList<>(processDataMap.values());
+                    for (PlatformProcessData data : dataList) {
+                        data.setAnalysisTime(System.currentTimeMillis());
+                        data.setIAverageTime(data.getITotalTime() / data.getTotalCalls());
+                    }
                     new MonitorServiceClient().uploadPlatformProcessData(dataList);
 
                 } catch (Exception e) {
@@ -63,9 +66,20 @@ public class PlatformProcessDataFilter implements StatusFilter {
         SoaHeader soaHeader = Context.Factory.getCurrentInstance().getHeader();
         PlatformProcessData data = getPlatformPorcessData(soaHeader);
 
-        data.setTotalCalls(data.getTotalCalls() + 1);
 
-        chain.doFilter();
+        try {
+            chain.doFilter();
+        } finally {
+
+            Long iProcessTime = (Long) chain.getAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME);
+
+            data.setIMaxTime(data.getIMinTime() > iProcessTime ? data.getIMaxTime() : iProcessTime);
+            data.setIMinTime(data.getIMinTime() < iProcessTime ? data.getIMinTime() : iProcessTime);
+            data.setITotalTime(data.getITotalTime() + iProcessTime);
+            data.setTotalCalls(data.getTotalCalls() + 1);
+        }
+
+
     }
 
     public static String generateKey(SoaHeader soaHeader) {
@@ -83,6 +97,8 @@ public class PlatformProcessDataFilter implements StatusFilter {
             data.setVersionName(soaHeader.getVersionName());
             data.setServerIP(IPUtils.localIp());
             data.setServerPort(SoaSystemEnvProperties.SOA_CONTAINER_PORT);
+
+            data.setPeriod((int) period / 1000 / 60);
 
             processDataMap.put(key, data);
         }
