@@ -15,6 +15,11 @@ service MonitorService {
     /**
     * 上送平台处理数据
     **/
-    void uploadPlatformProcessData(1:list<monitor_domain.PlatformProcessData> platformProcessDatas)
+    void uploadPlatformProcessData(1:list<monitor_domain.PlatformProcessData> platformProcessDatas),
+
+    /**
+    * 上送DataSource信息
+    **/
+    void uploadDataSourceStat(1:list<monitor_domain.DataSourceStat> dataSourceStat)
 
 }
