@@ -4,6 +4,7 @@ import com.isuwang.soa.container.filter.PlatformProcessDataFilter;
 import com.isuwang.soa.core.Context;
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.monitor.api.domain.PlatformProcessData;
+import com.isuwang.soa.monitor.api.domain.PlatformProcessDataAtomic;
 import io.netty.buffer.ByteBuf;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
@@ -91,7 +92,7 @@ public class TSoaTransport extends TTransport {
          */
         final Context context = Context.Factory.getCurrentInstance();
         SoaHeader soaHeader = context.getHeader();
-        PlatformProcessData data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
-        data.setResponseFlow(data.getResponseFlow() + length);
+        PlatformProcessDataAtomic data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
+        data.getResponseFlow().addAndGet(length);
     }
 }

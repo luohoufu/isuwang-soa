@@ -3,6 +3,7 @@ package com.isuwang.soa.container.netty;
 import com.isuwang.soa.container.filter.PlatformProcessDataFilter;
 import com.isuwang.soa.core.*;
 import com.isuwang.soa.monitor.api.domain.PlatformProcessData;
+import com.isuwang.soa.monitor.api.domain.PlatformProcessDataAtomic;
 import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.RegistryAgentProxy;
 import io.netty.buffer.ByteBuf;
@@ -139,8 +140,8 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             if (inputBuf.refCnt() > 0)
                 inputBuf.release();
 
-            PlatformProcessData data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
-            data.setSucceedCalls(data.getSucceedCalls() + 1);
+            PlatformProcessDataAtomic data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
+            data.getSucceedCalls().incrementAndGet();
 
         } catch (SoaException e) {
             LOGGER.error(e.getMessage(), e);
@@ -158,11 +159,12 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
                 outputSoaTransport.close();
 
             Long platformProcessTime = System.currentTimeMillis() - startTime;
-            PlatformProcessData data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
-            data.setRequestFlow(requestLength);
-            data.setPTotalTime(data.getPTotalTime() + platformProcessTime);
-            data.setPMaxTime(data.getPMaxTime() > platformProcessTime ? data.getPMaxTime() : platformProcessTime);
-            data.setPMinTime(data.getPMinTime() < platformProcessTime ? data.getPMinTime() : platformProcessTime);
+            PlatformProcessDataAtomic data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
+            data.getRequestFlow().addAndGet(requestLength);
+
+            data.getpMaxTime().set(data.getpMaxTime().get() > platformProcessTime ? data.getpMaxTime().get() : platformProcessTime);
+            data.getpMinTime().set(data.getpMinTime().get() < platformProcessTime ? data.getpMinTime().get() : platformProcessTime);
+            data.getpTotalTime().addAndGet(platformProcessTime);
 
             Context.Factory.removeCurrentInstance();
         }
@@ -227,8 +229,8 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
                 ctx.writeAndFlush(outputBuf);
 
-                PlatformProcessData data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
-                data.setFailCalls(data.getFailCalls() + 1);
+                PlatformProcessDataAtomic data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
+                data.getFailCalls().incrementAndGet();
 
             } catch (Throwable e1) {
                 LOGGER.error(e1.getMessage(), e1);
