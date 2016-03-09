@@ -70,6 +70,13 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
         Long startTime = System.currentTimeMillis();
 
+        /**
+         * get the length of the request
+         */
+        int readerIndex = inputBuf.readerIndex();
+        int requestLength = inputBuf.readInt();
+        inputBuf.readerIndex(readerIndex);
+
         final Context context = Context.Factory.getNewInstance();
         final SoaHeader soaHeader = new SoaHeader();
         final TSoaTransport inputSoaTransport = new TSoaTransport(inputBuf);
@@ -98,9 +105,9 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             }
 
             if (useThreadPool && b) {
-                executorService.execute(() -> processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime));
+                executorService.execute(() -> processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, requestLength));
             } else
-                processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime);
+                processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, requestLength);
         } finally {
             if (inputSoaTransport.isOpen())
                 inputSoaTransport.close();
@@ -109,7 +116,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         }
     }
 
-    protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, Context context, Long startTime) {
+    protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, Context context, Long startTime, Integer requestLength) {
         final ByteBuf outputBuf = ctx.alloc().buffer(8192);
 
         Context.Factory.setCurrentInstance(context);
@@ -152,6 +159,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
             Long platformProcessTime = System.currentTimeMillis() - startTime;
             PlatformProcessData data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
+            data.setRequestFlow(requestLength);
             data.setPTotalTime(data.getPTotalTime() + platformProcessTime);
             data.setPMaxTime(data.getPMaxTime() > platformProcessTime ? data.getPMaxTime() : platformProcessTime);
             data.setPMinTime(data.getPMinTime() < platformProcessTime ? data.getPMinTime() : platformProcessTime);
