@@ -66,6 +66,36 @@
                 </fields>
             </response>
         </method>
+        <method name="uploadDataSourceStat">
+            <doc>
+
+ 上送DataSource信息
+</doc>
+            <request name="uploadDataSourceStat_args">
+                <fields>
+                    <field tag="1" name="dataSourceStat" optional="false" privacy="false">
+                        <dataType>
+                            <kind>LIST</kind>
+                            <valueType>
+<kind>STRUCT</kind>
+<ref>com.isuwang.soa.monitor.api.domain.DataSourceStat</ref>
+                            </valueType>
+                        </dataType>
+                        <doc></doc>
+                    </field>
+                </fields>
+            </request>
+            <response name="uploadDataSourceStat_result">
+                <fields>
+                    <field tag="0" name="success" optional="false" privacy="false">
+                        <dataType>
+                            <kind>VOID</kind>
+                        </dataType>
+                        <doc></doc>
+                    </field>
+                </fields>
+            </response>
+        </method>
     </methods>
     <structs>
         <struct namespace="com.isuwang.soa.monitor.api.domain" name="QPSStat">
@@ -305,6 +335,158 @@
                     <doc>
 
  响应的流量(单位:字节)
+</doc>
+                </field>
+            </fields>
+        </struct>
+        <struct namespace="com.isuwang.soa.monitor.api.domain" name="DataSourceStat">
+            <doc>
+
+ DataSource Stat
+</doc>
+            <fields>
+                <field tag="1" name="period" optional="false" privacy="false">
+                    <dataType>
+                        <kind>INTEGER</kind>
+                    </dataType>
+                    <doc>
+
+ 时间间隔:单位分钟
+</doc>
+                </field>
+                <field tag="2" name="analysisTime" optional="false" privacy="false">
+                    <dataType>
+                        <kind>LONG</kind>
+                    </dataType>
+                    <doc>
+
+ 统计分析时间(时间戳)
+</doc>
+                </field>
+                <field tag="3" name="serverIP" optional="false" privacy="false">
+                    <dataType>
+                        <kind>STRING</kind>
+                    </dataType>
+                    <doc>
+
+ 服务器IP
+</doc>
+                </field>
+                <field tag="4" name="serverPort" optional="false" privacy="false">
+                    <dataType>
+                        <kind>INTEGER</kind>
+                    </dataType>
+                    <doc>
+
+ 服务器端口
+</doc>
+                </field>
+                <field tag="5" name="url" optional="false" privacy="false">
+                    <dataType>
+                        <kind>STRING</kind>
+                    </dataType>
+                    <doc>
+
+ 连接地址
+</doc>
+                </field>
+                <field tag="6" name="userName" optional="false" privacy="false">
+                    <dataType>
+                        <kind>STRING</kind>
+                    </dataType>
+                    <doc>
+
+ 用户名
+</doc>
+                </field>
+                <field tag="7" name="identity" optional="false" privacy="false">
+                    <dataType>
+                        <kind>STRING</kind>
+                    </dataType>
+                    <doc>
+
+ 编号
+</doc>
+                </field>
+                <field tag="8" name="dbType" optional="false" privacy="false">
+                    <dataType>
+                        <kind>STRING</kind>
+                    </dataType>
+                    <doc>
+
+ 数据库类型
+</doc>
+                </field>
+                <field tag="9" name="poolingCount" optional="false" privacy="false">
+                    <dataType>
+                        <kind>INTEGER</kind>
+                    </dataType>
+                    <doc>
+
+ 池中连接数
+</doc>
+                </field>
+                <field tag="10" name="poolingPeak" optional="true" privacy="false">
+                    <dataType>
+                        <kind>INTEGER</kind>
+                    </dataType>
+                    <doc>
+
+ 池中连接数峰值
+</doc>
+                </field>
+                <field tag="11" name="poolingPeakTime" optional="true" privacy="false">
+                    <dataType>
+                        <kind>LONG</kind>
+                    </dataType>
+                    <doc>
+
+ 池中连接数峰值时间
+</doc>
+                </field>
+                <field tag="13" name="activeCount" optional="false" privacy="false">
+                    <dataType>
+                        <kind>INTEGER</kind>
+                    </dataType>
+                    <doc>
+
+ 活跃连接数
+</doc>
+                </field>
+                <field tag="14" name="activePeak" optional="true" privacy="false">
+                    <dataType>
+                        <kind>INTEGER</kind>
+                    </dataType>
+                    <doc>
+
+ 活跃连接数峰值
+</doc>
+                </field>
+                <field tag="15" name="activePeakTime" optional="true" privacy="false">
+                    <dataType>
+                        <kind>LONG</kind>
+                    </dataType>
+                    <doc>
+
+ 活跃连接数峰值时间
+</doc>
+                </field>
+                <field tag="16" name="executeCount" optional="false" privacy="false">
+                    <dataType>
+                        <kind>INTEGER</kind>
+                    </dataType>
+                    <doc>
+
+ 执行数
+</doc>
+                </field>
+                <field tag="17" name="errorCount" optional="false" privacy="false">
+                    <dataType>
+                        <kind>INTEGER</kind>
+                    </dataType>
+                    <doc>
+
+ 错误数
 </doc>
                 </field>
             </fields>

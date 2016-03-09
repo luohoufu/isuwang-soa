@@ -1,6 +1,7 @@
 package com.isuwang.soa.monitor.influxdb.service;
 
 import com.isuwang.soa.core.SoaException;
+import com.isuwang.soa.monitor.api.domain.DataSourceStat;
 import com.isuwang.soa.monitor.api.domain.PlatformProcessData;
 import com.isuwang.soa.monitor.api.domain.QPSStat;
 import com.isuwang.soa.monitor.api.service.MonitorService;
@@ -84,6 +85,40 @@ public class MonitorServiceImpl implements MonitorService {
                     .field("failCalls", processData.getFailCalls())
                     .field("requestFlow", processData.getRequestFlow())
                     .field("responseFlow", processData.getResponseFlow())
+                    .build();
+
+            batchPoints.point(point);
+        }
+
+        influxDB.write(batchPoints);
+    }
+
+    @Override
+    public void uploadDataSourceStat(List<DataSourceStat> dataSourceStat) throws SoaException {
+        BatchPoints batchPoints = BatchPoints
+                .database(dbName)
+                .retentionPolicy("default")
+                .consistency(InfluxDB.ConsistencyLevel.ALL)
+                .build();
+
+        for (DataSourceStat stat : dataSourceStat) {
+            Point point = Point.measurement("datasource_stat")
+                    .tag("period", stat.getPeriod().toString())
+                    .tag("server_ip", stat.getServerIP())
+                    .tag("server_port", stat.getServerPort().toString())
+                    .tag("url", stat.getUrl())
+                    .tag("user_name", stat.getUserName())
+                    .tag("identity", stat.getIdentity())
+                    .tag("db_type", stat.getDbType())
+                    .tag("poolingPeakTime", stat.getPoolingPeakTime().isPresent() ? stat.getPoolingPeakTime().get().toString() : "")
+                    .tag("activePeakTime", stat.getActivePeakTime().isPresent() ? stat.getActivePeakTime().get().toString() : "")
+                    .time(stat.getAnalysisTime(), TimeUnit.MILLISECONDS)
+                    .field("pooling_count", stat.getPoolingCount())
+                    .field("active_count", stat.getActiveCount())
+                    .field("executeCount", stat.getExecuteCount())
+                    .field("errorCount", stat.getErrorCount())
+                    .field("poolingPeak", stat.getPoolingPeak().isPresent() ? stat.getPoolingPeak().get() : 0)
+                    .field("activePeak", stat.getActivePeak().isPresent() ? stat.getActivePeak().get() : 0)
                     .build();
 
             batchPoints.point(point);

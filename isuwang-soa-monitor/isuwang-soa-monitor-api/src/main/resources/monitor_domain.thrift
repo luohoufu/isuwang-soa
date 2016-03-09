@@ -138,3 +138,89 @@ struct PlatformProcessData {
     20:i32 responseFlow
 
 }
+
+/**
+* DataSource Stat
+**/
+struct DataSourceStat {
+
+    /**
+    * 时间间隔:单位分钟
+    **/
+    1:i32 period,
+
+    /**
+    * 统计分析时间(时间戳)
+    **/
+    2:i64 analysisTime,
+
+    /**
+    * 服务器IP
+    **/
+    3:string serverIP,
+
+    /**
+    * 服务器端口
+    **/
+    4:i32 serverPort,
+
+    /**
+    * 连接地址
+    **/
+    5:string url,
+
+    /**
+    * 用户名
+    **/
+    6:string userName,
+
+    /**
+    * 编号
+    **/
+    7:string identity,
+
+    /**
+    * 数据库类型
+    **/
+    8:string dbType,
+
+    /**
+    * 池中连接数
+    **/
+    9:i32 poolingCount,
+
+    /**
+    * 池中连接数峰值
+    **/
+    10:optional i32 poolingPeak,
+
+    /**
+    * 池中连接数峰值时间
+    **/
+    11:optional i64 poolingPeakTime,
+
+    /**
+    * 活跃连接数
+    **/
+    13:i32 activeCount,
+
+    /**
+    * 活跃连接数峰值
+    **/
+    14:optional i32 activePeak,
+
+    /**
+    * 活跃连接数峰值时间
+    **/
+    15:optional i64 activePeakTime,
+
+    /**
+    * 执行数
+    **/
+    16:i32 executeCount,
+
+    /**
+    * 错误数
+    **/
+    17:i32 errorCount
+}
