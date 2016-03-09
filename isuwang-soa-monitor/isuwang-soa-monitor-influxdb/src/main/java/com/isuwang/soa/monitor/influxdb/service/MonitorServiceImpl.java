@@ -39,9 +39,14 @@ public class MonitorServiceImpl implements MonitorService {
                 .consistency(InfluxDB.ConsistencyLevel.ALL)
                 .build();
 
+        double value = 0.0;
+
+        if (qpsStat.getCallCount() != 0)// value = callcount / period
+            value = new BigDecimal(qpsStat.getCallCount().toString()).divide(new BigDecimal(qpsStat.getPeriod().toString()), BigDecimal.ROUND_DOWN).doubleValue();
+
         Point point = Point.measurement("qps")
                 .time(qpsStat.getAnalysisTime(), TimeUnit.MILLISECONDS)
-                .field("value", new BigDecimal(qpsStat.getCallCount().toString()).divide(new BigDecimal(qpsStat.getPeriod().toString())).doubleValue())
+                .field("value", value)
                 .build();
 
         batchPoints.point(point);
