@@ -8,7 +8,7 @@ public class QPSStat {
     /**
      * 时间间隔:单位分钟
      **/
-    public Integer period;
+    private Integer period;
 
     public Integer getPeriod() {
         return this.period;
@@ -22,7 +22,7 @@ public class QPSStat {
     /**
      * 统计分析时间(时间戳)
      **/
-    public Long analysisTime;
+    private Long analysisTime;
 
     public Long getAnalysisTime() {
         return this.analysisTime;
@@ -36,7 +36,7 @@ public class QPSStat {
     /**
      * 服务器IP
      **/
-    public String serverIP;
+    private String serverIP;
 
     public String getServerIP() {
         return this.serverIP;
@@ -50,7 +50,7 @@ public class QPSStat {
     /**
      * 服务器端口
      **/
-    public Integer serverPort;
+    private Integer serverPort;
 
     public Integer getServerPort() {
         return this.serverPort;
@@ -64,7 +64,7 @@ public class QPSStat {
     /**
      * 调用次数
      **/
-    public Integer callCount;
+    private Integer callCount;
 
     public Integer getCallCount() {
         return this.callCount;
