@@ -1,6 +1,8 @@
 package com.isuwang.soa.container.netty;
 
+import com.isuwang.soa.container.filter.PlatformProcessDataFilter;
 import com.isuwang.soa.core.*;
+import com.isuwang.soa.monitor.api.domain.PlatformProcessData;
 import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.RegistryAgentProxy;
 import io.netty.buffer.ByteBuf;
@@ -65,6 +67,9 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     }
 
     protected void readRequestHeader(ChannelHandlerContext ctx, ByteBuf inputBuf) throws TException {
+
+        Long startTime = System.currentTimeMillis();
+
         final Context context = Context.Factory.getNewInstance();
         final SoaHeader soaHeader = new SoaHeader();
         final TSoaTransport inputSoaTransport = new TSoaTransport(inputBuf);
@@ -93,9 +98,9 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             }
 
             if (useThreadPool && b) {
-                executorService.execute(() -> processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context));
+                executorService.execute(() -> processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime));
             } else
-                processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context);
+                processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime);
         } finally {
             if (inputSoaTransport.isOpen())
                 inputSoaTransport.close();
@@ -104,7 +109,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         }
     }
 
-    protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, Context context) {
+    protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, Context context, Long startTime) {
         final ByteBuf outputBuf = ctx.alloc().buffer(8192);
 
         Context.Factory.setCurrentInstance(context);
@@ -126,6 +131,10 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
             if (inputBuf.refCnt() > 0)
                 inputBuf.release();
+
+            PlatformProcessData data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
+            data.setSucceedCalls(data.getSucceedCalls() + 1);
+
         } catch (SoaException e) {
             LOGGER.error(e.getMessage(), e);
 
@@ -140,6 +149,12 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
             if (outputSoaTransport != null)
                 outputSoaTransport.close();
+
+            Long platformProcessTime = System.currentTimeMillis() - startTime;
+            PlatformProcessData data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
+            data.setPTotalTime(data.getPTotalTime() + platformProcessTime);
+            data.setPMaxTime(data.getPMaxTime() > platformProcessTime ? data.getPMaxTime() : platformProcessTime);
+            data.setPMinTime(data.getPMinTime() < platformProcessTime ? data.getPMinTime() : platformProcessTime);
 
             Context.Factory.removeCurrentInstance();
         }
@@ -203,6 +218,10 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
                 outputSoaTransport.flush();
 
                 ctx.writeAndFlush(outputBuf);
+
+                PlatformProcessData data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
+                data.setFailCalls(data.getFailCalls() + 1);
+
             } catch (Throwable e1) {
                 LOGGER.error(e1.getMessage(), e1);
             }

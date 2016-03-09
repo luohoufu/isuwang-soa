@@ -8,7 +8,7 @@ public class PlatformProcessData {
     /**
      * 时间间隔:单位分钟
      **/
-    public Integer period;
+    private Integer period;
 
     public Integer getPeriod() {
         return this.period;
@@ -22,7 +22,7 @@ public class PlatformProcessData {
     /**
      * 统计分析时间(时间戳)
      **/
-    public Long analysisTime;
+    private Long analysisTime;
 
     public Long getAnalysisTime() {
         return this.analysisTime;
@@ -36,7 +36,7 @@ public class PlatformProcessData {
     /**
      * 服务名称
      **/
-    public String serviceName;
+    private String serviceName;
 
     public String getServiceName() {
         return this.serviceName;
@@ -50,7 +50,7 @@ public class PlatformProcessData {
     /**
      * 方法名称
      **/
-    public String methodName;
+    private String methodName;
 
     public String getMethodName() {
         return this.methodName;
@@ -64,7 +64,7 @@ public class PlatformProcessData {
     /**
      * 版本号
      **/
-    public String versionName;
+    private String versionName;
 
     public String getVersionName() {
         return this.versionName;
@@ -78,7 +78,7 @@ public class PlatformProcessData {
     /**
      * 服务器IP
      **/
-    public String serverIP;
+    private String serverIP;
 
     public String getServerIP() {
         return this.serverIP;
@@ -92,7 +92,7 @@ public class PlatformProcessData {
     /**
      * 服务器端口
      **/
-    public Integer serverPort;
+    private Integer serverPort;
 
     public Integer getServerPort() {
         return this.serverPort;
@@ -106,7 +106,7 @@ public class PlatformProcessData {
     /**
      * 平台最小耗时(单位:毫秒)
      **/
-    public Long pMinTime;
+    private Long pMinTime;
 
     public Long getPMinTime() {
         return this.pMinTime;
@@ -120,7 +120,7 @@ public class PlatformProcessData {
     /**
      * 平台最大耗时(单位:毫秒)
      **/
-    public Long pMaxTime;
+    private Long pMaxTime;
 
     public Long getPMaxTime() {
         return this.pMaxTime;
@@ -134,7 +134,7 @@ public class PlatformProcessData {
     /**
      * 平台平均耗时(单位:毫秒)
      **/
-    public Long pAverageTime;
+    private Long pAverageTime;
 
     public Long getPAverageTime() {
         return this.pAverageTime;
@@ -148,7 +148,7 @@ public class PlatformProcessData {
     /**
      * 平台总耗时(单位:毫秒)
      **/
-    public Long pTotalTime;
+    private Long pTotalTime;
 
     public Long getPTotalTime() {
         return this.pTotalTime;
@@ -162,7 +162,7 @@ public class PlatformProcessData {
     /**
      * 接口服务最小耗时(单位:毫秒)
      **/
-    public Long iMinTime;
+    private Long iMinTime;
 
     public Long getIMinTime() {
         return this.iMinTime;
@@ -176,7 +176,7 @@ public class PlatformProcessData {
     /**
      * 接口服务最大耗时(单位:毫秒)
      **/
-    public Long iMaxTime;
+    private Long iMaxTime;
 
     public Long getIMaxTime() {
         return this.iMaxTime;
@@ -190,7 +190,7 @@ public class PlatformProcessData {
     /**
      * 接口服务平均耗时(单位:毫秒)
      **/
-    public Long iAverageTime;
+    private Long iAverageTime;
 
     public Long getIAverageTime() {
         return this.iAverageTime;
@@ -204,7 +204,7 @@ public class PlatformProcessData {
     /**
      * 接口服务总耗时(单位:毫秒)
      **/
-    public Long iTotalTime;
+    private Long iTotalTime;
 
     public Long getITotalTime() {
         return this.iTotalTime;
@@ -218,7 +218,7 @@ public class PlatformProcessData {
     /**
      * 总调用次数
      **/
-    public Integer totalCalls;
+    private Integer totalCalls;
 
     public Integer getTotalCalls() {
         return this.totalCalls;
@@ -232,7 +232,7 @@ public class PlatformProcessData {
     /**
      * 成功调用次数
      **/
-    public Integer succeedCalls;
+    private Integer succeedCalls;
 
     public Integer getSucceedCalls() {
         return this.succeedCalls;
@@ -246,7 +246,7 @@ public class PlatformProcessData {
     /**
      * 失败调用次数
      **/
-    public Integer failCalls;
+    private Integer failCalls;
 
     public Integer getFailCalls() {
         return this.failCalls;
@@ -260,7 +260,7 @@ public class PlatformProcessData {
     /**
      * 请求的流量(单位:字节)
      **/
-    public Integer requestFlow;
+    private Integer requestFlow;
 
     public Integer getRequestFlow() {
         return this.requestFlow;
@@ -274,7 +274,7 @@ public class PlatformProcessData {
     /**
      * 响应的流量(单位:字节)
      **/
-    public Integer responseFlow;
+    private Integer responseFlow;
 
     public Integer getResponseFlow() {
         return this.responseFlow;

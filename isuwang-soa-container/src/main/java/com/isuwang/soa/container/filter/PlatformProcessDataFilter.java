@@ -33,7 +33,7 @@ public class PlatformProcessDataFilter implements StatusFilter {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MINUTE, 1);
+        calendar.add(Calendar.MINUTE, 3);
 
         timer.schedule(new TimerTask() {
             @Override
@@ -43,11 +43,15 @@ public class PlatformProcessDataFilter implements StatusFilter {
                     for (PlatformProcessData data : dataList) {
                         data.setAnalysisTime(System.currentTimeMillis());
                         data.setIAverageTime(data.getITotalTime() / data.getTotalCalls());
+                        data.setPAverageTime(data.getPTotalTime() / data.getTotalCalls());
                     }
-                    new MonitorServiceClient().uploadPlatformProcessData(dataList);
+                    if (dataList.size() > 0)
+                        new MonitorServiceClient().uploadPlatformProcessData(dataList);
 
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage());
+                } finally {
+                    processDataMap.clear();
                 }
             }
         }, calendar.getTime(), period);
@@ -66,16 +70,16 @@ public class PlatformProcessDataFilter implements StatusFilter {
         SoaHeader soaHeader = Context.Factory.getCurrentInstance().getHeader();
         PlatformProcessData data = getPlatformPorcessData(soaHeader);
 
-
         try {
             chain.doFilter();
         } finally {
 
             Long iProcessTime = (Long) chain.getAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME);
-
-            data.setIMaxTime(data.getIMinTime() > iProcessTime ? data.getIMaxTime() : iProcessTime);
-            data.setIMinTime(data.getIMinTime() < iProcessTime ? data.getIMinTime() : iProcessTime);
-            data.setITotalTime(data.getITotalTime() + iProcessTime);
+            if (iProcessTime != null) {
+                data.setIMaxTime(data.getIMaxTime() > iProcessTime ? data.getIMaxTime() : iProcessTime);
+                data.setIMinTime(data.getIMinTime() < iProcessTime ? data.getIMinTime() : iProcessTime);
+                data.setITotalTime(data.getITotalTime() + iProcessTime);
+            }
             data.setTotalCalls(data.getTotalCalls() + 1);
         }
 
@@ -99,6 +103,23 @@ public class PlatformProcessDataFilter implements StatusFilter {
             data.setServerPort(SoaSystemEnvProperties.SOA_CONTAINER_PORT);
 
             data.setPeriod((int) period / 1000 / 60);
+
+            data.setIAverageTime(0L);
+            data.setIMaxTime(0L);
+            data.setIMinTime(1000000L);
+            data.setITotalTime(0L);
+
+            data.setPAverageTime(0L);
+            data.setPMaxTime(0L);
+            data.setPMinTime(1000000L);
+            data.setPTotalTime(0L);
+
+            data.setRequestFlow(0);
+            data.setResponseFlow(0);
+
+            data.setTotalCalls(0);
+            data.setSucceedCalls(0);
+            data.setFailCalls(0);
 
             processDataMap.put(key, data);
         }
