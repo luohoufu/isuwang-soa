@@ -12,5 +12,6 @@
         <soa-server-filter name="ProviderTimesFilter" ref="com.isuwang.soa.container.filter.ProviderTimesFilter"/>
         <soa-server-filter name="SlowTimeServiceFilter" ref="com.isuwang.soa.container.filter.SlowTimeServiceFilter"/>
         <soa-server-filter name="QPSStatFilter" ref="com.isuwang.soa.container.filter.QPSStatFilter"/>
+        <soa-server-filter name="PlatformProcessDataFilter" ref="com.isuwang.soa.container.filter.PlatformProcessDataFilter"/>
     </soa-filters>
 </soa-server>
