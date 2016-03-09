@@ -25,6 +25,8 @@ public class ContainerFilterChain implements FilterChain {
     public static final String ATTR_KEY_CONTEXT = "context";
     public static final String ATTR_KEY_HEADER = "header";
     public static final String ATTR_KEY_LOGID = "logid";
+    public static final String ATTR_KEY_I_PROCESSTIME = "iTime";
+    public static final String ATTR_KEY_P_PROCESSTIME = "pTime";
 
     @Override
     public void doFilter() throws TException {
