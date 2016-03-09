@@ -73,9 +73,9 @@ public class PlatformProcessDataFilter implements StatusFilter {
 
             Long iProcessTime = (Long) chain.getAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME);
 
-            data.setIMaxTime(data.getIMinTime() > iProcessTime ? data.getIMaxTime() : iProcessTime);
-            data.setIMinTime(data.getIMinTime() < iProcessTime ? data.getIMinTime() : iProcessTime);
-            data.setITotalTime(data.getITotalTime() + iProcessTime);
+            data.setIMaxTime(data.getIMinTime() != null && data.getIMinTime() > iProcessTime ? data.getIMaxTime() : iProcessTime);
+            data.setIMinTime(data.getIMinTime() != null && data.getIMinTime() < iProcessTime ? data.getIMinTime() : iProcessTime);
+            data.setITotalTime(((data.getITotalTime() == null) ? 0 : data.getITotalTime()) + iProcessTime);
             data.setTotalCalls(data.getTotalCalls() + 1);
         }
 
