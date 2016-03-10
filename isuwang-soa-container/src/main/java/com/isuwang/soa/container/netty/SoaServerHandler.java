@@ -1,9 +1,8 @@
 package com.isuwang.soa.container.netty;
 
-import com.isuwang.soa.container.filter.PlatformProcessDataFilter;
+import com.isuwang.soa.container.util.PlatformProcessDataFactory;
 import com.isuwang.soa.core.*;
 import com.isuwang.soa.monitor.api.domain.PlatformProcessData;
-import com.isuwang.soa.monitor.api.domain.PlatformProcessDataAtomic;
 import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.RegistryAgentProxy;
 import io.netty.buffer.ByteBuf;
@@ -68,8 +67,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     }
 
     protected void readRequestHeader(ChannelHandlerContext ctx, ByteBuf inputBuf) throws TException {
-
-        Long startTime = System.currentTimeMillis();
+        final Long startTime = System.currentTimeMillis();
 
         /**
          * get the length of the request
@@ -82,8 +80,11 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         final SoaHeader soaHeader = new SoaHeader();
         final TSoaTransport inputSoaTransport = new TSoaTransport(inputBuf);
         context.setHeader(soaHeader);
-
         Context.Factory.setCurrentInstance(context);
+
+        final PlatformProcessData processData = PlatformProcessDataFactory.getNewInstance(soaHeader);
+        processData.setRequestFlow(requestLength + Integer.BYTES);
+        PlatformProcessDataFactory.setCurrentInstance(processData);
 
         try {
             final TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport);
@@ -96,7 +97,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             boolean b = true;
 
             String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".producer";
-            Map<ConfigKey, Object> configs = RegistryAgentProxy.getCurrentInstance().getConfig().get(serviceKey);
+            Map<ConfigKey, Object> configs = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Server).getConfig().get(serviceKey);
 
             if (null != configs) {
                 Boolean aBoolean = (Boolean) configs.get(ConfigKey.ThreadPool);
@@ -106,27 +107,31 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             }
 
             if (useThreadPool && b) {
-                executorService.execute(() -> processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, requestLength));
+                executorService.execute(() -> processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, processData));
             } else
-                processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, requestLength);
+                processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, processData);
         } finally {
             if (inputSoaTransport.isOpen())
                 inputSoaTransport.close();
 
             Context.Factory.removeCurrentInstance();
+            PlatformProcessDataFactory.removeCurrentInstance();
         }
     }
 
-    protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, Context context, Long startTime, Integer requestLength) {
+    protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, Context context, Long startTime, PlatformProcessData processData) {
         final ByteBuf outputBuf = ctx.alloc().buffer(8192);
 
         Context.Factory.setCurrentInstance(context);
+        PlatformProcessDataFactory.setCurrentInstance(processData);
 
         SoaHeader soaHeader = context.getHeader();
 
         final TSoaTransport outputSoaTransport = new TSoaTransport(outputBuf);
         TSoaServiceProtocol outputProtocol = null;
 
+        boolean isSucceed = false;
+
         try {
             outputProtocol = new TSoaServiceProtocol(outputSoaTransport);
             SoaBaseProcessor<?> soaProcessor = soaProcessors.get(soaHeader.getServiceName());
@@ -140,9 +145,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             if (inputBuf.refCnt() > 0)
                 inputBuf.release();
 
-            PlatformProcessDataAtomic data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
-            data.getSucceedCalls().incrementAndGet();
-
+            isSucceed = true;
         } catch (SoaException e) {
             LOGGER.error(e.getMessage(), e);
 
@@ -158,64 +161,31 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             if (outputSoaTransport != null)
                 outputSoaTransport.close();
 
-            Long platformProcessTime = System.currentTimeMillis() - startTime;
-            PlatformProcessDataAtomic data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
-            data.getRequestFlow().addAndGet(requestLength);
+            final boolean finalIsSucceed = isSucceed;
+            PlatformProcessDataFactory.update(soaHeader, cacheProcessData -> {
+                long totalTime = System.currentTimeMillis() - startTime;
 
-            data.getpMaxTime().set(data.getpMaxTime().get() > platformProcessTime ? data.getpMaxTime().get() : platformProcessTime);
-            data.getpMinTime().set(data.getpMinTime().get() < platformProcessTime ? data.getpMinTime().get() : platformProcessTime);
-            data.getpTotalTime().addAndGet(platformProcessTime);
+                if (cacheProcessData.getPMinTime() == 0 || totalTime < cacheProcessData.getPMinTime())
+                    cacheProcessData.setPMinTime(cacheProcessData.getPMinTime());
+                if (cacheProcessData.getPMaxTime() == 0 || totalTime > cacheProcessData.getPMaxTime())
+                    cacheProcessData.setPMaxTime(cacheProcessData.getPMaxTime());
+                cacheProcessData.setPTotalTime(cacheProcessData.getPTotalTime() + totalTime);
+
+                if (finalIsSucceed)
+                    cacheProcessData.setSucceedCalls(cacheProcessData.getSucceedCalls() + 1);
+                else
+                    cacheProcessData.setFailCalls(cacheProcessData.getFailCalls() + 1);
+
+                cacheProcessData.setTotalCalls(cacheProcessData.getTotalCalls() + 1);
+
+                cacheProcessData.setRequestFlow(cacheProcessData.getRequestFlow() + processData.getRequestFlow());
+                cacheProcessData.setResponseFlow(cacheProcessData.getResponseFlow() + outputBuf.writerIndex());
+            });
 
             Context.Factory.removeCurrentInstance();
+            PlatformProcessDataFactory.removeCurrentInstance();
         }
     }
-
-    /*protected void callService(ChannelHandlerContext ctx, ByteBuf inputBuf) {
-        final ByteBuf outputBuf = ctx.alloc().buffer(8192);
-        final Context context = Context.Factory.getCurrentInstance();
-        final SoaHeader soaHeader = new SoaHeader();
-        final TSoaTransport inputSoaTransport = new TSoaTransport(inputBuf);
-        final TSoaTransport outputSoaTransport = new TSoaTransport(outputBuf);
-
-        context.setHeader(soaHeader);
-
-        TSoaServiceProtocol inputProtocol, outputProtocol = null;
-
-        try {
-            inputProtocol = new TSoaServiceProtocol(inputSoaTransport);
-            outputProtocol = new TSoaServiceProtocol(outputSoaTransport);
-            TMessage tMessage = inputProtocol.readMessageBegin();
-
-            context.setSeqid(tMessage.seqid);
-
-            SoaBaseProcessor<?> soaProcessor = soaProcessors.get(soaHeader.getServiceName());
-
-            soaProcessor.process(inputProtocol, outputProtocol);
-
-            outputSoaTransport.flush();
-
-            ctx.writeAndFlush(outputBuf);
-
-            if (inputBuf.refCnt() > 0)
-                inputBuf.release();
-        } catch (SoaException e) {
-            LOGGER.error(e.getMessage(), e);
-
-            writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, e);
-        } catch (Throwable e) {
-            LOGGER.error(e.getMessage(), e);
-
-            writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, new SoaException(SoaBaseCode.NotNull));
-        } finally {
-            if (inputSoaTransport != null)
-                inputSoaTransport.close();
-
-            if (outputSoaTransport != null)
-                outputSoaTransport.close();
-
-            Context.Factory.removeCurrentInstance();
-        }
-    }*/
 
     private void writeErrorMessage(ChannelHandlerContext ctx, ByteBuf outputBuf, Context context, SoaHeader soaHeader, TSoaTransport outputSoaTransport, TSoaServiceProtocol outputProtocol, SoaException e) {
         if (outputProtocol != null) {
@@ -228,10 +198,6 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
                 outputSoaTransport.flush();
 
                 ctx.writeAndFlush(outputBuf);
-
-                PlatformProcessDataAtomic data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
-                data.getFailCalls().incrementAndGet();
-
             } catch (Throwable e1) {
                 LOGGER.error(e1.getMessage(), e1);
             }

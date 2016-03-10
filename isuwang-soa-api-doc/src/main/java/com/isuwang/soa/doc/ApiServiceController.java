@@ -183,7 +183,7 @@ public class ApiServiceController {
     @ResponseBody
     public Service findService(@PathVariable String serviceName, @PathVariable String version, @PathVariable boolean refresh) {
         if (refresh) {
-            serviceCache.init();
+            serviceCache.reloadServices();
         }
         Service service = serviceCache.getService(serviceName, version);
         return service;

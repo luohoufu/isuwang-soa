@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class QPSStatFilter implements StatusFilter {
 
-    private final long period = 3 * 60 * 1000L;
+    private final long period = 5 * 1000L;
     private final AtomicInteger callCount = new AtomicInteger(0);
     private final Timer timer = new Timer("QPSStatFilter-Timer");
     private static final Logger LOGGER = LoggerFactory.getLogger(QPSStatFilter.class);
@@ -32,15 +32,17 @@ public class QPSStatFilter implements StatusFilter {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MINUTE, 3);
+        calendar.add(Calendar.MILLISECOND, (int) period);
 
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
+                    final long timeMillis = System.currentTimeMillis() / 1000 * 1000;
+
                     QPSStat qpsStat = new QPSStat();
-                    qpsStat.setPeriod((int) period / 1000 / 60);
-                    qpsStat.setAnalysisTime(System.currentTimeMillis());
+                    qpsStat.setPeriod((int) (period / 1000));
+                    qpsStat.setAnalysisTime(timeMillis);
                     qpsStat.setServerIP(IPUtils.localIp());
                     qpsStat.setServerPort(SoaSystemEnvProperties.SOA_CONTAINER_PORT);
                     qpsStat.setCallCount(callCount.get());

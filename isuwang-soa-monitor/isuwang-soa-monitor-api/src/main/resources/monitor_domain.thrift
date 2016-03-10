@@ -6,7 +6,7 @@ namespace java com.isuwang.soa.monitor.api.domain
 struct QPSStat {
 
     /**
-    * 时间间隔:单位分钟
+    * 时间间隔:单位秒
     **/
     1:i32 period,
 
@@ -145,7 +145,7 @@ struct PlatformProcessData {
 struct DataSourceStat {
 
     /**
-    * 时间间隔:单位分钟
+    * 时间间隔:单位秒
     **/
     1:i32 period,
 

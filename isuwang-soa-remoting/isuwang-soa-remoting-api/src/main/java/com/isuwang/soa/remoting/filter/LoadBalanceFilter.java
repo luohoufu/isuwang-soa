@@ -33,7 +33,7 @@ public class LoadBalanceFilter implements Filter {
 
         String callerInfo = null;
 
-        List<ServiceInfo> usableList = RegistryAgentProxy.getCurrentInstance().loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName());
+        List<ServiceInfo> usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName());
 
         String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
         LoadBalanceStratage balance = getLoadBalanceStratage(serviceKey) == null ? LoadBalanceStratage.LeastActive : getLoadBalanceStratage(serviceKey);
@@ -67,7 +67,7 @@ public class LoadBalanceFilter implements Filter {
     }
 
     private LoadBalanceStratage getLoadBalanceStratage(String key) {
-        Map<ConfigKey, Object> configs = RegistryAgentProxy.getCurrentInstance().getConfig().get(key);
+        Map<ConfigKey, Object> configs = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).getConfig().get(key);
         if (null != configs) {
             return LoadBalanceStratage.findByValue((String) configs.get(ConfigKey.LoadBalance));
         }

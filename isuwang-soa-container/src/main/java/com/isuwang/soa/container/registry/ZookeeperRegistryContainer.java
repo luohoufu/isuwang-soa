@@ -32,14 +32,7 @@ public class ZookeeperRegistryContainer implements Container {
     @Override
     @SuppressWarnings("unchecked")
     public void start() {
-        RegistryAgentProxy.setCurrentInstance(registryAgent);
-
-        /*
-        ZookeeperWatcher siw = new ZookeeperWatcher();
-        siw.usedByClent = false;
-        siw.init();
-        LOGGER.info("service info watcher started.");
-        */
+        RegistryAgentProxy.setCurrentInstance(RegistryAgentProxy.Type.Server, registryAgent);
 
         registryAgent.setProcessorMap(processorMap);
         registryAgent.start();

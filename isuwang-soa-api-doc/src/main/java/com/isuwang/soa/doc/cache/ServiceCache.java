@@ -33,11 +33,25 @@ public class ServiceCache {
     public static TreeMultimap<String, String> urlMappings = TreeMultimap.create();
 
     public void init() {
+        new Thread() {
+            @Override
+            public void run() {
+                // 延迟10秒
+                try {
+                    Thread.sleep(10 * 1000);
+                } catch (InterruptedException e) {
+                }
 
+                reloadServices();
+            }
+        }.start();
+    }
+
+    public void reloadServices() {
         final Map<String, Service> services = new TreeMap<>();
         urlMappings.clear();
 
-        Map<String, SoaBaseProcessor<?>> processorMap = RegistryAgentProxy.getCurrentInstance().getProcessorMap();
+        Map<String, SoaBaseProcessor<?>> processorMap = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Server).getProcessorMap();
 
         Set<String> keys = processorMap.keySet();
         for (String key : keys) {
@@ -57,11 +71,13 @@ public class ServiceCache {
                     LOGGER.error(e.getMessage(), e);
                 }
 
-                try (StringReader reader = new StringReader(metadata)) {
-                    Service serviceData = JAXB.unmarshal(reader, Service.class);
-                    loadResource(serviceData, services);
-                } catch (Exception e) {
-                    LOGGER.error("生成SERVICE出错", e);
+                if(metadata != null) {
+                    try (StringReader reader = new StringReader(metadata)) {
+                        Service serviceData = JAXB.unmarshal(reader, Service.class);
+                        loadResource(serviceData, services);
+                    } catch (Exception e) {
+                        LOGGER.error("生成SERVICE出错", e);
+                    }
                 }
             }
         }

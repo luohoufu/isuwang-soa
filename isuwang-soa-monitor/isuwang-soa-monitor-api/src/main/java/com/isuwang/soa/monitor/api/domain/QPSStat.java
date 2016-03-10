@@ -6,7 +6,7 @@ package com.isuwang.soa.monitor.api.domain;
 public class QPSStat {
 
     /**
-     * 时间间隔:单位分钟
+     * 时间间隔:单位秒
      **/
     private Integer period;
 

@@ -68,8 +68,8 @@ public class BaseServiceClient {
 
             Class<?> aClass = classLoader.loadClass(soaRegistry.getRef());
 
-            RegistryAgentProxy.setCurrentInstance((RegistryAgent) aClass.newInstance());
-            RegistryAgentProxy.getCurrentInstance().start();
+            RegistryAgentProxy.setCurrentInstance(RegistryAgentProxy.Type.Client, (RegistryAgent) aClass.newInstance());
+            RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).start();
             LOGGER.info("client load registry {} with path {}", soaRegistry.getName(), soaRegistry.getRef());
         } catch (Exception e) {
             LOGGER.error("client load registry error", e);
@@ -148,7 +148,7 @@ public class BaseServiceClient {
 
                 int failOverTimes = 0;
                 String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
-                Map<ConfigKey, Object> configs = RegistryAgentProxy.getCurrentInstance().getConfig().get(serviceKey);
+                Map<ConfigKey, Object> configs = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).getConfig().get(serviceKey);
                 if (null != configs) {
                     failOverTimes = (Integer) configs.get(ConfigKey.FailOver);
                 }

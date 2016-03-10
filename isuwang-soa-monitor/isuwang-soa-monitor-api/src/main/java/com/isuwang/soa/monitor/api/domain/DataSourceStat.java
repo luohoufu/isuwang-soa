@@ -8,7 +8,7 @@ import java.util.Optional;
 public class DataSourceStat {
 
     /**
-     * 时间间隔:单位分钟
+     * 时间间隔:单位秒
      **/
     public Integer period;
 
