@@ -38,7 +38,10 @@ public class DruidDataSourceMonitor {
             @Override
             public void run() {
                 try {
-                    final long millis = System.currentTimeMillis() / 1000 * 1000;
+                    final Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+                    final long millis = calendar.getTimeInMillis();
 
                     final DruidStatManagerFacade facade = DruidStatManagerFacade.getInstance();
 

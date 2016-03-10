@@ -66,7 +66,10 @@ public class PlatformProcessDataFilter implements StatusFilter {
         @Override
         public void run() {
             try {
-                final long timeMillis = System.currentTimeMillis() / 1000 * 1000;
+                final Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                final long timeMillis = calendar.getTimeInMillis();
 
                 final List<PlatformProcessData> dataList = new ArrayList<>();
 
