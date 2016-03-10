@@ -10,7 +10,7 @@ public class DataSourceStat {
     /**
      * 时间间隔:单位秒
      **/
-    public Integer period;
+    private Integer period;
 
     public Integer getPeriod() {
         return this.period;
@@ -24,7 +24,7 @@ public class DataSourceStat {
     /**
      * 统计分析时间(时间戳)
      **/
-    public Long analysisTime;
+    private Long analysisTime;
 
     public Long getAnalysisTime() {
         return this.analysisTime;
@@ -38,7 +38,7 @@ public class DataSourceStat {
     /**
      * 服务器IP
      **/
-    public String serverIP;
+    private String serverIP;
 
     public String getServerIP() {
         return this.serverIP;
@@ -52,7 +52,7 @@ public class DataSourceStat {
     /**
      * 服务器端口
      **/
-    public Integer serverPort;
+    private Integer serverPort;
 
     public Integer getServerPort() {
         return this.serverPort;
@@ -66,7 +66,7 @@ public class DataSourceStat {
     /**
      * 连接地址
      **/
-    public String url;
+    private String url;
 
     public String getUrl() {
         return this.url;
@@ -80,7 +80,7 @@ public class DataSourceStat {
     /**
      * 用户名
      **/
-    public String userName;
+    private String userName;
 
     public String getUserName() {
         return this.userName;
@@ -94,7 +94,7 @@ public class DataSourceStat {
     /**
      * 编号
      **/
-    public String identity;
+    private String identity;
 
     public String getIdentity() {
         return this.identity;
@@ -108,7 +108,7 @@ public class DataSourceStat {
     /**
      * 数据库类型
      **/
-    public String dbType;
+    private String dbType;
 
     public String getDbType() {
         return this.dbType;
@@ -122,7 +122,7 @@ public class DataSourceStat {
     /**
      * 池中连接数
      **/
-    public Integer poolingCount;
+    private Integer poolingCount;
 
     public Integer getPoolingCount() {
         return this.poolingCount;
@@ -136,7 +136,7 @@ public class DataSourceStat {
     /**
      * 池中连接数峰值
      **/
-    public Optional<Integer> poolingPeak = Optional.empty();
+    private Optional<Integer> poolingPeak = Optional.empty();
 
     public Optional<Integer> getPoolingPeak() {
         return this.poolingPeak;
@@ -150,7 +150,7 @@ public class DataSourceStat {
     /**
      * 池中连接数峰值时间
      **/
-    public Optional<Long> poolingPeakTime = Optional.empty();
+    private Optional<Long> poolingPeakTime = Optional.empty();
 
     public Optional<Long> getPoolingPeakTime() {
         return this.poolingPeakTime;
@@ -164,7 +164,7 @@ public class DataSourceStat {
     /**
      * 活跃连接数
      **/
-    public Integer activeCount;
+    private Integer activeCount;
 
     public Integer getActiveCount() {
         return this.activeCount;
@@ -178,7 +178,7 @@ public class DataSourceStat {
     /**
      * 活跃连接数峰值
      **/
-    public Optional<Integer> activePeak = Optional.empty();
+    private Optional<Integer> activePeak = Optional.empty();
 
     public Optional<Integer> getActivePeak() {
         return this.activePeak;
@@ -192,7 +192,7 @@ public class DataSourceStat {
     /**
      * 活跃连接数峰值时间
      **/
-    public Optional<Long> activePeakTime = Optional.empty();
+    private Optional<Long> activePeakTime = Optional.empty();
 
     public Optional<Long> getActivePeakTime() {
         return this.activePeakTime;
@@ -206,7 +206,7 @@ public class DataSourceStat {
     /**
      * 执行数
      **/
-    public Integer executeCount;
+    private Integer executeCount;
 
     public Integer getExecuteCount() {
         return this.executeCount;
@@ -220,7 +220,7 @@ public class DataSourceStat {
     /**
      * 错误数
      **/
-    public Integer errorCount;
+    private Integer errorCount;
 
     public Integer getErrorCount() {
         return this.errorCount;

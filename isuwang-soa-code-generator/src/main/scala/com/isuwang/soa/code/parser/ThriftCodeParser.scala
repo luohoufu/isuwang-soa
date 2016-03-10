@@ -7,7 +7,8 @@ import com.github.mustachejava.Mustache
 import com.google.common.base.Charsets
 import com.google.common.io.CharStreams
 import com.isuwang.soa.core
-import com.isuwang.soa.core.metadata.{Method, DataType, TEnum}
+import com.isuwang.soa.core.metadata.Struct
+import com.isuwang.soa.core.metadata._
 import TEnum.EnumItem
 import com.twitter.scrooge.ast._
 import com.twitter.scrooge.frontend.{Importer, ResolvedDocument, ThriftParser, TypeResolver}
@@ -19,10 +20,9 @@ import scala.collection.mutable
 import scala.util.control.Breaks._
 
 
-
 /**
   * Thrift Code 解析器
- *
+  *
   * @author craneding
   * @date 15/7/22
   */
@@ -36,7 +36,7 @@ class ThriftCodeParser {
 
   /**
     * 生成文档
- *
+    *
     * @param resource 源文件
     * @return 文档
     */
@@ -60,7 +60,7 @@ class ThriftCodeParser {
 
   /**
     * 获取生成器
- *
+    *
     * @param doc0 文档结构
     * @param genHashcode 是否生成HashCode
     * @return 生成器
@@ -134,7 +134,7 @@ class ThriftCodeParser {
           dataType.setKind(DataType.KIND.LONG)
 
           //2015-2-18 In order to generate Date type in List/Map/Set
-          if(docString.contains("@datatype(name=\"date\")"))
+          if (docString.contains("@datatype(name=\"date\")"))
             dataType.setKind(DataType.KIND.DATE)
 
         } else if (clazz == TDouble.getClass) {
@@ -364,6 +364,11 @@ class ThriftCodeParser {
         this.version = "1.0.0"
         this.timeout = 30000
       })
+
+      for (struct: core.metadata.Struct <- service.getStructDefinitions) {
+        for (field: com.isuwang.soa.core.metadata.Field <- struct.getFields)
+          field.setPrivacy(true)
+      }
     }
 
     return serviceCache;

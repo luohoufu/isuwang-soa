@@ -2,7 +2,7 @@ package com.isuwang.soa.monitor.api;
 
 import com.isuwang.soa.core.*;
 import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.protocol.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,60 +14,60 @@ public class MonitorServiceCodec {
         @Override
         public void read(com.isuwang.soa.monitor.api.domain.QPSStat bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
 
                 switch (schemeField.id) {
 
                     case 1:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setPeriod(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 2:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setAnalysisTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 3:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setServerIP(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 4:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setServerPort(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 5:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setCallCount(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
 
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
 
                 }
                 iprot.readFieldEnd();
@@ -81,26 +81,26 @@ public class MonitorServiceCodec {
         public void write(com.isuwang.soa.monitor.api.domain.QPSStat bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("QPSStat"));
+            oprot.writeStructBegin(new TStruct("QPSStat"));
 
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("period", org.apache.thrift.protocol.TType.I32, (short) 1));
+            oprot.writeFieldBegin(new TField("period", TType.I32, (short) 1));
             oprot.writeI32(bean.getPeriod());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("analysisTime", org.apache.thrift.protocol.TType.I64, (short) 2));
+            oprot.writeFieldBegin(new TField("analysisTime", TType.I64, (short) 2));
             oprot.writeI64(bean.getAnalysisTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("serverIP", org.apache.thrift.protocol.TType.STRING, (short) 3));
+            oprot.writeFieldBegin(new TField("serverIP", TType.STRING, (short) 3));
             oprot.writeString(bean.getServerIP());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("serverPort", org.apache.thrift.protocol.TType.I32, (short) 4));
+            oprot.writeFieldBegin(new TField("serverPort", TType.I32, (short) 4));
             oprot.writeI32(bean.getServerPort());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("callCount", org.apache.thrift.protocol.TType.I32, (short) 5));
+            oprot.writeFieldBegin(new TField("callCount", TType.I32, (short) 5));
             oprot.writeI32(bean.getCallCount());
             oprot.writeFieldEnd();
 
@@ -138,180 +138,180 @@ public class MonitorServiceCodec {
         @Override
         public void read(com.isuwang.soa.monitor.api.domain.PlatformProcessData bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
 
                 switch (schemeField.id) {
 
                     case 1:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setPeriod(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 2:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setAnalysisTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 3:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setServiceName(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 4:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setMethodName(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 5:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setVersionName(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 6:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setServerIP(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 7:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setServerPort(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 8:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setPMinTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 9:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setPMaxTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 10:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setPAverageTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 11:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setPTotalTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 12:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setIMinTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 13:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setIMaxTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 14:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setIAverageTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 15:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setITotalTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 16:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setTotalCalls(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 17:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setSucceedCalls(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 18:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setFailCalls(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 19:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setRequestFlow(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 20:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setResponseFlow(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
 
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
 
                 }
                 iprot.readFieldEnd();
@@ -325,86 +325,86 @@ public class MonitorServiceCodec {
         public void write(com.isuwang.soa.monitor.api.domain.PlatformProcessData bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("PlatformProcessData"));
+            oprot.writeStructBegin(new TStruct("PlatformProcessData"));
 
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("period", org.apache.thrift.protocol.TType.I32, (short) 1));
+            oprot.writeFieldBegin(new TField("period", TType.I32, (short) 1));
             oprot.writeI32(bean.getPeriod());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("analysisTime", org.apache.thrift.protocol.TType.I64, (short) 2));
+            oprot.writeFieldBegin(new TField("analysisTime", TType.I64, (short) 2));
             oprot.writeI64(bean.getAnalysisTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("serviceName", org.apache.thrift.protocol.TType.STRING, (short) 3));
+            oprot.writeFieldBegin(new TField("serviceName", TType.STRING, (short) 3));
             oprot.writeString(bean.getServiceName());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("methodName", org.apache.thrift.protocol.TType.STRING, (short) 4));
+            oprot.writeFieldBegin(new TField("methodName", TType.STRING, (short) 4));
             oprot.writeString(bean.getMethodName());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("versionName", org.apache.thrift.protocol.TType.STRING, (short) 5));
+            oprot.writeFieldBegin(new TField("versionName", TType.STRING, (short) 5));
             oprot.writeString(bean.getVersionName());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("serverIP", org.apache.thrift.protocol.TType.STRING, (short) 6));
+            oprot.writeFieldBegin(new TField("serverIP", TType.STRING, (short) 6));
             oprot.writeString(bean.getServerIP());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("serverPort", org.apache.thrift.protocol.TType.I32, (short) 7));
+            oprot.writeFieldBegin(new TField("serverPort", TType.I32, (short) 7));
             oprot.writeI32(bean.getServerPort());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("pMinTime", org.apache.thrift.protocol.TType.I64, (short) 8));
+            oprot.writeFieldBegin(new TField("pMinTime", TType.I64, (short) 8));
             oprot.writeI64(bean.getPMinTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("pMaxTime", org.apache.thrift.protocol.TType.I64, (short) 9));
+            oprot.writeFieldBegin(new TField("pMaxTime", TType.I64, (short) 9));
             oprot.writeI64(bean.getPMaxTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("pAverageTime", org.apache.thrift.protocol.TType.I64, (short) 10));
+            oprot.writeFieldBegin(new TField("pAverageTime", TType.I64, (short) 10));
             oprot.writeI64(bean.getPAverageTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("pTotalTime", org.apache.thrift.protocol.TType.I64, (short) 11));
+            oprot.writeFieldBegin(new TField("pTotalTime", TType.I64, (short) 11));
             oprot.writeI64(bean.getPTotalTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("iMinTime", org.apache.thrift.protocol.TType.I64, (short) 12));
+            oprot.writeFieldBegin(new TField("iMinTime", TType.I64, (short) 12));
             oprot.writeI64(bean.getIMinTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("iMaxTime", org.apache.thrift.protocol.TType.I64, (short) 13));
+            oprot.writeFieldBegin(new TField("iMaxTime", TType.I64, (short) 13));
             oprot.writeI64(bean.getIMaxTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("iAverageTime", org.apache.thrift.protocol.TType.I64, (short) 14));
+            oprot.writeFieldBegin(new TField("iAverageTime", TType.I64, (short) 14));
             oprot.writeI64(bean.getIAverageTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("iTotalTime", org.apache.thrift.protocol.TType.I64, (short) 15));
+            oprot.writeFieldBegin(new TField("iTotalTime", TType.I64, (short) 15));
             oprot.writeI64(bean.getITotalTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("totalCalls", org.apache.thrift.protocol.TType.I32, (short) 16));
+            oprot.writeFieldBegin(new TField("totalCalls", TType.I32, (short) 16));
             oprot.writeI32(bean.getTotalCalls());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("succeedCalls", org.apache.thrift.protocol.TType.I32, (short) 17));
+            oprot.writeFieldBegin(new TField("succeedCalls", TType.I32, (short) 17));
             oprot.writeI32(bean.getSucceedCalls());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("failCalls", org.apache.thrift.protocol.TType.I32, (short) 18));
+            oprot.writeFieldBegin(new TField("failCalls", TType.I32, (short) 18));
             oprot.writeI32(bean.getFailCalls());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("requestFlow", org.apache.thrift.protocol.TType.I32, (short) 19));
+            oprot.writeFieldBegin(new TField("requestFlow", TType.I32, (short) 19));
             oprot.writeI32(bean.getRequestFlow());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("responseFlow", org.apache.thrift.protocol.TType.I32, (short) 20));
+            oprot.writeFieldBegin(new TField("responseFlow", TType.I32, (short) 20));
             oprot.writeI32(bean.getResponseFlow());
             oprot.writeFieldEnd();
 
@@ -487,148 +487,148 @@ public class MonitorServiceCodec {
         @Override
         public void read(com.isuwang.soa.monitor.api.domain.DataSourceStat bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
 
                 switch (schemeField.id) {
 
                     case 1:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setPeriod(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 2:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setAnalysisTime(iprot.readI64());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 3:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setServerIP(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 4:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setServerPort(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 5:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setUrl(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 6:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setUserName(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 7:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setIdentity(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 8:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setDbType(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 9:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setPoolingCount(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 10:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setPoolingPeak(Optional.of(iprot.readI32()));
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 11:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setPoolingPeakTime(Optional.of(iprot.readI64()));
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 13:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setActiveCount(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 14:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setActivePeak(Optional.of(iprot.readI32()));
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 15:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                        if (schemeField.type == TType.I64) {
                             bean.setActivePeakTime(Optional.of(iprot.readI64()));
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 16:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setExecuteCount(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
                     case 17:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                        if (schemeField.type == TType.I32) {
                             bean.setErrorCount(iprot.readI32());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
 
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
 
                 }
                 iprot.readFieldEnd();
@@ -642,74 +642,74 @@ public class MonitorServiceCodec {
         public void write(com.isuwang.soa.monitor.api.domain.DataSourceStat bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("DataSourceStat"));
+            oprot.writeStructBegin(new TStruct("DataSourceStat"));
 
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("period", org.apache.thrift.protocol.TType.I32, (short) 1));
+            oprot.writeFieldBegin(new TField("period", TType.I32, (short) 1));
             oprot.writeI32(bean.getPeriod());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("analysisTime", org.apache.thrift.protocol.TType.I64, (short) 2));
+            oprot.writeFieldBegin(new TField("analysisTime", TType.I64, (short) 2));
             oprot.writeI64(bean.getAnalysisTime());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("serverIP", org.apache.thrift.protocol.TType.STRING, (short) 3));
+            oprot.writeFieldBegin(new TField("serverIP", TType.STRING, (short) 3));
             oprot.writeString(bean.getServerIP());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("serverPort", org.apache.thrift.protocol.TType.I32, (short) 4));
+            oprot.writeFieldBegin(new TField("serverPort", TType.I32, (short) 4));
             oprot.writeI32(bean.getServerPort());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("url", org.apache.thrift.protocol.TType.STRING, (short) 5));
+            oprot.writeFieldBegin(new TField("url", TType.STRING, (short) 5));
             oprot.writeString(bean.getUrl());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("userName", org.apache.thrift.protocol.TType.STRING, (short) 6));
+            oprot.writeFieldBegin(new TField("userName", TType.STRING, (short) 6));
             oprot.writeString(bean.getUserName());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("identity", org.apache.thrift.protocol.TType.STRING, (short) 7));
+            oprot.writeFieldBegin(new TField("identity", TType.STRING, (short) 7));
             oprot.writeString(bean.getIdentity());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("dbType", org.apache.thrift.protocol.TType.STRING, (short) 8));
+            oprot.writeFieldBegin(new TField("dbType", TType.STRING, (short) 8));
             oprot.writeString(bean.getDbType());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("poolingCount", org.apache.thrift.protocol.TType.I32, (short) 9));
+            oprot.writeFieldBegin(new TField("poolingCount", TType.I32, (short) 9));
             oprot.writeI32(bean.getPoolingCount());
             oprot.writeFieldEnd();
             if (bean.getPoolingPeak().isPresent()) {
-                oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("poolingPeak", org.apache.thrift.protocol.TType.I32, (short) 10));
+                oprot.writeFieldBegin(new TField("poolingPeak", TType.I32, (short) 10));
                 oprot.writeI32(bean.getPoolingPeak().get());
                 oprot.writeFieldEnd();
             }
             if (bean.getPoolingPeakTime().isPresent()) {
-                oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("poolingPeakTime", org.apache.thrift.protocol.TType.I64, (short) 11));
+                oprot.writeFieldBegin(new TField("poolingPeakTime", TType.I64, (short) 11));
                 oprot.writeI64(bean.getPoolingPeakTime().get());
                 oprot.writeFieldEnd();
             }
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("activeCount", org.apache.thrift.protocol.TType.I32, (short) 13));
+            oprot.writeFieldBegin(new TField("activeCount", TType.I32, (short) 13));
             oprot.writeI32(bean.getActiveCount());
             oprot.writeFieldEnd();
             if (bean.getActivePeak().isPresent()) {
-                oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("activePeak", org.apache.thrift.protocol.TType.I32, (short) 14));
+                oprot.writeFieldBegin(new TField("activePeak", TType.I32, (short) 14));
                 oprot.writeI32(bean.getActivePeak().get());
                 oprot.writeFieldEnd();
             }
             if (bean.getActivePeakTime().isPresent()) {
-                oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("activePeakTime", org.apache.thrift.protocol.TType.I64, (short) 15));
+                oprot.writeFieldBegin(new TField("activePeakTime", TType.I64, (short) 15));
                 oprot.writeI64(bean.getActivePeakTime().get());
                 oprot.writeFieldEnd();
             }
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("executeCount", org.apache.thrift.protocol.TType.I32, (short) 16));
+            oprot.writeFieldBegin(new TField("executeCount", TType.I32, (short) 16));
             oprot.writeI32(bean.getExecuteCount());
             oprot.writeFieldEnd();
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("errorCount", org.apache.thrift.protocol.TType.I32, (short) 17));
+            oprot.writeFieldBegin(new TField("errorCount", TType.I32, (short) 17));
             oprot.writeI32(bean.getErrorCount());
             oprot.writeFieldEnd();
 
@@ -803,31 +803,31 @@ public class MonitorServiceCodec {
         @Override
         public void read(uploadQPSStat_args bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
 
                 switch (schemeField.id) {
 
                     case 1:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                        if (schemeField.type == TType.STRUCT) {
 
                             bean.setQpsStat(new com.isuwang.soa.monitor.api.domain.QPSStat());
                             new QPSStatSerializer().read(bean.getQpsStat(), iprot);
 
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
 
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
 
                 }
                 iprot.readFieldEnd();
@@ -842,10 +842,10 @@ public class MonitorServiceCodec {
         public void write(uploadQPSStat_args bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("uploadQPSStat_args"));
+            oprot.writeStructBegin(new TStruct("uploadQPSStat_args"));
 
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("qpsStat", org.apache.thrift.protocol.TType.STRUCT, (short) 1));
+            oprot.writeFieldBegin(new TField("qpsStat", TType.STRUCT, (short) 1));
             new QPSStatSerializer().write(bean.getQpsStat(), oprot);
             oprot.writeFieldEnd();
 
@@ -876,21 +876,21 @@ public class MonitorServiceCodec {
         @Override
         public void read(uploadQPSStat_result bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
 
                 switch (schemeField.id) {
                     case 0:  //SUCCESS
-                        if (schemeField.type == org.apache.thrift.protocol.TType.VOID) {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        if (schemeField.type == TType.VOID) {
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
                     /*
@@ -900,7 +900,7 @@ public class MonitorServiceCodec {
                         break A;
                     */
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
                 }
                 iprot.readFieldEnd();
             }
@@ -913,7 +913,7 @@ public class MonitorServiceCodec {
         public void write(uploadQPSStat_result bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("uploadQPSStat_result"));
+            oprot.writeStructBegin(new TStruct("uploadQPSStat_result"));
 
 
             oprot.writeFieldStop();
@@ -996,21 +996,21 @@ public class MonitorServiceCodec {
         @Override
         public void read(uploadPlatformProcessData_args bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
 
                 switch (schemeField.id) {
 
                     case 1:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+                        if (schemeField.type == TType.LIST) {
                             {
-                                org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
+                                TList _list0 = iprot.readListBegin();
                                 bean.setPlatformProcessDatas(new java.util.ArrayList<>(_list0.size));
                                 for (int _i2 = 0; _i2 < _list0.size; ++_i2) {
                                     com.isuwang.soa.monitor.api.domain.PlatformProcessData _elem1 = new com.isuwang.soa.monitor.api.domain.PlatformProcessData();
@@ -1021,13 +1021,13 @@ public class MonitorServiceCodec {
                             }
 
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
 
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
 
                 }
                 iprot.readFieldEnd();
@@ -1042,11 +1042,11 @@ public class MonitorServiceCodec {
         public void write(uploadPlatformProcessData_args bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("uploadPlatformProcessData_args"));
+            oprot.writeStructBegin(new TStruct("uploadPlatformProcessData_args"));
 
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("platformProcessDatas", org.apache.thrift.protocol.TType.LIST, (short) 1));
-            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, bean.getPlatformProcessDatas().size()));
+            oprot.writeFieldBegin(new TField("platformProcessDatas", TType.LIST, (short) 1));
+            oprot.writeListBegin(new TList(TType.STRUCT, bean.getPlatformProcessDatas().size()));
             for (com.isuwang.soa.monitor.api.domain.PlatformProcessData item : bean.getPlatformProcessDatas()) {
                 new PlatformProcessDataSerializer().write(item, oprot);
             }
@@ -1078,21 +1078,21 @@ public class MonitorServiceCodec {
         @Override
         public void read(uploadPlatformProcessData_result bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
 
                 switch (schemeField.id) {
                     case 0:  //SUCCESS
-                        if (schemeField.type == org.apache.thrift.protocol.TType.VOID) {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        if (schemeField.type == TType.VOID) {
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
                     /*
@@ -1102,7 +1102,7 @@ public class MonitorServiceCodec {
                         break A;
                     */
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
                 }
                 iprot.readFieldEnd();
             }
@@ -1115,7 +1115,7 @@ public class MonitorServiceCodec {
         public void write(uploadPlatformProcessData_result bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("uploadPlatformProcessData_result"));
+            oprot.writeStructBegin(new TStruct("uploadPlatformProcessData_result"));
 
 
             oprot.writeFieldStop();
@@ -1198,21 +1198,21 @@ public class MonitorServiceCodec {
         @Override
         public void read(uploadDataSourceStat_args bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
 
                 switch (schemeField.id) {
 
                     case 1:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+                        if (schemeField.type == TType.LIST) {
                             {
-                                org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
+                                TList _list0 = iprot.readListBegin();
                                 bean.setDataSourceStat(new java.util.ArrayList<>(_list0.size));
                                 for (int _i2 = 0; _i2 < _list0.size; ++_i2) {
                                     com.isuwang.soa.monitor.api.domain.DataSourceStat _elem1 = new com.isuwang.soa.monitor.api.domain.DataSourceStat();
@@ -1223,13 +1223,13 @@ public class MonitorServiceCodec {
                             }
 
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
 
 
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
 
                 }
                 iprot.readFieldEnd();
@@ -1244,11 +1244,11 @@ public class MonitorServiceCodec {
         public void write(uploadDataSourceStat_args bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("uploadDataSourceStat_args"));
+            oprot.writeStructBegin(new TStruct("uploadDataSourceStat_args"));
 
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("dataSourceStat", org.apache.thrift.protocol.TType.LIST, (short) 1));
-            oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, bean.getDataSourceStat().size()));
+            oprot.writeFieldBegin(new TField("dataSourceStat", TType.LIST, (short) 1));
+            oprot.writeListBegin(new TList(TType.STRUCT, bean.getDataSourceStat().size()));
             for (com.isuwang.soa.monitor.api.domain.DataSourceStat item : bean.getDataSourceStat()) {
                 new DataSourceStatSerializer().write(item, oprot);
             }
@@ -1280,21 +1280,21 @@ public class MonitorServiceCodec {
         @Override
         public void read(uploadDataSourceStat_result bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
 
                 switch (schemeField.id) {
                     case 0:  //SUCCESS
-                        if (schemeField.type == org.apache.thrift.protocol.TType.VOID) {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        if (schemeField.type == TType.VOID) {
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
                     /*
@@ -1304,7 +1304,7 @@ public class MonitorServiceCodec {
                         break A;
                     */
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
                 }
                 iprot.readFieldEnd();
             }
@@ -1317,7 +1317,7 @@ public class MonitorServiceCodec {
         public void write(uploadDataSourceStat_result bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("uploadDataSourceStat_result"));
+            oprot.writeStructBegin(new TStruct("uploadDataSourceStat_result"));
 
 
             oprot.writeFieldStop();
@@ -1399,17 +1399,17 @@ public class MonitorServiceCodec {
         @Override
         public void read(getServiceMetadata_args bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
                 switch (schemeField.id) {
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
 
                 }
                 iprot.readFieldEnd();
@@ -1424,7 +1424,7 @@ public class MonitorServiceCodec {
         public void write(getServiceMetadata_args bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("getServiceMetadata_args"));
+            oprot.writeStructBegin(new TStruct("getServiceMetadata_args"));
             oprot.writeFieldStop();
             oprot.writeStructEnd();
         }
@@ -1443,25 +1443,25 @@ public class MonitorServiceCodec {
         @Override
         public void read(getServiceMetadata_result bean, TProtocol iprot) throws TException {
 
-            org.apache.thrift.protocol.TField schemeField;
+            TField schemeField;
             iprot.readStructBegin();
 
             while (true) {
                 schemeField = iprot.readFieldBegin();
-                if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                if (schemeField.type == TType.STOP) {
                     break;
                 }
 
                 switch (schemeField.id) {
                     case 0:  //SUCCESS
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                        if (schemeField.type == TType.STRING) {
                             bean.setSuccess(iprot.readString());
                         } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
                     default:
-                        org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        TProtocolUtil.skip(iprot, schemeField.type);
                 }
                 iprot.readFieldEnd();
             }
@@ -1474,9 +1474,9 @@ public class MonitorServiceCodec {
         public void write(getServiceMetadata_result bean, TProtocol oprot) throws TException {
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("getServiceMetadata_result"));
+            oprot.writeStructBegin(new TStruct("getServiceMetadata_result"));
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRING, (short) 0));
+            oprot.writeFieldBegin(new TField("success", TType.STRING, (short) 0));
             oprot.writeString(bean.getSuccess());
             oprot.writeFieldEnd();
 
