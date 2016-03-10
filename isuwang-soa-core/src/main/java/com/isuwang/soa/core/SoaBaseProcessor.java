@@ -56,6 +56,8 @@ public class SoaBaseProcessor<I> implements TProcessor {
             soaProcessFunction.getReqSerializer().read(args, in);
             in.readMessageEnd();
 
+            SoaHeader soaHeader = (SoaHeader) chain.getAttribute(ContainerFilterChain.ATTR_KEY_HEADER);
+
             LOGGER.info("{} {} {} request header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), soaProcessFunction.getReqSerializer().toString(args));
             long startTime = System.currentTimeMillis();
 
