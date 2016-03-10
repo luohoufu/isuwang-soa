@@ -155,6 +155,13 @@ public class ZookeeperWatcher {
     private void resetServiceCaches(String path, List<String> serviceList) {
         serviceCounts.set(serviceList.size());
 
+        if (serviceCounts.get() == 0) {
+            synchronized (serviceListInitialized) {
+                serviceListInitialized.set(true);
+                serviceListInitialized.notifyAll();
+            }
+        }
+
         for (String serviceName : serviceList) {
             getServiceInfoByPath(path + "/" + serviceName, serviceName);
         }
