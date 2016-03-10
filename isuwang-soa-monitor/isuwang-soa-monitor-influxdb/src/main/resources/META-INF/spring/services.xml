@@ -2,12 +2,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:soa="http://soa-springtag.isuwang.com/schema/service"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://soa-springtag.isuwang.com/schema/service
-        http://soa-springtag.isuwang.com/schema/service/service.xsd">
+        http://soa-springtag.isuwang.com/schema/service/service.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="monitorService" class="com.isuwang.soa.monitor.influxdb.service.MonitorServiceImpl"/>
+    <!--参数配置-->
+    <context:property-placeholder location="classpath:config.properties" local-override="false"
+                                  system-properties-mode="ENVIRONMENT"/>
+
+    <bean id="monitorService" class="com.isuwang.soa.monitor.influxdb.service.MonitorServiceImpl" init-method="init">
+        <property name="url" value="${influxdb_url}"/>
+        <property name="userName" value="influxdb_username"/>
+        <property name="password" value="${influxdb_password}"/>
+        <property name="dbName" value="${soadb}"/>
+    </bean>
     <soa:service ref="monitorService"/>
 
 </beans>

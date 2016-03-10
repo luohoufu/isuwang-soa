@@ -22,12 +22,33 @@ import java.util.concurrent.TimeUnit;
  */
 public class MonitorServiceImpl implements MonitorService {
 
-    private String url = "http://192.168.99.100:8886";
-    private String userName = "root";
-    private String password = "root";
+    private String url;
+    private String userName;
+    private String password;
+    private String dbName;
 
-    private String dbName = "soadb";
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
     private InfluxDB influxDB = InfluxDBFactory.connect(url, userName, password);
+
+    public void init() {
+        if (influxDB == null)
+            influxDB = InfluxDBFactory.connect(url, userName, password);
+    }
 
     @Override
     public void uploadQPSStat(QPSStat qpsStat) throws SoaException {
