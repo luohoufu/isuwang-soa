@@ -48,6 +48,8 @@ public class SoaBaseProcessor<I> implements TProcessor {
         filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_HEADER, context.getHeader());
         filterChain.setAttribute(DispatchFilter.ATTR_KEY_CONTAINER_DISPATCH_ACTION, (DispatchFilter.DispatchAction) chain -> {
 
+
+            SoaHeader soaHeader = (SoaHeader) chain.getAttribute(ContainerFilterChain.ATTR_KEY_HEADER);
             // read
             //TMessage tMessage = in.readMessageBegin();
             @SuppressWarnings("unchecked")
@@ -56,20 +58,22 @@ public class SoaBaseProcessor<I> implements TProcessor {
             soaProcessFunction.getReqSerializer().read(args, in);
             in.readMessageEnd();
 
-            LOGGER.info("{} request:{}", logId, soaProcessFunction.getReqSerializer().toString(args));
+            LOGGER.info("{} {} {} request header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), soaProcessFunction.getReqSerializer().toString(args));
             long startTime = System.currentTimeMillis();
 
             Object result = soaProcessFunction.getResult(iface, args);
 
             chain.setAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME, System.currentTimeMillis() - startTime);
-            LOGGER.info("{} response:{}", logId, soaProcessFunction.getResSerializer().toString(result));
 
-            // write
             context.getHeader().setRespCode(Optional.of("0000"));
             context.getHeader().setRespMessage(Optional.of("成功"));
+
+            LOGGER.info("{} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), soaProcessFunction.getResSerializer().toString(result));
+            // write
             out.writeMessageBegin(new TMessage(context.getHeader().getMethodName(), TMessageType.CALL, context.getSeqid()));
             soaProcessFunction.getResSerializer().write(result, out);
             out.writeMessageEnd();
+
         });
 
         filterChain.doFilter();

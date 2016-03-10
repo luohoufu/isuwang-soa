@@ -21,7 +21,7 @@ public class NetworkLogFilter implements Filter {
         final SoaHeader soaHeader = (SoaHeader) chain.getAttribute(StubFilterChain.ATTR_KEY_HEADER);
         final Object request = chain.getAttribute(StubFilterChain.ATTR_KEY_REQUEST);
 
-        LOGGER.info("{} {} {} request:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), request.toString());
+        LOGGER.info("{} {} {} request header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), request.toString());
 
         try {
             chain.doFilter();
@@ -29,7 +29,7 @@ public class NetworkLogFilter implements Filter {
             Object response = chain.getAttribute(StubFilterChain.ATTR_KEY_RESPONSE);
 
             if (response != null)
-                LOGGER.info("{} {} {} response:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), response.toString());
+                LOGGER.info("{} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), response.toString());
         }
     }
 

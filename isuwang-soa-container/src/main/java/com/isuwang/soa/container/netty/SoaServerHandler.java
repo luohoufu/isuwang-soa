@@ -170,53 +170,6 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         }
     }
 
-    /*protected void callService(ChannelHandlerContext ctx, ByteBuf inputBuf) {
-        final ByteBuf outputBuf = ctx.alloc().buffer(8192);
-        final Context context = Context.Factory.getCurrentInstance();
-        final SoaHeader soaHeader = new SoaHeader();
-        final TSoaTransport inputSoaTransport = new TSoaTransport(inputBuf);
-        final TSoaTransport outputSoaTransport = new TSoaTransport(outputBuf);
-
-        context.setHeader(soaHeader);
-
-        TSoaServiceProtocol inputProtocol, outputProtocol = null;
-
-        try {
-            inputProtocol = new TSoaServiceProtocol(inputSoaTransport);
-            outputProtocol = new TSoaServiceProtocol(outputSoaTransport);
-            TMessage tMessage = inputProtocol.readMessageBegin();
-
-            context.setSeqid(tMessage.seqid);
-
-            SoaBaseProcessor<?> soaProcessor = soaProcessors.get(soaHeader.getServiceName());
-
-            soaProcessor.process(inputProtocol, outputProtocol);
-
-            outputSoaTransport.flush();
-
-            ctx.writeAndFlush(outputBuf);
-
-            if (inputBuf.refCnt() > 0)
-                inputBuf.release();
-        } catch (SoaException e) {
-            LOGGER.error(e.getMessage(), e);
-
-            writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, e);
-        } catch (Throwable e) {
-            LOGGER.error(e.getMessage(), e);
-
-            writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, new SoaException(SoaBaseCode.NotNull));
-        } finally {
-            if (inputSoaTransport != null)
-                inputSoaTransport.close();
-
-            if (outputSoaTransport != null)
-                outputSoaTransport.close();
-
-            Context.Factory.removeCurrentInstance();
-        }
-    }*/
-
     private void writeErrorMessage(ChannelHandlerContext ctx, ByteBuf outputBuf, Context context, SoaHeader soaHeader, TSoaTransport outputSoaTransport, TSoaServiceProtocol outputProtocol, SoaException e) {
         if (outputProtocol != null) {
             try {
@@ -231,6 +184,8 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
                 PlatformProcessDataAtomic data = PlatformProcessDataFilter.getPlatformPorcessData(soaHeader);
                 data.getFailCalls().incrementAndGet();
+
+                LOGGER.info("{} {} {} response header:{} body:{null}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString());
 
             } catch (Throwable e1) {
                 LOGGER.error(e1.getMessage(), e1);
