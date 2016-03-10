@@ -198,6 +198,8 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
                 outputSoaTransport.flush();
 
                 ctx.writeAndFlush(outputBuf);
+
+                LOGGER.info("{} {} {} response header:{} body:{null}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString());
             } catch (Throwable e1) {
                 LOGGER.error(e1.getMessage(), e1);
             }

@@ -56,14 +56,14 @@ public class SoaBaseProcessor<I> implements TProcessor {
             soaProcessFunction.getReqSerializer().read(args, in);
             in.readMessageEnd();
 
-            LOGGER.info("{} request:{}", logId, soaProcessFunction.getReqSerializer().toString(args));
+            LOGGER.info("{} {} {} request header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), soaProcessFunction.getReqSerializer().toString(args));
             long startTime = System.currentTimeMillis();
 
             Object result = null;
             try {
                 result = soaProcessFunction.getResult(iface, args);
 
-                LOGGER.info("{} response:{}", logId, soaProcessFunction.getResSerializer().toString(result));
+                LOGGER.info("{} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), soaProcessFunction.getResSerializer().toString(result));
             } finally {
                 chain.setAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME, System.currentTimeMillis() - startTime);
             }
