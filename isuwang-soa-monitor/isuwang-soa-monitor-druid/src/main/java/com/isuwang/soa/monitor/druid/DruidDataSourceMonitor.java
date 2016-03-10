@@ -38,7 +38,7 @@ public class DruidDataSourceMonitor {
             @Override
             public void run() {
                 try {
-                    final long millis = System.currentTimeMillis();
+                    final long millis = System.currentTimeMillis() / 1000 * 1000;
 
                     final DruidStatManagerFacade facade = DruidStatManagerFacade.getInstance();
 
