@@ -31,7 +31,7 @@ public class DruidDataSourceMonitor {
 
     public void init() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, 1);t
+        calendar.add(Calendar.MINUTE, 1);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
