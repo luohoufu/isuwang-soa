@@ -78,31 +78,6 @@ public class ZookeeperWatcher {
         return usableList;
     }
 
-    /*
-    private void createServicesNode() {
-        zk.create("/soa", new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, servicesNodeCreateCallBack, null);
-        zk.create("/soa/runtime", new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, servicesNodeCreateCallBack, null);
-        zk.create("/soa/runtime/services", new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, servicesNodeCreateCallBack, null);
-    }
-
-    private AsyncCallback.StringCallback servicesNodeCreateCallBack = (rc, path, ctx, name) -> {
-        switch (KeeperException.Code.get(rc)) {
-            case CONNECTIONLOSS:
-                LOGGER.info("创建" + path + "节点，连接断开，重新添加");
-                createServicesNode();
-                break;
-            case OK:
-                LOGGER.info("创建" + path + "节点成功");
-                break;
-            case NODEEXISTS:
-                LOGGER.info(path + "节点已存在");
-                break;
-            default:
-                LOGGER.info("Something went wrong when creating server info");
-        }
-    };
-    */
-
     //----------------------servicesList相关-----------------------------------
 
     /**
@@ -171,12 +146,12 @@ public class ZookeeperWatcher {
                     getServiceInfoByPath(path, (String) ctx);
                     break;
                 case OK:
-                    LOGGER.info("获取" + path + "的子节点成功");
+                    LOGGER.info("获取{}的子节点成功", path);
 
                     resetServiceInfoByName((String) ctx, path, children);
                     break;
                 default:
-                    LOGGER.error("get services list fail");
+                    LOGGER.error("获取{}的子节点失败", path);
             }
         }, serviceName);
     }
@@ -331,13 +306,13 @@ public class ZookeeperWatcher {
 
             zk = new ZooKeeper(SoaSystemEnvProperties.SOA_ZOOKEEPER_HOST, 15000, e -> {
                 if (e.getState() == Watcher.Event.KeeperState.Expired) {
-                    LOGGER.info("session过期，重连");
+                    LOGGER.info("{} 到zookeeper Server的session过期，重连", isClient ? "Client's" : "Server's");
 
                     destroy();
 
                     init();
                 } else if (e.getState() == Watcher.Event.KeeperState.SyncConnected) {
-                    LOGGER.info("已连接zookeeper Server");
+                    LOGGER.info("{} Zookeeper Watcher 已连接 zookeeper Server", isClient ? "Client's" : "Server's");
 
                     connectDownLatch.countDown();
                 }
