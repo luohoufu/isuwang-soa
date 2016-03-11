@@ -15,7 +15,10 @@ public class ZookeeperServer {
     public static void main(String[] args) {
         System.setProperty("zookeeper.jmx.log4j.disable", "true");
 
-        QuorumPeerMain.main(new String[]{new File("isuwang-soa-zookeeper", "src/main/resources/conf/zoo.cfg").getAbsolutePath()});
+        if (args != null && args.length > 0)
+            QuorumPeerMain.main(args);
+        else
+            QuorumPeerMain.main(new String[]{new File("isuwang-soa-zookeeper", "src/main/resources/conf/zoo.cfg").getAbsolutePath()});
     }
 
 }
