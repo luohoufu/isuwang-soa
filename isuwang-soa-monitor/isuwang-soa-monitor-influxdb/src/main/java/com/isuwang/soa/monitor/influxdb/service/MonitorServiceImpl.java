@@ -43,11 +43,10 @@ public class MonitorServiceImpl implements MonitorService {
         this.dbName = dbName;
     }
 
-    private InfluxDB influxDB = InfluxDBFactory.connect(url, userName, password);
+    private InfluxDB influxDB;
 
     public void init() {
-        if (influxDB == null)
-            influxDB = InfluxDBFactory.connect(url, userName, password);
+        influxDB = InfluxDBFactory.connect(url, userName, password);
     }
 
     @Override
