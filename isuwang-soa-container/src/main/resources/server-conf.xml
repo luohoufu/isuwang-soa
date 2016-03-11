@@ -2,9 +2,9 @@
     <soa-server-containers>
         <soa-server-container name="logbackContainer" ref="com.isuwang.soa.container.logback.LogbackContainer"/>
         <soa-server-container name="springContainer" ref="com.isuwang.soa.container.spring.SpringContainer"/>
-        <soa-server-container name="filterContainer" ref="com.isuwang.soa.container.filter.FilterContainer"/>
         <soa-server-container name="registryContainer" ref="com.isuwang.soa.container.registry.ZookeeperRegistryContainer"/>
         <soa-server-container name="nettyContainer" ref="com.isuwang.soa.container.netty.NettyContainer"/>
+        <soa-server-container name="filterContainer" ref="com.isuwang.soa.container.filter.FilterContainer"/>
         <soa-server-container name="versionContainer" ref="com.isuwang.soa.container.version.VersionContainer"/>
     </soa-server-containers>
 
