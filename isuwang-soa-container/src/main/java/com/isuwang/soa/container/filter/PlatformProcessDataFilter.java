@@ -11,6 +11,7 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,9 +29,11 @@ public class PlatformProcessDataFilter implements StatusFilter {
     @Override
     public void init() {
         final Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, 1);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MILLISECOND, (int) (period / (60 * 1000)));
+
+        LOGGER.info("PlatformProcessDataFilter 定时时间:{} 上送间隔:{}ms", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S").format(calendar.getTime()), period);
 
         timer.schedule(new MyTimerTask(), calendar.getTime(), period);
     }
