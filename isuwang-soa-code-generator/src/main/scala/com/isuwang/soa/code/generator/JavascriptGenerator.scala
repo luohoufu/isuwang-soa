@@ -378,6 +378,7 @@ class JavascriptGenerator extends CodeGenerator {
             {ref}
           </div>
         }
+      case _ => <div></div>
     }
   }
 

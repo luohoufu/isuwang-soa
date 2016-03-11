@@ -71,7 +71,7 @@ public class TestController {
             //生成json请求参数
             ObjectMapper objectMapper = new ObjectMapper();
             StringWriter out = new StringWriter();
-
+            @SuppressWarnings("unchecked")
             Map<String, Map<String, Object>> params = objectMapper.readValue(jsonParameter, Map.class);
 
             Map<String, Object> map = new HashMap<>();
@@ -157,9 +157,11 @@ public class TestController {
             outputProtocol.writeMessageEnd();
             outputSoaTransport.flush();//在报文头部写入int,代表报文长度(不包括自己)
 
+            /*
             if (client == null) {
                 throw new SoaException(SoaBaseCode.NotConnected);
             }
+            */
             ByteBuf responseBuf = client.send(context.getSeqid(), requestBuf); //发送请求，返回结果
 
             if (null != responseBuf) {

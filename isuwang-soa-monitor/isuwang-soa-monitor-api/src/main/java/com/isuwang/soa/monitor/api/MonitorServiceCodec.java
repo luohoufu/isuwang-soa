@@ -1508,12 +1508,12 @@ public class MonitorServiceCodec {
             try (InputStreamReader isr = new InputStreamReader(MonitorServiceCodec.class.getClassLoader().getResourceAsStream("com.isuwang.soa.monitor.api.service.MonitorService.xml"));
                  BufferedReader in = new BufferedReader(isr)) {
                 int len = 0;
-                StringBuffer str = new StringBuffer("");
+                StringBuilder str = new StringBuilder("");
                 String line;
                 while ((line = in.readLine()) != null) {
 
                     if (len != 0) {
-                        str.append("\r\n" + line);
+                        str.append("\r\n").append(line);
                     } else {
                         str.append(line);
                     }
@@ -1540,12 +1540,13 @@ public class MonitorServiceCodec {
         }
     }
 
-
+    @SuppressWarnings("unchecked")
     public static class Processor<I extends com.isuwang.soa.monitor.api.service.MonitorService> extends SoaBaseProcessor {
         public Processor(I iface) {
             super(iface, getProcessMap(new java.util.HashMap<>()));
         }
 
+        @SuppressWarnings("unchecked")
         private static <I extends com.isuwang.soa.monitor.api.service.MonitorService> java.util.Map<String, SoaProcessFunction<I, ?, ?, ? extends TBeanSerializer<?>, ? extends TBeanSerializer<?>>> getProcessMap(java.util.Map<String, SoaProcessFunction<I, ?, ?, ? extends TBeanSerializer<?>, ? extends TBeanSerializer<?>>> processMap) {
 
             processMap.put("uploadQPSStat", new uploadQPSStat());

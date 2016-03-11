@@ -352,12 +352,12 @@ class JavaClientGenerator extends CodeGenerator {
             try (InputStreamReader isr = new InputStreamReader({service.name}Codec.class.getClassLoader().getResourceAsStream("{service.namespace}.{service.name}.xml"));
             BufferedReader in = new BufferedReader(isr)) <block>
               int len = 0;
-              StringBuffer str = new StringBuffer("");
+              StringBuilder str = new StringBuilder("");
               String line;
               while ((line = in.readLine()) != null) <block>
 
                 if (len != 0) <block>
-                  str.append("\r\n" + line);
+                  str.append("\r\n").append(line);
                 </block> else <block>
                   str.append(line);
                 </block>
@@ -384,12 +384,13 @@ class JavaClientGenerator extends CodeGenerator {
           </block>
         </block>
 
-
+        @SuppressWarnings("unchecked")
         public static class Processor{lt}I extends {service.getNamespace + "." + service.name}{gt} extends SoaBaseProcessor<block>
           public Processor(I iface)<block>
             super(iface, getProcessMap(new java.util.HashMap{lt}{gt}()));
           </block>
 
+          @SuppressWarnings("unchecked")
           private static {lt}I extends {service.getNamespace + "." + service.name}{gt} java.util.Map{lt}String, SoaProcessFunction{lt}I, ?, ?, ? extends TBeanSerializer{lt}?{gt}, ? extends TBeanSerializer{lt}?{gt}{gt}{gt} getProcessMap(java.util.Map{lt}String, SoaProcessFunction{lt}I, ?, ?, ? extends TBeanSerializer{lt}?{gt}, ? extends TBeanSerializer{lt}?{gt}{gt}{gt} processMap)<block>
             {
             toMethodArrayBuffer(service.getMethods).map{(method: Method)=>{
@@ -462,6 +463,7 @@ class JavaClientGenerator extends CodeGenerator {
       case KIND.ENUM => <div>org.apache.thrift.protocol.TType.I32</div>
       case KIND.STRUCT => <div>org.apache.thrift.protocol.TType.STRUCT</div>
       case KIND.DATE => <div>org.apache.thrift.protocol.TType.I64</div>
+      case _ => <div></div>
     }
   }
 
@@ -500,6 +502,7 @@ class JavaClientGenerator extends CodeGenerator {
               case KIND.LONG => <div>oprot.writeI64(item);</div>
               case KIND.ENUM => <div>oprot.writeI32(item.getValue());</div>
               case KIND.DATE => <div>oprot.writeI64(item.getTime());</div>
+              case _ => <div></div>
             }
           }
               </block>
@@ -517,6 +520,7 @@ class JavaClientGenerator extends CodeGenerator {
               case KIND.SHORT => <div>oprot.writeI16(item.getKey());</div>
               case KIND.LONG => <div>oprot.writeI64(item.getKey());</div>
               case KIND.ENUM => <div>oprot.writeI32(item.getKey().getValue());</div>
+              case _ => <div></div>
              }
           }
           {
@@ -530,6 +534,7 @@ class JavaClientGenerator extends CodeGenerator {
                case KIND.LONG => <div>oprot.writeI64(item.getValue());</div>
                case KIND.ENUM => <div>oprot.writeI32(item.getValue().getValue());</div>
                case KIND.STRUCT => <div>     new {field.dataType.valueType.qualifiedName.substring(field.dataType.valueType.qualifiedName.lastIndexOf(".")+1)}Serializer().write(item.getValue(), oprot);</div>
+               case _ => <div></div>
              }
           }
              </block>
@@ -544,6 +549,8 @@ class JavaClientGenerator extends CodeGenerator {
 
       case KIND.VOID =>
         return {<div></div>}
+
+      case _ => return {<div></div>}
     }
 
   }
@@ -585,6 +592,7 @@ class JavaClientGenerator extends CodeGenerator {
                 case KIND.STRUCT => <div>{field.dataType.valueType.qualifiedName} _elem1 = new {field.dataType.valueType.qualifiedName}();
                   new {field.dataType.valueType.qualifiedName.substring(field.dataType.valueType.qualifiedName.lastIndexOf(".")+1)}Serializer().read(_elem1, iprot);</div>
                 case KIND.DATE => <div>Long time = iprot.readI64(); java.util.Date _elem1 = new java.util.Date(time);</div>
+                case _ => <div></div>
               }
               }
               bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.optional) <div>.get()</div>}.add(_elem1);
@@ -612,6 +620,7 @@ class JavaClientGenerator extends CodeGenerator {
               case KIND.ENUM => <div>{field.dataType.valueType.qualifiedName} _val5 = {field.dataType.valueType.qualifiedName}.findByValue(iprot.readI32());</div>
               case KIND.STRUCT => <div>{field.dataType.valueType.qualifiedName} _val5 = new {field.dataType.valueType.qualifiedName}();
                 new {field.dataType.valueType.qualifiedName.substring(field.dataType.valueType.qualifiedName.lastIndexOf(".")+1)}Serializer().read(_val5, iprot);</div>
+              case _ => <div></div>
             }
             }
             bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.optional) <div>.get()</div>}.put(_key4, _val5);
@@ -628,6 +637,7 @@ class JavaClientGenerator extends CodeGenerator {
         }
       case KIND.VOID =>
         return {<div>org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);</div>}
+      case _ => <div></div>
     }
   }
 

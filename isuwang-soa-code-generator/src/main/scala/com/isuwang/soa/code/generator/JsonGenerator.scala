@@ -148,6 +148,7 @@ class JsonGenerator extends CodeGenerator {
       case KIND.STRUCT =>
         val ref = dataType.getQualifiedName().replaceAll("^.*[.](.*?)$", "$1");
         return {<div>{ref}</div>}
+      case _ => <div></div>
     }
   }
 }
