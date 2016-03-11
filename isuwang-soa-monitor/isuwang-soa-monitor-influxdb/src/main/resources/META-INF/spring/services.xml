@@ -13,10 +13,10 @@
                                   system-properties-mode="ENVIRONMENT"/>
 
     <bean id="monitorService" class="com.isuwang.soa.monitor.influxdb.service.MonitorServiceImpl" init-method="init">
-        <property name="url" value="${influxdb_url}"/>
-        <property name="userName" value="influxdb_username"/>
-        <property name="password" value="${influxdb_password}"/>
-        <property name="dbName" value="${soadb}"/>
+        <property name="url" value="${monitor_influxdb_url}"/>
+        <property name="userName" value="${monitor_influxdb_username}"/>
+        <property name="password" value="${monitor_influxdb_password}"/>
+        <property name="dbName" value="${monitor_influxdb_dbname}"/>
     </bean>
     <soa:service ref="monitorService"/>
 
