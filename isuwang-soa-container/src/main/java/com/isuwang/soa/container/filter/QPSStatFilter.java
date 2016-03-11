@@ -9,6 +9,7 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,9 +31,11 @@ public class QPSStatFilter implements StatusFilter {
     @Override
     public void init() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MILLISECOND, (int) period * 4);
+        calendar.add(Calendar.MINUTE, 1);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+
+        LOGGER.info("QPSStatFilter 定时时间:{} 上送间隔:{}ms", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S").format(calendar.getTime()), period);
 
         timer.schedule(new TimerTask() {
             @Override
