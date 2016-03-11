@@ -30,9 +30,9 @@ public class QPSStatFilter implements StatusFilter {
     @Override
     public void init() {
         Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MILLISECOND, (int) period * 4);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MILLISECOND, (int) period * 3);
 
         timer.schedule(new TimerTask() {
             @Override
