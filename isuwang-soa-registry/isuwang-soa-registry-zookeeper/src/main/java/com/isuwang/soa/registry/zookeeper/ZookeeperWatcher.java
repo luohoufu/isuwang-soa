@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -31,8 +31,7 @@ public class ZookeeperWatcher {
     private final Map<String, Map<ConfigKey, Object>> config = new ConcurrentHashMap<>();
 
     private ZooKeeper zk;
-
-    public AtomicBoolean serviceListInitialized = new AtomicBoolean(false);
+    private CountDownLatch connectDownLatch;
 
     public ZookeeperWatcher(boolean isClient) {
         this.isClient = isClient;
@@ -46,6 +45,12 @@ public class ZookeeperWatcher {
         }
 
         getConfig("/soa/config");
+
+        try {
+            connectDownLatch.await(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     public void destroy() {
@@ -65,15 +70,6 @@ public class ZookeeperWatcher {
     }
 
     public List<ServiceInfo> getServiceInfo(String serviceName, String versionName) {
-        synchronized (serviceListInitialized) {
-            if (!serviceListInitialized.get()) {
-                try {
-                    serviceListInitialized.wait(10000L);
-                } catch (InterruptedException e) {
-                }
-            }
-        }
-
         List<ServiceInfo> serverList = caches.get(serviceName);
         List<ServiceInfo> usableList = new ArrayList<>();
         if (serverList != null && serverList.size() > 0) {
@@ -144,8 +140,6 @@ public class ZookeeperWatcher {
 
     //----------------------serviceInfo相关-----------------------------------
 
-    private AtomicInteger serviceCounts = new AtomicInteger(0);
-
     /**
      * 对每一个serviceName,要获取serviceName下的子节点
      *
@@ -153,15 +147,6 @@ public class ZookeeperWatcher {
      * @param serviceList
      */
     private void resetServiceCaches(String path, List<String> serviceList) {
-        serviceCounts.set(serviceList.size());
-
-        if (serviceCounts.get() == 0) {
-            synchronized (serviceListInitialized) {
-                serviceListInitialized.set(true);
-                serviceListInitialized.notifyAll();
-            }
-        }
-
         for (String serviceName : serviceList) {
             getServiceInfoByPath(path + "/" + serviceName, serviceName);
         }
@@ -228,14 +213,6 @@ public class ZookeeperWatcher {
             }
         }
         caches.put(serviceName, sinfos);
-
-        if (serviceCounts.decrementAndGet() <= 0) {
-            synchronized (serviceListInitialized) {
-                serviceListInitialized.set(true);
-
-                serviceListInitialized.notifyAll();
-            }
-        }
     }
     //----------------------servicesInfo相关-----------------------------------
 
@@ -350,6 +327,8 @@ public class ZookeeperWatcher {
      */
     private void connect() {
         try {
+            connectDownLatch = new CountDownLatch(1);
+
             zk = new ZooKeeper(SoaSystemEnvProperties.SOA_ZOOKEEPER_HOST, 15000, e -> {
                 if (e.getState() == Watcher.Event.KeeperState.Expired) {
                     LOGGER.info("session过期，重连");
@@ -359,6 +338,8 @@ public class ZookeeperWatcher {
                     init();
                 } else if (e.getState() == Watcher.Event.KeeperState.SyncConnected) {
                     LOGGER.info("已连接zookeeper Server");
+
+                    connectDownLatch.countDown();
                 }
             });
         } catch (Exception e) {
