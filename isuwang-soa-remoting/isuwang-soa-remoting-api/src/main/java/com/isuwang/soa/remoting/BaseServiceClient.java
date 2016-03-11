@@ -63,16 +63,20 @@ public class BaseServiceClient {
             LOGGER.error("client load filter error", e);
         }
 
-        try (InputStream is = getInputStream("registry-conf.xml")) {
-            final SoaRegistry soaRegistry = JAXB.unmarshal(is, SoaRegistry.class);
+        if(!SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local")) {
+            try (InputStream is = getInputStream("registry-conf.xml")) {
+                final SoaRegistry soaRegistry = JAXB.unmarshal(is, SoaRegistry.class);
 
-            Class<?> aClass = classLoader.loadClass(soaRegistry.getRef());
+                Class<?> aClass = classLoader.loadClass(soaRegistry.getRef());
 
-            RegistryAgentProxy.setCurrentInstance(RegistryAgentProxy.Type.Client, (RegistryAgent) aClass.newInstance());
-            RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).start();
-            LOGGER.info("client load registry {} with path {}", soaRegistry.getName(), soaRegistry.getRef());
-        } catch (Exception e) {
-            LOGGER.error("client load registry error", e);
+                RegistryAgentProxy.setCurrentInstance(RegistryAgentProxy.Type.Client, (RegistryAgent) aClass.newInstance());
+                RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).start();
+                LOGGER.info("client load registry {} with path {}", soaRegistry.getName(), soaRegistry.getRef());
+            } catch (Exception e) {
+                LOGGER.error("client load registry error", e);
+            }
+        } else {
+            LOGGER.info("soa remoting mode is {},client not load registry", SoaSystemEnvProperties.SOA_REMOTING_MODE);
         }
     }
 
