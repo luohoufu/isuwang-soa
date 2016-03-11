@@ -31,15 +31,15 @@ public class LoadBalanceFilter implements Filter {
     public void doFilter(FilterChain chain) throws TException {
         final Context context = (Context) chain.getAttribute(StubFilterChain.ATTR_KEY_CONTEXT);
         final SoaHeader soaHeader = (SoaHeader) chain.getAttribute(StubFilterChain.ATTR_KEY_HEADER);
+        final boolean isLocal = SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local");
 
         String callerInfo = null;
 
         List<ServiceInfo> usableList;
-        if (SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local")) {
+        if (isLocal)
             usableList = new ArrayList<>();
-        } else {
+        else
             usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName());
-        }
 
         String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
         LoadBalanceStratage balance = getLoadBalanceStratage(serviceKey) == null ? LoadBalanceStratage.LeastActive : getLoadBalanceStratage(serviceKey);
@@ -64,7 +64,7 @@ public class LoadBalanceFilter implements Filter {
             String[] infos = callerInfo.split(":");
             context.setCalleeIp(infos[0]);
             context.setCalleePort(Integer.valueOf(infos[1]));
-        } else if (SoaSystemEnvProperties.SOA_SERVICE_IP != null && SoaSystemEnvProperties.SOA_SERVICE_PORT != null) {
+        } else if (isLocal) {
             context.setCalleeIp(SoaSystemEnvProperties.SOA_SERVICE_IP);
             context.setCalleePort(SoaSystemEnvProperties.SOA_SERVICE_PORT);
         }

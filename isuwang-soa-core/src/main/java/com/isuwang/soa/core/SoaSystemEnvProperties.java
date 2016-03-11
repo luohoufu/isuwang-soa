@@ -17,8 +17,8 @@ public class SoaSystemEnvProperties {
     private static final String KEY_SOA_APIDOC_PORT = "soa.apidoc.port";
     private static final String KEY_SOA_REMOTING_MODE = "soa.remoting.mode";
 
-    public static final String SOA_SERVICE_IP = get(KEY_SOA_SERVICE_IP);
-    public static final Integer SOA_SERVICE_PORT = isNotBlank(get(KEY_SOA_SERVICE_PORT)) ? Integer.valueOf(get(KEY_SOA_SERVICE_PORT)) : null;
+    public static final String SOA_SERVICE_IP = get(KEY_SOA_SERVICE_IP, "127.0.0.1");
+    public static final Integer SOA_SERVICE_PORT = Integer.valueOf(get(KEY_SOA_SERVICE_PORT, "9090"));
     public static final String SOA_ZOOKEEPER_HOST = get(KEY_SOA_ZOOKEEPER_HOST, "127.0.0.1:2181");
     public static final boolean SOA_CONTAINER_USETHREADPOOL = Boolean.valueOf(get(KEY_SOA_CONTAINER_USETHREADPOOL, Boolean.TRUE.toString()));
     //public static final boolean ZOOKEEPER_JMX_LOG4J_DISABLE = Boolean.valueOf(get(KEY_ZOOKEEPER_JMX_LOG4J_DISABLE, Boolean.FALSE.toString()));
