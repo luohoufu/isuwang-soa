@@ -104,14 +104,14 @@ public class ZookeeperHelper {
     private AsyncCallback.StringCallback serverNameCreateCb = (rc, path, ctx, name) -> {
         switch (KeeperException.Code.get(rc)) {
             case CONNECTIONLOSS:
-                LOGGER.info("添加节点, path:" + path + "连接断开，重新添加");
+                LOGGER.info("创建serviceName:{},连接断开，重新创建", path);
                 addPersistServerNode(path, (String) ctx);
                 break;
             case OK:
-                LOGGER.info("添加节点成功，path:" + path + "  值为：" + ((String) ctx));
+                LOGGER.info("创建serviceName:{},成功", path);
                 break;
             case NODEEXISTS:
-                LOGGER.info("添加节点, path:" + path + "已存在，更新");
+                LOGGER.info("创建serviceName:{},已存在", path);
                 updateServerInfo(path, (String) ctx);
                 break;
             default:
@@ -133,18 +133,23 @@ public class ZookeeperHelper {
     private AsyncCallback.StringCallback serverAddrCreateCb = (rc, path, ctx, name) -> {
         switch (KeeperException.Code.get(rc)) {
             case CONNECTIONLOSS:
-                LOGGER.info("添加server info, path:" + path + "连接断开，重新添加");
+                LOGGER.info("添加serviceInfo:{},连接断开，重新添加", path);
                 addServerInfo(path, (String) ctx);
                 break;
             case OK:
-                LOGGER.info("添加server info成功，path:" + path + "  值为：" + ((String) ctx));
+                LOGGER.info("添加serviceInfo:{},成功", path);
                 break;
             case NODEEXISTS:
-                LOGGER.info("添加server info, path:" + path + "已存在，更新");
-                updateServerInfo(path, (String) ctx);
+                LOGGER.info("添加serviceInfo:{},已存在，删掉后重新添加", path);
+                try {
+                    zk.delete(path, -1);
+                } catch (Exception e) {
+                    LOGGER.error("删除serviceInfo:{} 失败:{}", path, e.getMessage());
+                }
+                addServerInfo(path, (String) ctx);
                 break;
             default:
-                LOGGER.info("Something went wrong when creating server info");
+                LOGGER.info("添加serviceInfo:{}，出错", path);
         }
     };
 

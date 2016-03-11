@@ -33,7 +33,7 @@ public class Bootstrap {
         System.setProperty("soa.base", enginePath);
 
         System.out.println("soa.base:" + enginePath);
-        System.out.println("soa.run.mode:" + enginePath);
+        System.out.println("soa.run.mode:" + soaRunMode);
 
         final boolean isRunInMaven = soaRunMode.equals("maven");
 
