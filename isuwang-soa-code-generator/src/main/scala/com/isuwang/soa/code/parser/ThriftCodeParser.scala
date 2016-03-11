@@ -7,9 +7,8 @@ import com.github.mustachejava.Mustache
 import com.google.common.base.Charsets
 import com.google.common.io.CharStreams
 import com.isuwang.soa.core
-import com.isuwang.soa.core.metadata.Struct
+import com.isuwang.soa.core.metadata.TEnum.EnumItem
 import com.isuwang.soa.core.metadata._
-import TEnum.EnumItem
 import com.twitter.scrooge.ast._
 import com.twitter.scrooge.frontend.{Importer, ResolvedDocument, ThriftParser, TypeResolver}
 import com.twitter.scrooge.java_generator._

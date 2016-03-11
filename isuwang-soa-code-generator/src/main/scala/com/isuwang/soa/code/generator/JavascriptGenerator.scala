@@ -3,9 +3,9 @@ package com.isuwang.soa.code.generator
 import java.io.{File, PrintWriter}
 import java.util
 
+import com.isuwang.soa.core.metadata.DataType.KIND
+import com.isuwang.soa.core.metadata.TEnum.EnumItem
 import com.isuwang.soa.core.metadata._
-import DataType.KIND
-import TEnum.EnumItem
 
 import scala.xml.Elem
 

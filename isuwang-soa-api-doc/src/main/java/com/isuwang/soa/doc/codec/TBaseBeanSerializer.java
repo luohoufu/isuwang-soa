@@ -3,7 +3,6 @@ package com.isuwang.soa.doc.codec;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.isuwang.soa.core.metadata.*;
 import com.isuwang.soa.doc.restful.InvocationInfo;
 import org.apache.thrift.TException;
@@ -14,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * 基础序列化
