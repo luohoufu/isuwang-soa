@@ -35,7 +35,7 @@ public class DruidDataSourceMonitor {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        LOGGER.info("DruidDataSourceMonitor 定时时间:{} 上送间隔:{}ms", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S").format(calendar.getTime()), period);
+        LOGGER.info("DruidDataSourceMonitor 定时时间:{} 上送间隔:{}ms", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S").format(calendar.getTime()), period * 1000);
 
         timer.schedule(new TimerTask() {
             @Override
