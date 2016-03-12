@@ -67,26 +67,23 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     }
 
     protected void readRequestHeader(ChannelHandlerContext ctx, ByteBuf inputBuf) throws TException {
-        final Long startTime = System.currentTimeMillis();
-
-        /**
-         * get the length of the request
-         */
-        int readerIndex = inputBuf.readerIndex();
-        int requestLength = inputBuf.readInt();
-        inputBuf.readerIndex(readerIndex);
-
-        final Context context = Context.Factory.getNewInstance();
-        final SoaHeader soaHeader = new SoaHeader();
-        final TSoaTransport inputSoaTransport = new TSoaTransport(inputBuf);
-        context.setHeader(soaHeader);
-        Context.Factory.setCurrentInstance(context);
-
-        final PlatformProcessData processData = PlatformProcessDataFactory.getNewInstance(soaHeader);
-        processData.setRequestFlow(requestLength + Integer.BYTES);
-        PlatformProcessDataFactory.setCurrentInstance(processData);
+        TSoaTransport inputSoaTransport = null;
 
         try {
+            final Long startTime = System.currentTimeMillis();
+
+            final int requestLength = getRequestLength(inputBuf);
+
+            final Context context = Context.Factory.getNewInstance();
+            final SoaHeader soaHeader = new SoaHeader();
+            inputSoaTransport = new TSoaTransport(inputBuf);
+            context.setHeader(soaHeader);
+            Context.Factory.setCurrentInstance(context);
+
+            final PlatformProcessData processData = PlatformProcessDataFactory.getNewInstance(soaHeader);
+            processData.setRequestFlow(requestLength + Integer.BYTES);
+            PlatformProcessDataFactory.setCurrentInstance(processData);
+
             final TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport);
             TMessage tMessage = inputProtocol.readMessageBegin();
             context.setSeqid(tMessage.seqid);
@@ -107,16 +104,27 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             }
 
             if (useThreadPool && b) {
-                executorService.execute(() -> processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, processData));
+                final TSoaTransport finalInputSoaTransport = inputSoaTransport;
+                executorService.execute(() -> processRequest(ctx, inputBuf, finalInputSoaTransport, inputProtocol, context, startTime, processData));
             } else
                 processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, processData);
         } finally {
             if (inputSoaTransport.isOpen())
                 inputSoaTransport.close();
 
+            if (inputBuf.refCnt() > 0)
+                inputBuf.release();
+
             Context.Factory.removeCurrentInstance();
             PlatformProcessDataFactory.removeCurrentInstance();
         }
+    }
+
+    private int getRequestLength(ByteBuf inputBuf) {
+        int readerIndex = inputBuf.readerIndex();
+        int requestLength = inputBuf.readInt();
+        inputBuf.readerIndex(readerIndex);
+        return requestLength;
     }
 
     protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, Context context, Long startTime, PlatformProcessData processData) {
@@ -142,9 +150,6 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
             ctx.writeAndFlush(outputBuf);
 
-            if (inputBuf.refCnt() > 0)
-                inputBuf.release();
-
             isSucceed = true;
         } catch (SoaException e) {
             LOGGER.error(e.getMessage(), e);
@@ -153,13 +158,15 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
 
-            writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, new SoaException(SoaBaseCode.NotNull));
+            writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, new SoaException(SoaBaseCode.UnKnown));
         } finally {
             if (inputSoaTransport != null)
                 inputSoaTransport.close();
 
             if (outputSoaTransport != null)
                 outputSoaTransport.close();
+
+            inputBuf.release();
 
             final boolean finalIsSucceed = isSucceed;
             PlatformProcessDataFactory.update(soaHeader, cacheProcessData -> {
