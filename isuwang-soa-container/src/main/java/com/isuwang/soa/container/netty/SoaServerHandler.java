@@ -181,9 +181,9 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
                 long totalTime = System.currentTimeMillis() - startTime;
 
                 if (cacheProcessData.getPMinTime() == 0 || totalTime < cacheProcessData.getPMinTime())
-                    cacheProcessData.setPMinTime(cacheProcessData.getPMinTime());
+                    cacheProcessData.setPMinTime(totalTime);
                 if (cacheProcessData.getPMaxTime() == 0 || totalTime > cacheProcessData.getPMaxTime())
-                    cacheProcessData.setPMaxTime(cacheProcessData.getPMaxTime());
+                    cacheProcessData.setPMaxTime(totalTime);
                 cacheProcessData.setPTotalTime(cacheProcessData.getPTotalTime() + totalTime);
 
                 if (finalIsSucceed)
