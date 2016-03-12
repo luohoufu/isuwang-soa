@@ -82,7 +82,8 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
         } finally {
             outputSoaTransport.close();
 
-            requestBuf.release();
+            if(requestBuf.refCnt() > 0)
+                requestBuf.release();
 
             // to see SoaDecoder: ByteBuf msg = in.slice(readerIndex, length + Integer.BYTES).retain();
             if (responseBuf != null)
