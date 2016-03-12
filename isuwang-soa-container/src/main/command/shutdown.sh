@@ -31,4 +31,9 @@ do
     fi
   done
 done
-  echo 'shutdown finish....'
+
+echo '...shutdown finish....'
+
+rm -rf $workdir/../logs/pid.txt
+
+touch $workdir/../logs/pid.txt
