@@ -191,6 +191,8 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             inputBuf.release();
 
             final boolean finalIsSucceed = isSucceed;
+            final String finalResponseCode = responseCode;
+            final String finalResponseMsg = responseMsg;
             PlatformProcessDataFactory.update(soaHeader, cacheProcessData -> {
                 long totalTime = System.currentTimeMillis() - startTime;
 
@@ -209,22 +211,22 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
                 cacheProcessData.setRequestFlow(cacheProcessData.getRequestFlow() + processData.getRequestFlow());
                 cacheProcessData.setResponseFlow(cacheProcessData.getResponseFlow() + outputBuf.writerIndex());
+
+                StringBuilder builder = new StringBuilder("DONE")
+                        .append(" ").append(ctx.channel().remoteAddress())
+                        .append(" ").append(ctx.channel().localAddress())
+                        .append(" ").append(context.getSeqid())
+                        .append(" ").append(soaHeader.getServiceName()).append(".").append(soaHeader.getMethodName()).append(":").append(soaHeader.getVersionName())
+                        .append(" ").append(finalResponseCode)
+                        .append(" ").append(finalResponseMsg)
+                        .append(" ").append(processData.getRequestFlow())
+                        .append(" ").append(outputBuf.writerIndex())
+                        .append(" ").append(totalTime);
+                SIMPLE_LOGGER.info(builder.toString());
             });
 
             Context.Factory.removeCurrentInstance();
             PlatformProcessDataFactory.removeCurrentInstance();
-
-            StringBuilder builder = new StringBuilder("DONE")
-                    .append(" ").append(ctx.channel().remoteAddress())
-                    .append(" ").append(ctx.channel().localAddress())
-                    .append(" ").append(context.getSeqid())
-                    .append(" ").append(soaHeader.getServiceName()).append(".").append(soaHeader.getMethodName()).append(":").append(soaHeader.getVersionName())
-                    .append(" ").append(responseCode)
-                    .append(" ").append(responseMsg)
-                    .append(" ").append(processData.getRequestFlow())
-                    .append(" ").append(processData.getResponseFlow())
-                    .append(" ").append(processData.getPTotalTime());
-            SIMPLE_LOGGER.info(builder.toString());
         }
     }
 
