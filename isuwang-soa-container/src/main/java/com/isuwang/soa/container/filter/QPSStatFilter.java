@@ -42,19 +42,18 @@ public class QPSStatFilter implements StatusFilter {
             public void run() {
                 try {
                     final long timeMillis = System.currentTimeMillis() / 1000 * 1000;
+                    final int callCountNum = callCount.getAndSet(0);
 
                     QPSStat qpsStat = new QPSStat();
                     qpsStat.setPeriod((int) (period / 1000));
                     qpsStat.setAnalysisTime(timeMillis);
                     qpsStat.setServerIP(IPUtils.localIp());
                     qpsStat.setServerPort(SoaSystemEnvProperties.SOA_CONTAINER_PORT);
-                    qpsStat.setCallCount(callCount.get());
+                    qpsStat.setCallCount(callCountNum);
 
                     new MonitorServiceClient().uploadQPSStat(qpsStat);
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage());
-                } finally {
-                    callCount.set(0);
                 }
             }
         }, calendar.getTime(), period);
