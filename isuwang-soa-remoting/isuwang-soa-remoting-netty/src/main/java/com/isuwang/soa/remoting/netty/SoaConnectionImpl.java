@@ -28,7 +28,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
         Context context = Context.Factory.getCurrentInstance();
         SoaHeader soaHeader = context.getHeader();
 
-        final ByteBuf requestBuf = Unpooled.buffer(8192);
+        final ByteBuf requestBuf = Unpooled.directBuffer(8192);
         final TSoaTransport outputSoaTransport = new TSoaTransport(requestBuf);
 
         TSoaServiceProtocol outputProtocol;
@@ -82,8 +82,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
         } finally {
             outputSoaTransport.close();
 
-            if(requestBuf.refCnt() > 0)
-                requestBuf.release();
+            requestBuf.release();
 
             // to see SoaDecoder: ByteBuf msg = in.slice(readerIndex, length + Integer.BYTES).retain();
             if (responseBuf != null)
