@@ -1,5 +1,6 @@
 package com.isuwang.soa.container.filter;
 
+import com.isuwang.soa.container.util.LoggerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public class TaskManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggerUtil.SLOWTIME_LOG);
 
     private boolean live = false;
 

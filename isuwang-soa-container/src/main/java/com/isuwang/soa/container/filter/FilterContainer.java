@@ -50,9 +50,7 @@ public class FilterContainer implements Container {
     public void stop() {
         filters.stream()
                 .filter(soaFilter -> soaFilter instanceof StatusFilter)
-                .forEach(soaFilter -> {
-                    ((StatusFilter) soaFilter).destory();
-                });
+                .forEach(soaFilter -> ((StatusFilter) soaFilter).destory());
 
         filters.forEach(ContainerFilterChain::removeFilter);
 

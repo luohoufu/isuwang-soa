@@ -1,5 +1,6 @@
 package com.isuwang.soa.container.netty;
 
+import com.isuwang.soa.container.util.LoggerUtil;
 import com.isuwang.soa.container.util.PlatformProcessDataFactory;
 import com.isuwang.soa.core.*;
 import com.isuwang.soa.monitor.api.domain.PlatformProcessData;
@@ -29,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SoaServerHandler extends ChannelHandlerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(SoaServerHandler.class);
+    private static final Logger SIMPLE_LOGGER = LoggerFactory.getLogger(LoggerUtil.SIMPLE_LOG);
 
     private static Map<String, SoaBaseProcessor<?>> soaProcessors;
 
@@ -146,6 +148,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
         boolean isSucceed = false;
 
+        String responseCode = "-", responseMsg = "-";
         try {
             outputProtocol = new TSoaServiceProtocol(outputSoaTransport);
             SoaBaseProcessor<?> soaProcessor = soaProcessors.get(soaHeader.getServiceName());
@@ -157,14 +160,25 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             ctx.writeAndFlush(outputBuf);
 
             isSucceed = true;
+
+            if (soaHeader.getRespCode().isPresent())
+                responseCode = soaHeader.getRespCode().get();
+            if (soaHeader.getRespMessage().isPresent())
+                responseMsg = soaHeader.getRespMessage().get();
         } catch (SoaException e) {
             LOGGER.error(e.getMessage(), e);
 
             writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, e);
+
+            responseCode = e.getCode();
+            responseMsg = e.getMsg();
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
 
             writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, new SoaException(SoaBaseCode.UnKnown));
+
+            responseCode = SoaBaseCode.UnKnown.getCode();
+            responseMsg = SoaBaseCode.UnKnown.getMsg();
         } finally {
             if (inputSoaTransport != null)
                 inputSoaTransport.close();
@@ -199,6 +213,18 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
             Context.Factory.removeCurrentInstance();
             PlatformProcessDataFactory.removeCurrentInstance();
+
+            StringBuilder builder = new StringBuilder("DONE")
+                    .append(" ").append(ctx.channel().remoteAddress())
+                    .append(" ").append(ctx.channel().localAddress())
+                    .append(" ").append(context.getSeqid())
+                    .append(" ").append(soaHeader.getServiceName()).append(".").append(soaHeader.getMethodName()).append(":").append(soaHeader.getVersionName())
+                    .append(" ").append(responseCode)
+                    .append(" ").append(responseMsg)
+                    .append(" ").append(processData.getRequestFlow())
+                    .append(" ").append(processData.getResponseFlow())
+                    .append(" ").append(processData.getPTotalTime());
+            SIMPLE_LOGGER.info(builder.toString());
         }
     }
 
