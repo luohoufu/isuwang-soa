@@ -21,7 +21,7 @@ public class ContainerStartup {
 
     private static volatile boolean running = true;
     public static final String SOA_BASE = System.getProperty("soa.base");
-    public static final String SOA_RUN_MODE = System.getProperty("soa.run.mode");
+    public static final String SOA_RUN_MODE = System.getProperty("soa.run.mode", "maven");
     public static SoaServer soaServer = null;
 
     public static void startup() {

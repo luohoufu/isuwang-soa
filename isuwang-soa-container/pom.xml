@@ -70,7 +70,7 @@
                                     <overWriteReleases>false</overWriteReleases>
                                     <overWriteSnapshots>false</overWriteSnapshots>
                                     <overWriteIfNewer>true</overWriteIfNewer>
-                                    <includeArtifactIds>isuwang-soa-core,slf4j-api,logback-classic,logback-core
+                                    <includeArtifactIds>isuwang-soa-core,slf4j-api,logback-classic,logback-core,janino
                                     </includeArtifactIds>
                                 </configuration>
                             </execution>
@@ -86,7 +86,7 @@
                                     <overWriteReleases>false</overWriteReleases>
                                     <overWriteSnapshots>false</overWriteSnapshots>
                                     <overWriteIfNewer>true</overWriteIfNewer>
-                                    <excludeArtifactIds>isuwang-soa-core,slf4j-api,logback-classic,logback-core
+                                    <excludeArtifactIds>isuwang-soa-core,slf4j-api,logback-classic,logback-core,janino
                                     </excludeArtifactIds>
                                 </configuration>
                             </execution>
@@ -143,6 +143,11 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
         </dependency>
 
         <dependency>

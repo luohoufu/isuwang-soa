@@ -76,7 +76,7 @@
             </then>
         </if>
 
-        <appender-ref ref="ALLFILE"/>
+        <appender-ref ref="DETAILFILE"/>
         <appender-ref ref="ERRORFILE"/>
     </root>
 </configuration>

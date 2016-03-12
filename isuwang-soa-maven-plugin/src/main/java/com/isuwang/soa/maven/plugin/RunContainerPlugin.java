@@ -34,6 +34,7 @@ public class RunContainerPlugin extends SoaAbstractMojo {
         getLog().info("bundle:" + project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion());
 
         System.setProperty("soa.base", new File(project.getBuild().getOutputDirectory()).getAbsolutePath().replace("/target/classes", ""));
+        System.setProperty("soa.run.mode", "maven");
 
         final String mainClass = Bootstrap.class.getName();
 
