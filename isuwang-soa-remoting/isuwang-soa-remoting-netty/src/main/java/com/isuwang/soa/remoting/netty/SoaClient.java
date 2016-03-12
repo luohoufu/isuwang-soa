@@ -109,6 +109,8 @@ public class SoaClient {
 
         if (byteBufs == null) {
             LOGGER.error("返回结果超时，siqid为：" + String.valueOf(seqid));
+
+            msg.release();
         } else {
             synchronized (byteBufs) {
                 byteBufs[0] = msg;

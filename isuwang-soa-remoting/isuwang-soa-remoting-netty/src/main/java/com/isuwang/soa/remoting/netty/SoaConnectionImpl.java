@@ -32,6 +32,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
         final TSoaTransport outputSoaTransport = new TSoaTransport(requestBuf);
 
         TSoaServiceProtocol outputProtocol;
+        ByteBuf responseBuf = null;
 
         try {
             outputProtocol = new TSoaServiceProtocol(outputSoaTransport);
@@ -43,7 +44,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
             if (soaClient == null) {
                 throw new SoaException(SoaBaseCode.NotConnected);
             }
-            ByteBuf responseBuf = soaClient.send(context.getSeqid(), requestBuf); //发送请求，返回结果
+            responseBuf = soaClient.send(context.getSeqid(), requestBuf); //发送请求，返回结果
 
             if (responseBuf == null) {
                 throw new SoaException(SoaBaseCode.TimeOut);
@@ -80,6 +81,12 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
             throw new SoaException(SoaBaseCode.UnKnown);
         } finally {
             outputSoaTransport.close();
+
+            requestBuf.release();
+
+            // to see SoaDecoder: ByteBuf msg = in.slice(readerIndex, length + Integer.BYTES).retain();
+            if (responseBuf != null)
+                responseBuf.release();
         }
     }
 

@@ -69,6 +69,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     protected void readRequestHeader(ChannelHandlerContext ctx, ByteBuf inputBuf) throws TException {
         TSoaTransport inputSoaTransport = null;
 
+        boolean intoPool = false, intoProcessRequest = false;
         try {
             final Long startTime = System.currentTimeMillis();
 
@@ -103,16 +104,21 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
                     b = aBoolean.booleanValue();
             }
 
+            intoProcessRequest = true;
+
             if (useThreadPool && b) {
                 final TSoaTransport finalInputSoaTransport = inputSoaTransport;
                 executorService.execute(() -> processRequest(ctx, inputBuf, finalInputSoaTransport, inputProtocol, context, startTime, processData));
+                intoPool = true;
             } else
                 processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, processData);
         } finally {
-            if (inputSoaTransport.isOpen())
-                inputSoaTransport.close();
+            if (!intoPool) {
+                if (inputSoaTransport.isOpen())
+                    inputSoaTransport.close();
+            }
 
-            if (inputBuf.refCnt() > 0)
+            if (!intoProcessRequest)
                 inputBuf.release();
 
             Context.Factory.removeCurrentInstance();
@@ -167,8 +173,8 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
                 outputSoaTransport.close();
 
             //LEAK: ByteBuf.release() was not called before it's garbage-collected. Enable advanced leak reporting to find out where the leak occurred. To enable advanced leak reporting, specify the JVM option '-Dio.netty.leakDetectionLevel=advanced' or call ResourceLeakDetector.setLevel() See http://netty.io/wiki/reference-counted-objects.html for more information.
-            if(inputBuf.refCnt() > 0)
-                inputBuf.release();
+            // to see SoaDecoder: ByteBuf msg = in.slice(readerIndex, length + Integer.BYTES).retain();
+            inputBuf.release();
 
             final boolean finalIsSucceed = isSucceed;
             PlatformProcessDataFactory.update(soaHeader, cacheProcessData -> {
