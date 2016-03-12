@@ -70,7 +70,12 @@
     </logger>
 
     <root level="INFO">
-        <appender-ref ref="STDOUT"/>
+        <if condition='!property("soa.run.mode").equals("native")'>
+            <then>
+                <appender-ref ref="STDOUT"/>
+            </then>
+        </if>
+
         <appender-ref ref="ALLFILE"/>
         <appender-ref ref="ERRORFILE"/>
     </root>
