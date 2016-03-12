@@ -167,7 +167,8 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
                 outputSoaTransport.close();
 
             //LEAK: ByteBuf.release() was not called before it's garbage-collected. Enable advanced leak reporting to find out where the leak occurred. To enable advanced leak reporting, specify the JVM option '-Dio.netty.leakDetectionLevel=advanced' or call ResourceLeakDetector.setLevel() See http://netty.io/wiki/reference-counted-objects.html for more information.
-            inputBuf.release();
+            if(inputBuf.refCnt() > 0)
+                inputBuf.release();
 
             final boolean finalIsSucceed = isSucceed;
             PlatformProcessDataFactory.update(soaHeader, cacheProcessData -> {
