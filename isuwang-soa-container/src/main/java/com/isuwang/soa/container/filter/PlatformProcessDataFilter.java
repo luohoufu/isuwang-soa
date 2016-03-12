@@ -41,19 +41,19 @@ public class PlatformProcessDataFilter implements StatusFilter {
     @Override
     public void doFilter(FilterChain chain) throws TException {
         final SoaHeader soaHeader = Context.Factory.getCurrentInstance().getHeader();
-        final PlatformProcessData processData = PlatformProcessDataFactory.getCurrentInstance();
+        //final PlatformProcessData processData = PlatformProcessDataFactory.getCurrentInstance();
 
         try {
             chain.doFilter();
         } finally {
             PlatformProcessDataFactory.update(soaHeader, cacheProcessData -> {
-                if (cacheProcessData.getIMinTime() == 0 || processData.getIMinTime() < cacheProcessData.getIMinTime())
-                    cacheProcessData.setIMinTime(processData.getIMinTime());
-                if (cacheProcessData.getIMaxTime() == 0 || processData.getIMaxTime() > cacheProcessData.getIMaxTime())
-                    cacheProcessData.setIMaxTime(processData.getIMaxTime());
-
                 final Long totalTime = (Long) chain.getAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME);
                 cacheProcessData.setITotalTime(cacheProcessData.getITotalTime() + totalTime);
+
+                if (cacheProcessData.getIMinTime() == 0 || totalTime < cacheProcessData.getIMinTime())
+                    cacheProcessData.setIMinTime(totalTime);
+                if (cacheProcessData.getIMaxTime() == 0 || totalTime > cacheProcessData.getIMaxTime())
+                    cacheProcessData.setIMaxTime(totalTime);
             });
         }
     }

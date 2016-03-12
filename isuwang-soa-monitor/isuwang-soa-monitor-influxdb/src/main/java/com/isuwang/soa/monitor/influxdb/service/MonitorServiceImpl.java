@@ -93,7 +93,7 @@ public class MonitorServiceImpl implements MonitorService {
                     .tag("server_port", processData.getServerPort().toString())
                     .time(processData.getAnalysisTime(), TimeUnit.MILLISECONDS)
                     .field("p_mintime", processData.getPMinTime())
-                    .field("p_maxTime", processData.getPMaxTime())
+                    .field("p_maxtime", processData.getPMaxTime())
                     .field("p_averagetime", processData.getPAverageTime())
                     .field("p_totaltime", processData.getPTotalTime())
                     .field("i_mintime", processData.getIMinTime())
