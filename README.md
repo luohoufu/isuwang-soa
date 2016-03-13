@@ -401,6 +401,12 @@ compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run
 # -Dsoa.remoting.mode=local
 ```
 
+可选参数:
+
+```
+-Dsoa.service.port=9091
+```
+
 ##### 远程模式
 
 > 无必选参数
@@ -409,6 +415,7 @@ compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run
 
 ```
 -Dsoa.zookeeper.host=127.0.0.1:2181
+-Dsoa.service.port=9091
 ```
 
 ##### 调用服务测试
