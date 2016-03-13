@@ -3,6 +3,7 @@ package com.isuwang.soa.container;
 import com.isuwang.soa.container.apidoc.ApidocContainer;
 import com.isuwang.soa.container.conf.SoaServer;
 import com.isuwang.soa.container.conf.SoaServerContainer;
+import com.isuwang.soa.core.SoaSystemEnvProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +11,8 @@ import javax.xml.bind.JAXB;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * ContainerStartup
@@ -44,13 +47,26 @@ public class ContainerStartup {
             e.printStackTrace();
         }
 
+        // 本地模式
+        final boolean localMode = SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local");
+
+        if (localMode) {// 剔除Registry的容器
+            List<SoaServerContainer> collect = soaServer.getSoaServerContainers()
+                    .getSoaServerContainer()
+                    .stream()
+                    .filter(soaServerContainer -> soaServerContainer.getRef().startsWith("com.isuwang.soa.container.registry."))
+                    .collect(toList());
+
+            soaServer.getSoaServerContainers().getSoaServerContainer().removeAll(collect);
+        }
+
         final boolean hasApidocContainer = soaServer.getSoaServerContainers()
                 .getSoaServerContainer()
                 .stream()
                 .filter(soaContainer -> soaContainer.getRef().equals(ApidocContainer.class.getName()))
                 .count() > 0;
 
-        if("maven".equals(SOA_RUN_MODE) && !hasApidocContainer)
+        if ("maven".equals(SOA_RUN_MODE) && !hasApidocContainer)
             containers.add(new ApidocContainer());
 
         try {
