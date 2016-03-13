@@ -365,6 +365,7 @@ compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run
 ```
 # -Dsoa.zookeeper.host=127.0.0.1:2181
 # -Dsoa.container.port=9090
+# -Dsoa.monitor.enable=false
 ```
 
 #### 客户端调用服务

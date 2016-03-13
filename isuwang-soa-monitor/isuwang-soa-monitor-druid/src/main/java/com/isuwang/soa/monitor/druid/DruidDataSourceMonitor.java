@@ -30,6 +30,9 @@ public class DruidDataSourceMonitor {
     private final Timer timer = new Timer("DruidDataSourceMonitor-Timer-" + INDEX.incrementAndGet());
 
     public void init() {
+        if (!SoaSystemEnvProperties.SOA_MONITOR_ENABLE)
+            return;
+
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, 1);
         calendar.set(Calendar.SECOND, 0);

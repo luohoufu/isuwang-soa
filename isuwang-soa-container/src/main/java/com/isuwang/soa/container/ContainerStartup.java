@@ -3,6 +3,7 @@ package com.isuwang.soa.container;
 import com.isuwang.soa.container.apidoc.ApidocContainer;
 import com.isuwang.soa.container.conf.SoaServer;
 import com.isuwang.soa.container.conf.SoaServerContainer;
+import com.isuwang.soa.container.conf.SoaServerFilter;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,8 @@ import javax.xml.bind.JAXB;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * ContainerStartup
@@ -42,6 +45,18 @@ public class ContainerStartup {
                         .stream()
                         .filter(soaServerContainer -> soaServerContainer.getRef().startsWith("com.isuwang.soa.container.registry."))
                         .forEach(soaServerContainer -> soaServerContainer.setRef("com.isuwang.soa.container.registry.LocalRegistryContainer"));
+            }
+
+            if (!SoaSystemEnvProperties.SOA_MONITOR_ENABLE) {
+                List<SoaServerFilter> collect = ContainerStartup.soaServer
+                        .getSoaFilters()
+                        .getSoaServerFilter()
+                        .stream()
+                        .filter(filter -> filter.getRef().equals("com.isuwang.soa.container.filter.QPSStatFilter") || filter.getRef().equals("com.isuwang.soa.container.filter.PlatformProcessDataFilter"))
+                        .collect(toList());
+
+                if (collect.size() > 0)
+                    ContainerStartup.soaServer.getSoaFilters().getSoaServerFilter().removeAll(collect);
             }
 
             for (SoaServerContainer soaContainer : soaServer.getSoaServerContainers().getSoaServerContainer()) {

@@ -27,12 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LocalRegistryContainer implements Container, RegistryAgent {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalRegistryContainer.class);
 
-    private static final Map<String, SoaBaseProcessor<?>> processorMap = ProcessorCache.getProcessorMap();
-
     @Override
     public void start() {
-        setProcessorMap(new ConcurrentHashMap<>());
-
         Map<Object, Class<?>> contexts = SpringContainer.getContexts();
         Set<Object> ctxs = contexts.keySet();
 
@@ -73,7 +69,7 @@ public class LocalRegistryContainer implements Container, RegistryAgent {
 
     @Override
     public void stop() {
-        processorMap.clear();
+        ProcessorCache.getProcessorMap().clear();
     }
 
     @Override
@@ -83,10 +79,10 @@ public class LocalRegistryContainer implements Container, RegistryAgent {
 
     @Override
     public void registerAllServices() {
-        Set<String> keys = processorMap.keySet();
+        Set<String> keys = ProcessorCache.getProcessorMap().keySet();
 
         for (String key : keys) {
-            SoaBaseProcessor<?> processor = processorMap.get(key);
+            SoaBaseProcessor<?> processor = ProcessorCache.getProcessorMap().get(key);
 
             if (null != processor.getInterfaceClass().getClass()) {
                 Service service = processor.getInterfaceClass().getAnnotation(Service.class);
@@ -102,7 +98,7 @@ public class LocalRegistryContainer implements Container, RegistryAgent {
 
     @Override
     public Map<String, SoaBaseProcessor<?>> getProcessorMap() {
-        return processorMap;
+        return ProcessorCache.getProcessorMap();
     }
 
     @Override
