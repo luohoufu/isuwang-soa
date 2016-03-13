@@ -6,6 +6,7 @@ import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
 import com.isuwang.soa.registry.ConfigKey;
+import com.isuwang.soa.registry.RegistryAgent;
 import com.isuwang.soa.registry.RegistryAgentProxy;
 import com.isuwang.soa.registry.ServiceInfo;
 import org.apache.thrift.TException;
@@ -73,6 +74,10 @@ public class LoadBalanceFilter implements Filter {
     }
 
     private LoadBalanceStratage getLoadBalanceStratage(String key) {
+        RegistryAgent currentInstance = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client);
+        if (currentInstance == null)
+            return null;
+
         Map<ConfigKey, Object> configs = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).getConfig().get(key);
         if (null != configs) {
             return LoadBalanceStratage.findByValue((String) configs.get(ConfigKey.LoadBalance));

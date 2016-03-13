@@ -152,7 +152,8 @@ public class BaseServiceClient {
 
                 int failOverTimes = 0;
                 String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
-                Map<ConfigKey, Object> configs = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).getConfig().get(serviceKey);
+                RegistryAgent registryAgent = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client);
+                Map<ConfigKey, Object> configs = registryAgent != null ? registryAgent.getConfig().get(serviceKey) : null;
                 if (null != configs) {
                     failOverTimes = (Integer) configs.get(ConfigKey.FailOver);
                 }

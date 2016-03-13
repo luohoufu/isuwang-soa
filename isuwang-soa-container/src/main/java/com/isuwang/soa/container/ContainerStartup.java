@@ -12,8 +12,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * ContainerStartup
  *
@@ -35,6 +33,17 @@ public class ContainerStartup {
         try (InputStream is = new BufferedInputStream(loadInputStreamInClassLoader("server-conf.xml"))) {
             soaServer = JAXB.unmarshal(is, SoaServer.class);
 
+            // 本地模式
+            final boolean localMode = SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local");
+
+            if (localMode) {// 剔除Registry的容器
+                soaServer.getSoaServerContainers()
+                        .getSoaServerContainer()
+                        .stream()
+                        .filter(soaServerContainer -> soaServerContainer.getRef().startsWith("com.isuwang.soa.container.registry."))
+                        .forEach(soaServerContainer -> soaServerContainer.setRef("com.isuwang.soa.container.registry.LocalRegistryContainer"));
+            }
+
             for (SoaServerContainer soaContainer : soaServer.getSoaServerContainers().getSoaServerContainer()) {
                 Class containerClass = ContainerStartup.class.getClassLoader().loadClass(soaContainer.getRef());
                 Container container = (Container) containerClass.newInstance();
@@ -45,19 +54,6 @@ public class ContainerStartup {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        // 本地模式
-        final boolean localMode = SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local");
-
-        if (localMode) {// 剔除Registry的容器
-            List<SoaServerContainer> collect = soaServer.getSoaServerContainers()
-                    .getSoaServerContainer()
-                    .stream()
-                    .filter(soaServerContainer -> soaServerContainer.getRef().startsWith("com.isuwang.soa.container.registry."))
-                    .collect(toList());
-
-            soaServer.getSoaServerContainers().getSoaServerContainer().removeAll(collect);
         }
 
         final boolean hasApidocContainer = soaServer.getSoaServerContainers()

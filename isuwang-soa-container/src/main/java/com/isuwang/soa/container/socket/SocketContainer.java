@@ -1,7 +1,7 @@
 package com.isuwang.soa.container.socket;
 
 import com.isuwang.soa.container.Container;
-import com.isuwang.soa.container.registry.ZookeeperRegistryContainer;
+import com.isuwang.soa.container.registry.ProcessorCache;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class SocketContainer implements Container {
                     try {
                         final Socket client = server.accept();
 
-                        soaTransPool.execute(new SoaTransPool.SoaCodecTask(client, ZookeeperRegistryContainer.getProcessorMap()));
+                        soaTransPool.execute(new SoaTransPool.SoaCodecTask(client, ProcessorCache.getProcessorMap()));
                     } catch (IOException e) {
                         LOGGER.error(e.getMessage(), e);
                     }

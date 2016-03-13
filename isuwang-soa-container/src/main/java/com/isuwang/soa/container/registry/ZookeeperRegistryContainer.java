@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Registry Container
@@ -25,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ZookeeperRegistryContainer implements Container {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperRegistryContainer.class);
-    private static final Map<String, SoaBaseProcessor<?>> processorMap = new ConcurrentHashMap<>();
 
     private final RegistryAgent registryAgent = new RegistryAgentImpl(false);
 
@@ -34,7 +32,7 @@ public class ZookeeperRegistryContainer implements Container {
     public void start() {
         RegistryAgentProxy.setCurrentInstance(RegistryAgentProxy.Type.Server, registryAgent);
 
-        registryAgent.setProcessorMap(processorMap);
+        registryAgent.setProcessorMap(ProcessorCache.getProcessorMap());
         registryAgent.start();
 
         Map<Object, Class<?>> contexts = SpringContainer.getContexts();
@@ -53,7 +51,7 @@ public class ZookeeperRegistryContainer implements Container {
                 for (String key : keys) {
                     SoaBaseProcessor<?> processor = processorMap.get(key);
 
-                    ZookeeperRegistryContainer.processorMap.put(processor.getInterfaceClass().getName(), processor);
+                    ProcessorCache.getProcessorMap().put(processor.getInterfaceClass().getName(), processor);
 
                     if (processor.getInterfaceClass().getClass() != null) {
                         Service service = processor.getInterfaceClass().getAnnotation(Service.class);
@@ -75,13 +73,13 @@ public class ZookeeperRegistryContainer implements Container {
 
     @Override
     public void stop() {
-        ZookeeperRegistryContainer.processorMap.clear();
+        ProcessorCache.getProcessorMap().clear();
 
         registryAgent.stop();
     }
 
     public static Map<String, SoaBaseProcessor<?>> getProcessorMap() {
-        return ZookeeperRegistryContainer.processorMap;
+        return ProcessorCache.getProcessorMap();
     }
 
 }
