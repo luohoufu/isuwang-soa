@@ -260,10 +260,24 @@ public class HelloServiceImpl implements HelloService {
 </beans>
 ```
     
-#### 启动服务
+#### 开发模式启动服务
 
-* 本地启动zookeeper
-* `hello-service`添加maven插件：
+> 前提:需要把`isuwang-soa-maven-plugin`安装到本地maven仓库
+
+##### 安装Maven插件
+
+安装`isuwang-soa-maven-plugin`工程
+
+* 源码手动安装
+
+```
+cd isuwang-soa/isuwang-soa-maven-plugin
+mvn clean install
+```
+
+* pom.xml依赖自动安装
+
+`hello-service`添加maven插件：
 
 ```
 <pluginRepositories>
@@ -298,13 +312,64 @@ public class HelloServiceImpl implements HelloService {
 </plugin>
 ```
 
-* 在`hello-service`目录下使用maven命令启动service:
+##### Maven启动服务容器
 
-`compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run` or `compile isuwangsoa:run`
+> 启动服务容器在开发模式下可以选择`本地模式`或`远程模式`
+>
+> 可在无开发ide环境下或在ide开发环境下运行
+> 
+> 可以使用`isuwangsoa`的插件简称,需要在本地maven进行配置
 
-到此为止，插件会启动容器，加载服务并向zookeeper注册。
+* isuwangsoa插件简称配置(不使用不用配置)
+
+修改maven的主配置文件（${MAVEN_HOME}/conf/settings.xml文件或者 ~/.m2/settings.xml文件）
+
+```
+<pluginGroups>
+    <pluginGroup>com.isuwang</pluginGroup>
+  </pluginGroups>
+```
+
+* 本地模式(无需启动zookeeper)
+
+> 默认启动端口:9090
+
+启动命令:
+```
+# 第一种(简称)
+cd hello-service
+compile isuwangsoa:run -Dsoa.remoting.mode=local
+
+# 第二种
+cd hello-service
+compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run -Dsoa.remoting.mode=local
+```
+
+* 远程模式(需要启动zookeeper)
+
+> 默认启动端口:9090
+
+启动命令:
+```
+# 第一种(简称)
+cd hello-service
+compile isuwangsoa:run
+
+# 第二种
+cd hello-service
+compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run
+```
+
+* 启动可选参数
+
+```
+# -Dsoa.zookeeper.host=127.0.0.1:2181
+# -Dsoa.container.port=9090
+```
 
 #### 客户端调用服务
+
+##### 依赖配置
 
 客户端要依赖`hello-api`,`isuwang-soa-registry-zookeeper`和`isuwang-soa-remoting-netty`
 ```
@@ -324,6 +389,29 @@ public class HelloServiceImpl implements HelloService {
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
+
+
+##### 本地模式
+
+> 非本地模式不用配置
+
+启动参数:
+
+```
+# -Dsoa.remoting.mode=local
+```
+
+##### 远程模式
+
+> 无必选参数
+
+可选参数:
+
+```
+-Dsoa.zookeeper.host=127.0.0.1:2181
+```
+
+##### 调用服务测试
 
 测试代码：
 
