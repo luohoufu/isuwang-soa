@@ -112,7 +112,7 @@ service HelloService {
 
 #### 服务接口代码生成：
 
-> 打包服务接口代码工程(isuwang-soa-code-generator): `mvn clean package` 
+> 打包服务接口代码工程(`isuwang-soa-code-generator`): `mvn clean package` 
 >
 > 输出的可执行jar包目录: `isuwang-soa-code-generator/target/isuwang-soa-code-generator-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
