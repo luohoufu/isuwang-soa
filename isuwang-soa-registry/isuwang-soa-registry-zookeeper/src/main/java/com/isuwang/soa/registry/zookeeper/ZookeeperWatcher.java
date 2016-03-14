@@ -3,9 +3,8 @@ package com.isuwang.soa.registry.zookeeper;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.ServiceInfo;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.*;
+import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +52,69 @@ public class ZookeeperWatcher {
         }
     }
 
+
+    private void tryCreateNode(String path) {
+
+        String[] paths = path.split("/");
+
+        String createPath = "/";
+        for (int i = 1; i < paths.length; i++) {
+            createPath += paths[i];
+            addPersistServerNode(createPath, "");
+            createPath += "/";
+        }
+    }
+
+    /**
+     * 添加持久化的节点
+     *
+     * @param path
+     * @param data
+     */
+    private void addPersistServerNode(String path, String data) {
+        Stat stat = exists(path);
+
+        if (stat == null)
+            zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, nodeCreatedCallBack, data);
+    }
+
+    /**
+     * 判断节点是否存在
+     *
+     * @param path
+     * @return
+     */
+    private Stat exists(String path) {
+        Stat stat = null;
+        try {
+            stat = zk.exists(path, false);
+        } catch (KeeperException e) {
+        } catch (InterruptedException e) {
+        }
+        return stat;
+    }
+
+    /**
+     * 异步添加serverName节点的回调处理
+     */
+    private AsyncCallback.StringCallback nodeCreatedCallBack = (rc, path, ctx, name) -> {
+        switch (KeeperException.Code.get(rc)) {
+            case CONNECTIONLOSS:
+                LOGGER.info("创建节点:{},连接断开，重新创建", path);
+                addPersistServerNode(path, (String) ctx);
+                break;
+            case OK:
+                LOGGER.info("创建节点:{},成功", path);
+                break;
+            case NODEEXISTS:
+                LOGGER.info("创建节点:{},已存在", path);
+                break;
+            default:
+                LOGGER.info("创建节点:{},失败", path);
+        }
+    };
+
+
     public void destroy() {
         if (zk != null) {
             try {
@@ -86,6 +148,9 @@ public class ZookeeperWatcher {
      * @return
      */
     public void getServersList() {
+
+        tryCreateNode("/soa/runtime/services");
+
         zk.getChildren("/soa/runtime/services", watchedEvent -> {
             //Children发生变化，则重新获取最新的services列表
             if (watchedEvent.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
@@ -193,6 +258,11 @@ public class ZookeeperWatcher {
 
     //----------------------static config-------------------------------------
     private void getConfig(String path) {
+
+
+        //每次getConfig之前，先判断父节点是否存在，若不存在，则创建
+        tryCreateNode("/soa/config");
+
         zk.getChildren(path, watchedEvent -> {
             if (watchedEvent.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
                 LOGGER.info(watchedEvent.getPath() + "'s children changed, reset config in memory");
