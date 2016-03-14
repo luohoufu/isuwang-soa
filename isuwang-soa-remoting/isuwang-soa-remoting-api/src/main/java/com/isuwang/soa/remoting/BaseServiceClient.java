@@ -63,7 +63,7 @@ public class BaseServiceClient {
             LOGGER.error("client load filter error", e);
         }
 
-        if(!SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local")) {
+        if (!SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local")) {
             try (InputStream is = getInputStream("registry-conf.xml")) {
                 final SoaRegistry soaRegistry = JAXB.unmarshal(is, SoaRegistry.class);
 
@@ -101,11 +101,21 @@ public class BaseServiceClient {
     }
 
     protected void initContext(String methodName) {
-        Context context = Context.Factory.getCurrentInstance();
+        InvocationContext context = InvocationContext.Factory.getCurrentInstance();
 
         context.setSeqid(seqid_.incrementAndGet());
 
         SoaHeader soaHeader = new SoaHeader();
+
+        InvocationContext.Factory.ISoaHeaderProxy headerProxy = InvocationContext.Factory.getSoaHeaderProxy();
+        if(headerProxy != null) {
+            soaHeader.setCallerFrom(headerProxy.callerFrom());
+            soaHeader.setCustomerId(headerProxy.customerId());
+            soaHeader.setCustomerName(headerProxy.customerName());
+            soaHeader.setOperatorId(headerProxy.operatorId());
+            soaHeader.setOperatorName(headerProxy.operatorName());
+        }
+
         try {
             soaHeader.setCallerIp(Optional.of(InetAddress.getLocalHost().getHostAddress()));
         } catch (UnknownHostException e) {
@@ -115,20 +125,25 @@ public class BaseServiceClient {
         soaHeader.setServiceName(serviceName);
         soaHeader.setMethodName(methodName);
         soaHeader.setVersionName(versionName);
-        soaHeader.setCallerFrom(Optional.of(System.getProperty("soa.service.callerfrom", "web")));
+
+        if (!soaHeader.getCallerFrom().isPresent())
+            soaHeader.setCallerFrom(Optional.of(SoaSystemEnvProperties.SOA_SERVICE_CALLERFROM));
+
+
 
         context.setHeader(soaHeader);
 
-        context.setCalleeTimeout(Long.valueOf(System.getProperty("soa.service.timeout", "45000")));
+        if (context.getCalleeTimeout() <= 0)
+            context.setCalleeTimeout(SoaSystemEnvProperties.SOA_SERVICE_TIMEOUT);
     }
 
     protected void destoryContext() {
-        Context.Factory.removeCurrentInstance();
+        InvocationContext.Factory.removeCurrentInstance();
     }
 
     @SuppressWarnings("unchecked")
     protected <REQ, RESP> RESP sendBase(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer) throws TException {
-        Context context = Context.Factory.getCurrentInstance();
+        InvocationContext context = InvocationContext.Factory.getCurrentInstance();
         SoaHeader soaHeader = context.getHeader();
 
         final StubFilterChain stubFilterChain = new StubFilterChain();

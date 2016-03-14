@@ -111,8 +111,7 @@ public class TestController {
 
 
     private void initContext(DataInfo data) {
-
-        Context context = Context.Factory.getCurrentInstance();
+        InvocationContext context = InvocationContext.Factory.getCurrentInstance();
 
         context.setSeqid(1);
 
@@ -143,7 +142,7 @@ public class TestController {
             client = new SoaClient(host, port);
 
             initContext(invocationInfo.getDataInfo());
-            Context context = Context.Factory.getCurrentInstance();
+            InvocationContext context = InvocationContext.Factory.getCurrentInstance();
             SoaHeader soaHeader = context.getHeader();
 
             final ByteBuf requestBuf = Unpooled.buffer(8192);
@@ -151,7 +150,7 @@ public class TestController {
 
             TSoaServiceProtocol outputProtocol;
 
-            outputProtocol = new TSoaServiceProtocol(outputSoaTransport);
+            outputProtocol = new TSoaServiceProtocol(outputSoaTransport, true);
             outputProtocol.writeMessageBegin(new TMessage(invocationInfo.getDataInfo().getServiceName() + ":" + invocationInfo.getDataInfo().getMethodName(), TMessageType.CALL, context.getSeqid()));
             jsonSerializer.write(invocationInfo, outputProtocol);
             outputProtocol.writeMessageEnd();
@@ -167,7 +166,7 @@ public class TestController {
             if (null != responseBuf) {
 
                 inputSoaTransport = new TSoaTransport(responseBuf);
-                TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport);
+                TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport, true);
 
                 TMessage msg = inputProtocol.readMessageBegin();
                 if (TMessageType.EXCEPTION == msg.type) {
@@ -219,7 +218,7 @@ public class TestController {
             if (inputSoaTransport != null)
                 inputSoaTransport.close();
 
-            Context.Factory.removeCurrentInstance();
+            InvocationContext.Factory.removeCurrentInstance();
         }
 
         return jsonResponse;

@@ -1,10 +1,10 @@
 package com.isuwang.soa.core;
 
 /**
- * 配置信息
+ * Context
  *
  * @author craneding
- * @date 15/9/24
+ * @date 16/3/14
  */
 public class Context {
 
@@ -91,36 +91,6 @@ public class Context {
         this.seqid = seqid;
     }
 
-    public static class Factory {
-        private static ThreadLocal<Context> threadLocal = new ThreadLocal<>();
-
-        public static Context getNewInstance() {
-            return new Context();
-        }
-
-        public static Context setCurrentInstance(Context context) {
-            threadLocal.set(context);
-
-            return context;
-        }
-
-        public static Context getCurrentInstance() {
-            Context context = threadLocal.get();
-
-            if (context == null) {
-                context = getNewInstance();
-
-                threadLocal.set(context);
-            }
-
-            return context;
-        }
-
-        public static void removeCurrentInstance() {
-            threadLocal.remove();
-        }
-    }
-
     public static enum CodecProtocol {
         Binary((byte) 0), CompressedBinary((byte) 1), Json((byte) 2), Xml((byte) 3);
 
@@ -144,4 +114,5 @@ public class Context {
             return null;
         }
     }
+
 }

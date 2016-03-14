@@ -35,7 +35,7 @@ public class SoaBaseProcessor<I> implements TProcessor {
     @Override
     public boolean process(TProtocol in, TProtocol out) throws TException {
         // threadlocal
-        Context context = Context.Factory.getCurrentInstance();
+        TransactionContext context = TransactionContext.Factory.getCurrentInstance();
         String methodName = context.getHeader().getMethodName();
 
         final String logId = context.getHeader().getServiceName() + "/" + context.getHeader().getMethodName();

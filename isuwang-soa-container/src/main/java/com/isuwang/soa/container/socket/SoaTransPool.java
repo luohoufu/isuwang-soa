@@ -57,7 +57,7 @@ public class SoaTransPool {
 
         @Override
         public void run() {
-            final Context context = Context.Factory.getCurrentInstance();
+            final TransactionContext context = TransactionContext.Factory.getCurrentInstance();
             final SoaHeader soaHeader = new SoaHeader();
             final TSoaTransport soaTransport = new TSoaTransport();
 
@@ -74,7 +74,7 @@ public class SoaTransPool {
                 soaTransport.setInputStream(input);
                 soaTransport.setOutputStream(out);
 
-                protocol = new TSoaServiceProtocol(soaTransport);
+                protocol = new TSoaServiceProtocol(soaTransport, false);
                 TMessage tMessage = protocol.readMessageBegin();
 
                 context.setSeqid(tMessage.seqid);

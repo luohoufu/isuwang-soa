@@ -25,7 +25,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
     }
 
     public <REQ, RESP> RESP send(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer) throws TException {
-        Context context = Context.Factory.getCurrentInstance();
+        InvocationContext context = InvocationContext.Factory.getCurrentInstance();
         SoaHeader soaHeader = context.getHeader();
 
         final ByteBuf requestBuf = Unpooled.directBuffer(8192);
@@ -35,7 +35,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
         ByteBuf responseBuf = null;
 
         try {
-            outputProtocol = new TSoaServiceProtocol(outputSoaTransport);
+            outputProtocol = new TSoaServiceProtocol(outputSoaTransport, true);
             outputProtocol.writeMessageBegin(new TMessage(soaHeader.getServiceName() + ":" + soaHeader.getMethodName(), TMessageType.CALL, context.getSeqid()));
             requestSerializer.write(request, outputProtocol);
             outputProtocol.writeMessageEnd();
@@ -51,7 +51,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
 //                throw new TException("request time out.");
             } else {
                 final TSoaTransport inputSoaTransport = new TSoaTransport(responseBuf);
-                TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport);
+                TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport, true);
 
                 TMessage msg = inputProtocol.readMessageBegin();
                 if (TMessageType.EXCEPTION == msg.type) {

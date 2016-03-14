@@ -1,7 +1,7 @@
 package com.isuwang.soa.container.filter;
 
-import com.isuwang.soa.core.Context;
 import com.isuwang.soa.core.SoaHeader;
+import com.isuwang.soa.core.TransactionContext;
 
 /**
  * Created by tangliu on 2016/2/1.
@@ -31,7 +31,7 @@ public class Task {
     private String customerName;
 
 
-    public Task(Context context) {
+    public Task(TransactionContext context) {
 
         this.startTime = System.currentTimeMillis();
         this.seqid = context.getSeqid();

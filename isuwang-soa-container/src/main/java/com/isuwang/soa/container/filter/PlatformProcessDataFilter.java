@@ -1,8 +1,8 @@
 package com.isuwang.soa.container.filter;
 
 import com.isuwang.soa.container.util.PlatformProcessDataFactory;
-import com.isuwang.soa.core.Context;
 import com.isuwang.soa.core.SoaHeader;
+import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.FilterChain;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import com.isuwang.soa.monitor.api.MonitorServiceClient;
@@ -40,7 +40,7 @@ public class PlatformProcessDataFilter implements StatusFilter {
 
     @Override
     public void doFilter(FilterChain chain) throws TException {
-        final SoaHeader soaHeader = Context.Factory.getCurrentInstance().getHeader();
+        final SoaHeader soaHeader = TransactionContext.Factory.getCurrentInstance().getHeader();
         //final PlatformProcessData processData = PlatformProcessDataFactory.getCurrentInstance();
 
         try {

@@ -1,6 +1,6 @@
 package com.isuwang.soa.container.filter;
 
-import com.isuwang.soa.core.Context;
+import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.FilterChain;
 import org.apache.thrift.TException;
 
@@ -19,7 +19,7 @@ public class SlowTimeServiceFilter implements StatusFilter {
 
     @Override
     public void doFilter(FilterChain chain) throws TException {
-        Context context = Context.Factory.getCurrentInstance();
+        TransactionContext context = TransactionContext.Factory.getCurrentInstance();
         Task task = new Task(context);
         taskManager.addTask(task);
 

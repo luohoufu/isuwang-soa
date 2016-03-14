@@ -77,17 +77,17 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
             final int requestLength = getRequestLength(inputBuf);
 
-            final Context context = Context.Factory.getNewInstance();
+            final TransactionContext context = TransactionContext.Factory.getNewInstance();
             final SoaHeader soaHeader = new SoaHeader();
             inputSoaTransport = new TSoaTransport(inputBuf);
             context.setHeader(soaHeader);
-            Context.Factory.setCurrentInstance(context);
+            TransactionContext.Factory.setCurrentInstance(context);
 
             final PlatformProcessData processData = PlatformProcessDataFactory.getNewInstance(soaHeader);
             processData.setRequestFlow(requestLength + Integer.BYTES);
             PlatformProcessDataFactory.setCurrentInstance(processData);
 
-            final TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport);
+            final TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport, false);
             TMessage tMessage = inputProtocol.readMessageBegin();
             context.setSeqid(tMessage.seqid);
 
@@ -123,7 +123,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
             if (!intoProcessRequest)
                 inputBuf.release();
 
-            Context.Factory.removeCurrentInstance();
+            TransactionContext.Factory.removeCurrentInstance();
             PlatformProcessDataFactory.removeCurrentInstance();
         }
     }
@@ -135,10 +135,10 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         return requestLength;
     }
 
-    protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, Context context, Long startTime, PlatformProcessData processData) {
+    protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, TransactionContext context, Long startTime, PlatformProcessData processData) {
         final ByteBuf outputBuf = ctx.alloc().buffer(8192);
 
-        Context.Factory.setCurrentInstance(context);
+        TransactionContext.Factory.setCurrentInstance(context);
         PlatformProcessDataFactory.setCurrentInstance(processData);
 
         SoaHeader soaHeader = context.getHeader();
@@ -150,7 +150,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
         String responseCode = "-", responseMsg = "-";
         try {
-            outputProtocol = new TSoaServiceProtocol(outputSoaTransport);
+            outputProtocol = new TSoaServiceProtocol(outputSoaTransport, false);
             SoaBaseProcessor<?> soaProcessor = soaProcessors.get(soaHeader.getServiceName());
 
             soaProcessor.process(inputProtocol, outputProtocol);
@@ -225,12 +225,12 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
                 SIMPLE_LOGGER.info(builder.toString());
             });
 
-            Context.Factory.removeCurrentInstance();
+            TransactionContext.Factory.removeCurrentInstance();
             PlatformProcessDataFactory.removeCurrentInstance();
         }
     }
 
-    private void writeErrorMessage(ChannelHandlerContext ctx, ByteBuf outputBuf, Context context, SoaHeader soaHeader, TSoaTransport outputSoaTransport, TSoaServiceProtocol outputProtocol, SoaException e) {
+    private void writeErrorMessage(ChannelHandlerContext ctx, ByteBuf outputBuf, TransactionContext context, SoaHeader soaHeader, TSoaTransport outputSoaTransport, TSoaServiceProtocol outputProtocol, SoaException e) {
         if (outputProtocol != null) {
             try {
                 soaHeader.setRespCode(Optional.of(e.getCode()));

@@ -23,7 +23,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
     private static final Logger LOGGER = LoggerFactory.getLogger(SoaConnectionImpl.class);
 
     public <REQ, RESP> RESP send(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer) throws TException {
-        final Context context = Context.Factory.getCurrentInstance();
+        final InvocationContext context = InvocationContext.Factory.getCurrentInstance();
         final SoaHeader header = context.getHeader();
 
         try (
@@ -38,7 +38,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
             transport.setInputStream(input);
             transport.setOutputStream(output);
 
-            TSoaServiceProtocol protocol = new TSoaServiceProtocol(transport);
+            TSoaServiceProtocol protocol = new TSoaServiceProtocol(transport, true);
 
             protocol.writeMessageBegin(new TMessage(header.getServiceName() + ":" + header.getMethodName(), TMessageType.CALL, context.getSeqid()));
             requestSerializer.write(request, protocol);

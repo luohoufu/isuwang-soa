@@ -21,16 +21,19 @@ public class TSoaServiceProtocol extends TProtocol {
     private TProtocol realHeaderProtocol;
     private TProtocol realContentProtocol;
 
+    private final boolean isRequestFlag;
+
     //private TSoaTransport trans;
 
-    public TSoaServiceProtocol(TTransport trans) {
+    public TSoaServiceProtocol(TTransport trans, boolean isRequestFlag) {
         super(trans);
         //this.trans = trans;
+        this.isRequestFlag = isRequestFlag;
     }
 
     @Override
     public void writeMessageBegin(TMessage message) throws TException {
-        final Context context = Context.Factory.getCurrentInstance();
+        final Context context = isRequestFlag ? InvocationContext.Factory.getCurrentInstance() : TransactionContext.Factory.getCurrentInstance();
 
         if (realHeaderProtocol == null) {
             realHeaderProtocol = new TBinaryProtocol(getTransport());
@@ -167,7 +170,7 @@ public class TSoaServiceProtocol extends TProtocol {
 
     @Override
     public TMessage readMessageBegin() throws TException {
-        final Context context = Context.Factory.getCurrentInstance();
+        final Context context = isRequestFlag ? InvocationContext.Factory.getCurrentInstance() : TransactionContext.Factory.getCurrentInstance();
 
         if (realHeaderProtocol == null) {
             realHeaderProtocol = new TBinaryProtocol(getTransport());

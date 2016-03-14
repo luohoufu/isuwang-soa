@@ -1,6 +1,6 @@
 package com.isuwang.soa.remoting.netty;
 
-import com.isuwang.soa.core.Context;
+import com.isuwang.soa.core.InvocationContext;
 import com.isuwang.soa.core.SoaBaseCode;
 import com.isuwang.soa.core.SoaException;
 import com.isuwang.soa.remoting.SoaConnection;
@@ -26,7 +26,7 @@ public class SoaConnectionPoolImpl implements com.isuwang.soa.remoting.SoaConnec
 
     @Override
     public synchronized SoaConnection getConnection() throws SoaException {
-        Context context = Context.Factory.getCurrentInstance();
+        InvocationContext context = InvocationContext.Factory.getCurrentInstance();
 
         if (context.getCalleeIp() == null || context.getCalleePort() <= 0)
             throw new SoaException(SoaBaseCode.NotFoundServer);

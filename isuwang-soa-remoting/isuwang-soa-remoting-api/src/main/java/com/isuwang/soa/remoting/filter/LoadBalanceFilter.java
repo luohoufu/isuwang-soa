@@ -1,6 +1,6 @@
 package com.isuwang.soa.remoting.filter;
 
-import com.isuwang.soa.core.Context;
+import com.isuwang.soa.core.InvocationContext;
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.filter.Filter;
@@ -30,7 +30,7 @@ public class LoadBalanceFilter implements Filter {
 
     @Override
     public void doFilter(FilterChain chain) throws TException {
-        final Context context = (Context) chain.getAttribute(StubFilterChain.ATTR_KEY_CONTEXT);
+        final InvocationContext context = (InvocationContext) chain.getAttribute(StubFilterChain.ATTR_KEY_CONTEXT);
         final SoaHeader soaHeader = (SoaHeader) chain.getAttribute(StubFilterChain.ATTR_KEY_HEADER);
         final boolean isLocal = SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local");
 
