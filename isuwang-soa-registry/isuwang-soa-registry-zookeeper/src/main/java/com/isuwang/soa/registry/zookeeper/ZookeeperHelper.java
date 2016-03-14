@@ -52,7 +52,7 @@ public class ZookeeperHelper {
         setZookeeperHost(host);
     }
 
-    public void addOrUpdateServerInfo(String path, String data) throws KeeperException, InterruptedException {
+    public void addOrUpdateServerInfo(String path, String data) {
         String[] paths = path.split("/");
 
         String createPath = "/";
@@ -63,10 +63,6 @@ public class ZookeeperHelper {
         }
 
         addServerInfo(path, data);
-
-//        destroy();
-//        LOGGER.info("到zookeeper的连接已关闭");
-
     }
 
     /**
@@ -80,12 +76,12 @@ public class ZookeeperHelper {
 
         if (stat == null)
             zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, serverNameCreateCb, data);
-        else
-            try {
-                zk.setData(path, data.getBytes(), -1);
-            } catch (KeeperException e) {
-            } catch (InterruptedException e) {
-            }
+//        else
+//            try {
+//                zk.setData(path, data.getBytes(), -1);
+//            } catch (KeeperException e) {
+//            } catch (InterruptedException e) {
+//            }
     }
 
     private Stat exists(String path) {
@@ -115,7 +111,7 @@ public class ZookeeperHelper {
                 updateServerInfo(path, (String) ctx);
                 break;
             default:
-                LOGGER.info("Something went wrong when creating server info");
+                LOGGER.info("创建serviceName:{},失败", path);
         }
     };
 
@@ -134,7 +130,7 @@ public class ZookeeperHelper {
         switch (KeeperException.Code.get(rc)) {
             case CONNECTIONLOSS:
                 LOGGER.info("添加serviceInfo:{},连接断开，重新添加", path);
-                addServerInfo(path, (String) ctx);
+                addOrUpdateServerInfo(path, (String) ctx);
                 break;
             case OK:
                 LOGGER.info("添加serviceInfo:{},成功", path);
@@ -146,7 +142,7 @@ public class ZookeeperHelper {
                 } catch (Exception e) {
                     LOGGER.error("删除serviceInfo:{} 失败:{}", path, e.getMessage());
                 }
-                addServerInfo(path, (String) ctx);
+                addOrUpdateServerInfo(path, (String) ctx);
                 break;
             default:
                 LOGGER.info("添加serviceInfo:{}，出错", path);
