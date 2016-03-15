@@ -17,9 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -59,7 +57,9 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         }
     }
 
-    private volatile static ExecutorService executorService = Executors.newFixedThreadPool(Integer.getInteger("soa.container.threadpool.size", Runtime.getRuntime().availableProcessors() * 2), new ServerThreadFactory());
+    private volatile static ExecutorService executorService = new ThreadPoolExecutor(SoaSystemEnvProperties.SOA_CORE_POOL_SIZE,
+            SoaSystemEnvProperties.SOA_MAX_POOL_SIZE, SoaSystemEnvProperties.SOA_KEEP_ALIVE_TIME,
+            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new ServerThreadFactory());
 
     public SoaServerHandler(Map<String, SoaBaseProcessor<?>> soaProcessors) {
         this.soaProcessors = soaProcessors;
