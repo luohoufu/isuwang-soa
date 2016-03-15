@@ -4,6 +4,9 @@ import com.isuwang.soa.container.apidoc.ApidocContainer;
 import com.isuwang.soa.container.conf.SoaServer;
 import com.isuwang.soa.container.conf.SoaServerContainer;
 import com.isuwang.soa.container.conf.SoaServerFilter;
+import com.isuwang.soa.core.HeaderProxy;
+import com.isuwang.soa.core.IPUtils;
+import com.isuwang.soa.core.InvocationContext;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +30,18 @@ public class ContainerStartup {
     public static final String SOA_BASE = System.getProperty("soa.base");
     public static final String SOA_RUN_MODE = System.getProperty("soa.run.mode", "maven");
     public static SoaServer soaServer = null;
+
+    public static HeaderProxy headerProxy = new HeaderProxy();
+
+    static {
+        headerProxy.setCallerFrom("Container:" + IPUtils.localIp() + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT);
+        headerProxy.setCustomerId(0);
+        headerProxy.setCustomerName("SoaServerContainer");
+        headerProxy.setOperatorId(0);
+        headerProxy.setOperatorName("SoaServerContainer");
+
+        InvocationContext.Factory.setSoaHeaderProxy(headerProxy);
+    }
 
     public static void startup() {
         final long startTime = System.currentTimeMillis();
