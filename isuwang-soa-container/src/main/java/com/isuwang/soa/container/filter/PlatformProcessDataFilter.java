@@ -28,6 +28,8 @@ public class PlatformProcessDataFilter implements StatusFilter {
 
     @Override
     public void init() {
+        ContainerSoaHeader.setup();
+
         final Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, 1);
         calendar.set(Calendar.SECOND, 0);
