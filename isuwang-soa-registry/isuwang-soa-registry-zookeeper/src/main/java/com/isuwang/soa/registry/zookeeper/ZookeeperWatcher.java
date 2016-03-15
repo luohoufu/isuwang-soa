@@ -60,7 +60,7 @@ public class ZookeeperWatcher {
         String createPath = "/";
         for (int i = 1; i < paths.length; i++) {
             createPath += paths[i];
-            addPersistServerNode(createPath, "");
+            addPersistServerNode(createPath, path);
             createPath += "/";
         }
     }
@@ -101,7 +101,8 @@ public class ZookeeperWatcher {
         switch (KeeperException.Code.get(rc)) {
             case CONNECTIONLOSS:
                 LOGGER.info("创建节点:{},连接断开，重新创建", path);
-                addPersistServerNode(path, (String) ctx);
+                tryCreateNode((String) ctx); //每次创建都会从根节点开始尝试创建，避免根节点未创建而造成创建失败
+//                addPersistServerNode(path, (String) ctx);
                 break;
             case OK:
                 LOGGER.info("创建节点:{},成功", path);

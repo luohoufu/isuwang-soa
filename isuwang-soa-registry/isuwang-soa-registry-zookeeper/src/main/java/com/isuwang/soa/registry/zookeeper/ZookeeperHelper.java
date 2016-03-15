@@ -26,7 +26,7 @@ public class ZookeeperHelper {
         try {
             zk = new ZooKeeper(zookeeperHost, 15000, watchedEvent -> {
                 if (watchedEvent.getState() == Watcher.Event.KeeperState.Expired) {
-                    LOGGER.info("Registry Session过期,重连 [Zookeeper]");
+                    LOGGER.info("Registry {} Session过期,重连 [Zookeeper]", zookeeperHost);
                     destroy();
                     connect();
 
@@ -48,10 +48,6 @@ public class ZookeeperHelper {
         }
     }
 
-    public void setHost(String host) {
-        setZookeeperHost(host);
-    }
-
     public void addOrUpdateServerInfo(String path, String data) {
         String[] paths = path.split("/");
 
@@ -66,7 +62,7 @@ public class ZookeeperHelper {
     }
 
     /**
-     * 添加持久化的节点，节点名为serviceName
+     * 添加持久化的节点
      *
      * @param path
      * @param data
@@ -75,7 +71,7 @@ public class ZookeeperHelper {
         Stat stat = exists(path);
 
         if (stat == null)
-            zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, serverNameCreateCb, data);
+            zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, persistNodeCreateCb, data);
 //        else
 //            try {
 //                zk.setData(path, data.getBytes(), -1);
@@ -95,23 +91,23 @@ public class ZookeeperHelper {
     }
 
     /**
-     * 异步添加serverName节点的回调处理
+     * 添加持久化节点回调方法
      */
-    private AsyncCallback.StringCallback serverNameCreateCb = (rc, path, ctx, name) -> {
+    private AsyncCallback.StringCallback persistNodeCreateCb = (rc, path, ctx, name) -> {
         switch (KeeperException.Code.get(rc)) {
             case CONNECTIONLOSS:
-                LOGGER.info("创建serviceName:{},连接断开，重新创建", path);
+                LOGGER.info("创建节点:{},连接断开，重新创建", path);
                 addPersistServerNode(path, (String) ctx);
                 break;
             case OK:
-                LOGGER.info("创建serviceName:{},成功", path);
+                LOGGER.info("创建节点:{},成功", path);
                 break;
             case NODEEXISTS:
-                LOGGER.info("创建serviceName:{},已存在", path);
+                LOGGER.info("创建节点:{},已存在", path);
                 updateServerInfo(path, (String) ctx);
                 break;
             default:
-                LOGGER.info("创建serviceName:{},失败", path);
+                LOGGER.info("创建节点:{},失败", path);
         }
     };
 
@@ -150,14 +146,14 @@ public class ZookeeperHelper {
     };
 
     /**
-     * 异步更新serverInfo
+     * 异步更新节点信息
      */
     public void updateServerInfo(String path, String data) {
         zk.setData(path, data.getBytes(), -1, serverAddrUpdateCb, data);
     }
 
     /**
-     * 异步更新serverInfo的回调
+     * 异步更新节点信息的回调方法
      */
     private AsyncCallback.StatCallback serverAddrUpdateCb = (rc, path1, ctx, stat) -> {
         switch (KeeperException.Code.get(rc)) {
