@@ -34,26 +34,35 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
     private static Map<String, SoaBaseProcessor<?>> soaProcessors;
 
-    /**
-     * threadPool to read requests
-     */
-    private final ExecutorService executorService;
     private final Boolean useThreadPool = SoaSystemEnvProperties.SOA_CONTAINER_USETHREADPOOL;
 
     static class ServerThreadFactory implements ThreadFactory {
-        private static final AtomicInteger executorId = new AtomicInteger();
-        private static final String namePrefix = "soa-threadPool";
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+
+        ServerThreadFactory() {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            namePrefix = "trans-pool-" + poolNumber.getAndIncrement() + "-thread-";
+        }
 
         @Override
         public Thread newThread(Runnable r) {
-            return new Thread(r, namePrefix + "-" + executorId.getAndIncrement());
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+            if (t.isDaemon())
+                t.setDaemon(false);
+            if (t.getPriority() != Thread.NORM_PRIORITY)
+                t.setPriority(Thread.NORM_PRIORITY);
+            return t;
         }
     }
 
+    private volatile static ExecutorService executorService = Executors.newFixedThreadPool(Integer.getInteger("soa.container.threadpool.size", Runtime.getRuntime().availableProcessors() * 2), new ServerThreadFactory());
+
     public SoaServerHandler(Map<String, SoaBaseProcessor<?>> soaProcessors) {
         this.soaProcessors = soaProcessors;
-
-        executorService = Executors.newFixedThreadPool(Integer.getInteger("soa.container.threadpool.size", Runtime.getRuntime().availableProcessors() * 2), new ServerThreadFactory());
     }
 
     @Override
