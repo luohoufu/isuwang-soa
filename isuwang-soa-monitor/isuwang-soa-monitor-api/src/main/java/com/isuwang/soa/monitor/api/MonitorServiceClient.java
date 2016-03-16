@@ -14,12 +14,12 @@ public class MonitorServiceClient extends BaseServiceClient {
     /**
      * 上送QPS信息
      **/
-    public void uploadQPSStat(com.isuwang.soa.monitor.api.domain.QPSStat qpsStat) throws TException {
+    public void uploadQPSStat(java.util.List<com.isuwang.soa.monitor.api.domain.QPSStat> qpsStats) throws TException {
         initContext("uploadQPSStat");
 
         try {
             uploadQPSStat_args uploadQPSStat_args = new uploadQPSStat_args();
-            uploadQPSStat_args.setQpsStat(qpsStat);
+            uploadQPSStat_args.setQpsStats(qpsStats);
 
 
             uploadQPSStat_result response = sendBase(uploadQPSStat_args, new uploadQPSStat_result(), new UploadQPSStat_argsSerializer(), new UploadQPSStat_resultSerializer());

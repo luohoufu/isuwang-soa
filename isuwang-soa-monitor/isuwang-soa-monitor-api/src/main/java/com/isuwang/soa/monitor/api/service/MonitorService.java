@@ -14,7 +14,7 @@ public interface MonitorService {
     /**
      * 上送QPS信息
      **/
-    void uploadQPSStat(com.isuwang.soa.monitor.api.domain.QPSStat qpsStat) throws com.isuwang.soa.core.SoaException;
+    void uploadQPSStat(java.util.List<com.isuwang.soa.monitor.api.domain.QPSStat> qpsStats) throws com.isuwang.soa.core.SoaException;
 
     /**
      * 上送平台处理数据

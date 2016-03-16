@@ -49,29 +49,62 @@ public class MonitorServiceImpl implements MonitorService {
         influxDB = InfluxDBFactory.connect(url, userName, password);
     }
 
+//    public void uploadQPSStat(QPSStat qpsStat) throws SoaException {
+//        BatchPoints batchPoints = BatchPoints
+//                .database(dbName)
+//                .tag("server_ip", qpsStat.getServerIP())
+//                .tag("server_port", qpsStat.getServerPort().toString())
+//                .tag("period", qpsStat.getPeriod().toString())
+//                .retentionPolicy("default")
+//                .consistency(InfluxDB.ConsistencyLevel.ALL)
+//                .build();
+//
+//        double value = 0.0;
+//
+//        if (qpsStat.getCallCount() != 0)// value = callcount / period
+//            value = new BigDecimal(qpsStat.getCallCount().toString()).divide(new BigDecimal(qpsStat.getPeriod().toString()), BigDecimal.ROUND_DOWN).doubleValue();
+//
+//        Point point = Point.measurement("qps")
+//                .time(qpsStat.getAnalysisTime(), TimeUnit.MILLISECONDS)
+//                .field("value", value)
+//                .build();
+//
+//        batchPoints.point(point);
+//
+//        influxDB.write(batchPoints);
+//    }
+
     @Override
-    public void uploadQPSStat(QPSStat qpsStat) throws SoaException {
+    public void uploadQPSStat(List<QPSStat> qpsStats) throws SoaException {
+
+        if (qpsStats.size() <= 0) return;
+
         BatchPoints batchPoints = BatchPoints
                 .database(dbName)
-                .tag("server_ip", qpsStat.getServerIP())
-                .tag("server_port", qpsStat.getServerPort().toString())
-                .tag("period", qpsStat.getPeriod().toString())
                 .retentionPolicy("default")
                 .consistency(InfluxDB.ConsistencyLevel.ALL)
                 .build();
 
-        double value = 0.0;
+        for (QPSStat qpsStat : qpsStats) {
 
-        if (qpsStat.getCallCount() != 0)// value = callcount / period
-            value = new BigDecimal(qpsStat.getCallCount().toString()).divide(new BigDecimal(qpsStat.getPeriod().toString()), BigDecimal.ROUND_DOWN).doubleValue();
+            double value = 0.0;
 
-        Point point = Point.measurement("qps")
-                .time(qpsStat.getAnalysisTime(), TimeUnit.MILLISECONDS)
-                .field("value", value)
-                .build();
+            if (qpsStat.getCallCount() != 0)// value = callcount / period
+                value = new BigDecimal(qpsStat.getCallCount().toString()).divide(new BigDecimal(qpsStat.getPeriod().toString()), BigDecimal.ROUND_DOWN).doubleValue();
 
-        batchPoints.point(point);
+            Point point = Point.measurement("qps")
+                    .time(qpsStat.getAnalysisTime(), TimeUnit.MILLISECONDS)
+                    .tag("service_name", qpsStat.getServiceName())
+                    .tag("method_name", qpsStat.getMethodName())
+                    .tag("version_name", qpsStat.getVersionName())
+                    .tag("server_ip", qpsStat.getServerIP())
+                    .tag("server_port", qpsStat.getServerPort().toString())
+                    .tag("period", qpsStat.getPeriod().toString())
+                    .field("value", value)
+                    .build();
 
+            batchPoints.point(point);
+        }
         influxDB.write(batchPoints);
     }
 
