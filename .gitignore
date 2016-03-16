@@ -1,5 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
+*.iml
 isuwang-soa.iml
+**/target/
 /.idea/
 /datas/
 /isuwang-soa-code-generator/target/
