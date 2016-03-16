@@ -19,9 +19,9 @@ public class SoaSystemEnvProperties {
     private static final String KEY_SOA_MONITOR_ENABLE = "soa.monitor.enable";
     private static final String KEY_SOA_SERVICE_CALLERFROM = "soa.service.callerfrom";
     private static final String KEY_SOA_SERVICE_TIMEOUT = "soa.service.timeout";
-    private static final String KEY_SOA_CORE_POOL_CORE = "soa.core.pool.core";
-    private static final String KEY_SOA_MAX_POOL_CORE = "soa.max.pool.core";
-    private static final String KEY_SOA_KEEP_ALIVE_TIME = "soa.keep.alive.time";
+    private static final String KEY_SOA_CORE_POOL_SIZE = "soa.core.pool.size";
+    //private static final String KEY_SOA_MAX_POOL_CORE = "soa.max.pool.core";
+    //private static final String KEY_SOA_KEEP_ALIVE_TIME = "soa.keep.alive.time";
 
     public static final String SOA_SERVICE_IP = get(KEY_SOA_SERVICE_IP, "127.0.0.1");
     public static final Integer SOA_SERVICE_PORT = Integer.valueOf(get(KEY_SOA_SERVICE_PORT, "9090"));
@@ -35,9 +35,9 @@ public class SoaSystemEnvProperties {
     public static final String SOA_SERVICE_CALLERFROM = get(KEY_SOA_SERVICE_CALLERFROM, "unknown");
     public static final Long SOA_SERVICE_TIMEOUT = Long.valueOf(get(KEY_SOA_SERVICE_TIMEOUT, "45000"));
 
-    public static final Integer SOA_CORE_POOL_SIZE = Integer.valueOf(get(KEY_SOA_CORE_POOL_CORE, (Runtime.getRuntime().availableProcessors() * 2) + ""));
-    public static final Integer SOA_MAX_POOL_SIZE = Integer.valueOf(get(KEY_SOA_MAX_POOL_CORE, SOA_CORE_POOL_SIZE.toString()));
-    public static final Long SOA_KEEP_ALIVE_TIME = Long.valueOf(get(KEY_SOA_KEEP_ALIVE_TIME, "60000"));
+    public static final Integer SOA_CORE_POOL_SIZE = Integer.valueOf(get(KEY_SOA_CORE_POOL_SIZE, (Runtime.getRuntime().availableProcessors() * 2) + ""));
+    //public static final Integer SOA_MAX_POOL_SIZE = Integer.valueOf(get(KEY_SOA_MAX_POOL_CORE, SOA_CORE_POOL_SIZE.toString()));
+    //public static final Long SOA_KEEP_ALIVE_TIME = Long.valueOf(get(KEY_SOA_KEEP_ALIVE_TIME, "60000"));
 
     public static String get(String key) {
         return get(key, null);

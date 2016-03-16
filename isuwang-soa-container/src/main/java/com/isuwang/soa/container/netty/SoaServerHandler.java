@@ -57,9 +57,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         }
     }
 
-    private volatile static ExecutorService executorService = new ThreadPoolExecutor(SoaSystemEnvProperties.SOA_CORE_POOL_SIZE,
-            SoaSystemEnvProperties.SOA_MAX_POOL_SIZE, SoaSystemEnvProperties.SOA_KEEP_ALIVE_TIME,
-            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), new ServerThreadFactory());
+    private volatile static ExecutorService executorService = Executors.newFixedThreadPool(SoaSystemEnvProperties.SOA_CORE_POOL_SIZE,  new ServerThreadFactory());
 
     public SoaServerHandler(Map<String, SoaBaseProcessor<?>> soaProcessors) {
         this.soaProcessors = soaProcessors;
