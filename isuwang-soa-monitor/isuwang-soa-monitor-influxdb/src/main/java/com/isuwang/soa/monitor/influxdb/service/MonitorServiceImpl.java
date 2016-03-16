@@ -81,9 +81,6 @@ public class MonitorServiceImpl implements MonitorService {
 
         BatchPoints batchPoints = BatchPoints
                 .database(dbName)
-                .tag("server_ip", qpsStats.get(0).getServerIP())
-                .tag("server_port", qpsStats.get(0).getServerPort().toString())
-                .tag("period", qpsStats.get(0).getPeriod().toString())
                 .retentionPolicy("default")
                 .consistency(InfluxDB.ConsistencyLevel.ALL)
                 .build();
@@ -97,10 +94,13 @@ public class MonitorServiceImpl implements MonitorService {
 
             Point point = Point.measurement("qps")
                     .time(qpsStat.getAnalysisTime(), TimeUnit.MILLISECONDS)
+                    .tag("service_name", qpsStat.getServiceName())
+                    .tag("method_name", qpsStat.getMethodName())
+                    .tag("version_name", qpsStat.getVersionName())
+                    .tag("server_ip", qpsStat.getServerIP())
+                    .tag("server_port", qpsStat.getServerPort().toString())
+                    .tag("period", qpsStat.getPeriod().toString())
                     .field("value", value)
-                    .field("service_name", qpsStat.getServiceName())
-                    .field("method_name", qpsStat.getMethodName())
-                    .field("version_name", qpsStat.getVersionName())
                     .build();
 
             batchPoints.point(point);
