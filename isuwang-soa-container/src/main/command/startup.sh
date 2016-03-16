@@ -41,6 +41,7 @@ fi
 # soa_container_usethreadpool (default: true)
 # soa_core_pool_size (default: Runtime.getRuntime().availableProcessors() * 2)
 # soa_remoting_mode (default: remote [remote/local])
+# soa_max_read_buffer_size (defalut: 1024 * 1024 * 5)
 
 # vm option
 # soa.container.port (default: 9090)
@@ -49,6 +50,7 @@ fi
 # soa.container.usethreadpool (default: true)
 # soa.core.pool.size (default: Runtime.getRuntime().availableProcessors() * 2)
 # soa.remoting.mode (default: remote [remote/local])
+# soa.max.read.buffer.size (defalut: 1024 * 1024 * 5)
 
 # netty option
 # default : one thread cache is about 1MB
