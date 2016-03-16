@@ -24,7 +24,6 @@ public class ContainerSoaHeader {
     }
 
     static class HeaderProxy implements InvocationContext.Factory.ISoaHeaderProxy {
-
         @Override
         public Optional<String> callerFrom() {
             return Optional.of("soaServer:" + IPUtils.localIp() + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT);
