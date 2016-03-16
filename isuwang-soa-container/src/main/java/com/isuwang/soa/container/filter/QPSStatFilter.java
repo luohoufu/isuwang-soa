@@ -13,7 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * QPS Stat Filter
@@ -23,10 +26,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class QPSStatFilter implements StatusFilter {
 
-    private final long period = 5 * 1000L;
-    private static final Map<String, AtomicInteger> methodCallCount = new HashMap<>();
-    private final Timer timer = new Timer("QPSStatFilter-Timer");
     private static final Logger LOGGER = LoggerFactory.getLogger(QPSStatFilter.class);
+
+    private final long period = 5 * 1000L;
+    private Map<String, AtomicInteger> methodCallCount = new ConcurrentHashMap<>();
+    private final Timer timer = new Timer("QPSStatFilter-Timer");
 
     @Override
     public void init() {
@@ -45,10 +49,10 @@ public class QPSStatFilter implements StatusFilter {
                 try {
                     final long timeMillis = System.currentTimeMillis() / 1000 * 1000;
 
-                    List<QPSStat> qpsStats = new ArrayList<>();
-                    Set<String> keys = methodCallCount.keySet();
-                    for (String key : keys) {
+                    Map<String, AtomicInteger> tmp = methodCallCount;
+                    methodCallCount = new ConcurrentHashMap<>();
 
+                    List<QPSStat> qpsStats = tmp.keySet().stream().map(key -> {
                         String[] infos = key.split(":");
                         QPSStat qpsStat = new QPSStat();
                         qpsStat.setPeriod((int) (period / 1000));
@@ -59,16 +63,14 @@ public class QPSStatFilter implements StatusFilter {
                         qpsStat.setServiceName(infos[0]);
                         qpsStat.setMethodName(infos[1]);
                         qpsStat.setVersionName(infos[2]);
-                        qpsStat.setCallCount(methodCallCount.get(key).get());
+                        qpsStat.setCallCount(tmp.get(key).get());
 
-                        qpsStats.add(qpsStat);
-                    }
+                        return qpsStat;
+                    }).collect(toList());
 
                     new MonitorServiceClient().uploadQPSStat(qpsStats);
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage());
-                } finally {
-                    methodCallCount.clear();
                 }
             }
         }, calendar.getTime(), period);
@@ -83,14 +85,11 @@ public class QPSStatFilter implements StatusFilter {
         try {
             chain.doFilter();
         } finally {
-
             synchronized (methodCallCount) {
-                if (methodCallCount.containsKey(key)) {
+                if (methodCallCount.containsKey(key))
                     methodCallCount.get(key).incrementAndGet();
-                } else {
-                    AtomicInteger count = new AtomicInteger(1);
-                    methodCallCount.put(key, count);
-                }
+                else
+                    methodCallCount.put(key, new AtomicInteger(1));
             }
         }
     }
