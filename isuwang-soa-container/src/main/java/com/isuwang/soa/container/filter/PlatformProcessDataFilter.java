@@ -43,7 +43,6 @@ public class PlatformProcessDataFilter implements StatusFilter {
     @Override
     public void doFilter(FilterChain chain) throws TException {
         final SoaHeader soaHeader = TransactionContext.Factory.getCurrentInstance().getHeader();
-        //final PlatformProcessData processData = PlatformProcessDataFactory.getCurrentInstance();
 
         try {
             chain.doFilter();

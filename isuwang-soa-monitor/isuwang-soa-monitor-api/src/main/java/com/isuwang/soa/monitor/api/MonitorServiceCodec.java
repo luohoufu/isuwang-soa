@@ -65,6 +65,30 @@ public class MonitorServiceCodec {
                         }
                         break;
 
+                    case 6:
+                        if (schemeField.type == TType.STRING) {
+                            bean.setServiceName(iprot.readString());
+                        } else {
+                            TProtocolUtil.skip(iprot, schemeField.type);
+                        }
+                        break;
+
+                    case 7:
+                        if (schemeField.type == TType.STRING) {
+                            bean.setMethodName(iprot.readString());
+                        } else {
+                            TProtocolUtil.skip(iprot, schemeField.type);
+                        }
+                        break;
+
+                    case 8:
+                        if (schemeField.type == TType.STRING) {
+                            bean.setVersionName(iprot.readString());
+                        } else {
+                            TProtocolUtil.skip(iprot, schemeField.type);
+                        }
+                        break;
+
 
                     default:
                         TProtocolUtil.skip(iprot, schemeField.type);
@@ -104,6 +128,18 @@ public class MonitorServiceCodec {
             oprot.writeI32(bean.getCallCount());
             oprot.writeFieldEnd();
 
+            oprot.writeFieldBegin(new TField("serviceName", TType.STRING, (short) 6));
+            oprot.writeString(bean.getServiceName());
+            oprot.writeFieldEnd();
+
+            oprot.writeFieldBegin(new TField("methodName", TType.STRING, (short) 7));
+            oprot.writeString(bean.getMethodName());
+            oprot.writeFieldEnd();
+
+            oprot.writeFieldBegin(new TField("versionName", TType.STRING, (short) 8));
+            oprot.writeString(bean.getVersionName());
+            oprot.writeFieldEnd();
+
             oprot.writeFieldStop();
             oprot.writeStructEnd();
         }
@@ -124,6 +160,15 @@ public class MonitorServiceCodec {
 
             if (bean.getCallCount() == null)
                 throw new SoaException(SoaBaseCode.NotNull, "callCount字段不允许为空");
+
+            if (bean.getServiceName() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "serviceName字段不允许为空");
+
+            if (bean.getMethodName() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "methodName字段不允许为空");
+
+            if (bean.getVersionName() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "versionName字段不允许为空");
 
         }
 
@@ -766,14 +811,14 @@ public class MonitorServiceCodec {
 
     public static class uploadQPSStat_args {
 
-        private com.isuwang.soa.monitor.api.domain.QPSStat qpsStat;
+        private java.util.List<com.isuwang.soa.monitor.api.domain.QPSStat> qpsStats;
 
-        public com.isuwang.soa.monitor.api.domain.QPSStat getQpsStat() {
-            return this.qpsStat;
+        public java.util.List<com.isuwang.soa.monitor.api.domain.QPSStat> getQpsStats() {
+            return this.qpsStats;
         }
 
-        public void setQpsStat(com.isuwang.soa.monitor.api.domain.QPSStat qpsStat) {
-            this.qpsStat = qpsStat;
+        public void setQpsStats(java.util.List<com.isuwang.soa.monitor.api.domain.QPSStat> qpsStats) {
+            this.qpsStats = qpsStats;
         }
 
 
@@ -781,7 +826,7 @@ public class MonitorServiceCodec {
         public String toString() {
             StringBuilder stringBuilder = new StringBuilder("{");
 
-            stringBuilder.append("\"").append("qpsStat").append("\":").append(this.qpsStat.toString()).append(",");
+            stringBuilder.append("\"").append("qpsStats").append("\":").append(this.qpsStats).append(",");
 
             if (stringBuilder.lastIndexOf(",") > 0)
                 stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));
@@ -815,10 +860,17 @@ public class MonitorServiceCodec {
                 switch (schemeField.id) {
 
                     case 1:
-                        if (schemeField.type == TType.STRUCT) {
-
-                            bean.setQpsStat(new com.isuwang.soa.monitor.api.domain.QPSStat());
-                            new QPSStatSerializer().read(bean.getQpsStat(), iprot);
+                        if (schemeField.type == TType.LIST) {
+                            {
+                                TList _list0 = iprot.readListBegin();
+                                bean.setQpsStats(new java.util.ArrayList<>(_list0.size));
+                                for (int _i2 = 0; _i2 < _list0.size; ++_i2) {
+                                    com.isuwang.soa.monitor.api.domain.QPSStat _elem1 = new com.isuwang.soa.monitor.api.domain.QPSStat();
+                                    new QPSStatSerializer().read(_elem1, iprot);
+                                    bean.getQpsStats().add(_elem1);
+                                }
+                                iprot.readListEnd();
+                            }
 
                         } else {
                             TProtocolUtil.skip(iprot, schemeField.type);
@@ -845,8 +897,13 @@ public class MonitorServiceCodec {
             oprot.writeStructBegin(new TStruct("uploadQPSStat_args"));
 
 
-            oprot.writeFieldBegin(new TField("qpsStat", TType.STRUCT, (short) 1));
-            new QPSStatSerializer().write(bean.getQpsStat(), oprot);
+            oprot.writeFieldBegin(new TField("qpsStats", TType.LIST, (short) 1));
+            oprot.writeListBegin(new TList(TType.STRUCT, bean.getQpsStats().size()));
+            for (com.isuwang.soa.monitor.api.domain.QPSStat item : bean.getQpsStats()) {
+                new QPSStatSerializer().write(item, oprot);
+            }
+            oprot.writeListEnd();
+
             oprot.writeFieldEnd();
 
             oprot.writeFieldStop();
@@ -856,11 +913,8 @@ public class MonitorServiceCodec {
 
         public void validate(uploadQPSStat_args bean) throws TException {
 
-            if (bean.getQpsStat() == null)
-                throw new SoaException(SoaBaseCode.NotNull, "qpsStat字段不允许为空");
-
-            if (bean.getQpsStat() != null)
-                new QPSStatSerializer().validate(bean.getQpsStat());
+            if (bean.getQpsStats() == null)
+                throw new SoaException(SoaBaseCode.NotNull, "qpsStats字段不允许为空");
 
         }
 
@@ -941,7 +995,7 @@ public class MonitorServiceCodec {
         public uploadQPSStat_result getResult(I iface, uploadQPSStat_args args) throws TException {
             uploadQPSStat_result result = new uploadQPSStat_result();
 
-            iface.uploadQPSStat(args.qpsStat);
+            iface.uploadQPSStat(args.qpsStats);
 
             return result;
         }

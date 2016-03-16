@@ -28,7 +28,22 @@ struct QPSStat {
     /**
     * 调用次数
     **/
-    5:i32 callCount
+    5:i32 callCount,
+
+    /**
+    * 服务名称
+    **/
+    6:string serviceName,
+
+    /**
+    * 方法名称
+    **/
+    7:string methodName,
+
+    /**
+    * 版本号
+    **/
+    8:string versionName
 
 }
 

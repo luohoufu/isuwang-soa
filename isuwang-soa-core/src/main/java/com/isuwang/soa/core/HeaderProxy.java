@@ -39,26 +39,26 @@ public class HeaderProxy implements InvocationContext.Factory.ISoaHeaderProxy {
 
     @Override
     public Optional<String> callerFrom() {
-        return Optional.of(callerFrom);
+        return callerFrom == null ? Optional.empty() : Optional.of(callerFrom);
     }
 
     @Override
     public Optional<Integer> customerId() {
-        return Optional.of(customerId);
+        return customerId == null ? Optional.empty() : Optional.of(customerId);
     }
 
     @Override
     public Optional<String> customerName() {
-        return Optional.of(customerName);
+        return customerName == null ? Optional.empty() : Optional.of(customerName);
     }
 
     @Override
     public Optional<Integer> operatorId() {
-        return Optional.of(operatorId);
+        return operatorId == null ? Optional.empty() : Optional.of(operatorId);
     }
 
     @Override
     public Optional<String> operatorName() {
-        return Optional.of(operatorName);
+        return operatorName == null ? Optional.empty() : Optional.of(operatorName);
     }
 }

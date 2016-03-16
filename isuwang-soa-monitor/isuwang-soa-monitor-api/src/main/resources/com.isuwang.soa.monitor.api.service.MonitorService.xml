@@ -16,10 +16,13 @@
             </doc>
             <request name="uploadQPSStat_args">
                 <fields>
-                    <field tag="1" name="qpsStat" optional="false" privacy="false">
+                    <field tag="1" name="qpsStats" optional="false" privacy="false">
                         <dataType>
-                            <kind>STRUCT</kind>
-                            <ref>com.isuwang.soa.monitor.api.domain.QPSStat</ref>
+                            <kind>LIST</kind>
+                            <valueType>
+                                <kind>STRUCT</kind>
+                                <ref>com.isuwang.soa.monitor.api.domain.QPSStat</ref>
+                            </valueType>
                         </dataType>
                         <doc></doc>
                     </field>
@@ -147,6 +150,33 @@
                     <doc>
 
                         调用次数
+                    </doc>
+                </field>
+                <field tag="6" name="serviceName" optional="false" privacy="true">
+                    <dataType>
+                        <kind>STRING</kind>
+                    </dataType>
+                    <doc>
+
+                        服务名称
+                    </doc>
+                </field>
+                <field tag="7" name="methodName" optional="false" privacy="true">
+                    <dataType>
+                        <kind>STRING</kind>
+                    </dataType>
+                    <doc>
+
+                        方法名称
+                    </doc>
+                </field>
+                <field tag="8" name="versionName" optional="false" privacy="true">
+                    <dataType>
+                        <kind>STRING</kind>
+                    </dataType>
+                    <doc>
+
+                        版本号
                     </doc>
                 </field>
             </fields>
