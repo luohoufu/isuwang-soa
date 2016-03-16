@@ -35,20 +35,26 @@ fi
 # export PATH="$JAVA_HOME/bin:$PATH"
 
 # env option(priority than vm option)
-# soa_container_port default 9090
-# soa_zookeeper_host default 127.0.0.1:2181
-# soa_monitor_enable default true
-# soa_container_usethreadpool default true
-# soa_core_pool_size default Runtime.getRuntime().availableProcessors() * 2
-# soa_remoting_mode default remote (remote/local)
+# soa_container_port (default: 9090)
+# soa_zookeeper_host (default: 127.0.0.1:2181)
+# soa_monitor_enable (default: true)
+# soa_container_usethreadpool (default: true)
+# soa_core_pool_size (default: Runtime.getRuntime().availableProcessors() * 2)
+# soa_remoting_mode (default: remote [remote/local])
 
 # vm option
-# soa.container.port default 9090
-# soa.zookeeper.host default 127.0.0.1:2181
-# soa.monitor.enable default true
-# soa.container.usethreadpool default true
-# soa.core.pool.size default Runtime.getRuntime().availableProcessors() * 2
-# soa.remoting.mode default remote (remote/local)
+# soa.container.port (default: 9090)
+# soa.zookeeper.host (default: 127.0.0.1:2181)
+# soa.monitor.enable (default: true)
+# soa.container.usethreadpool (default: true)
+# soa.core.pool.size (default: Runtime.getRuntime().availableProcessors() * 2)
+# soa.remoting.mode (default: remote [remote/local])
+
+# netty option
+# io.netty.allocator.tinyCacheSize (default: 512)
+# io.netty.allocator.smallCacheSize (default: 256)
+# io.netty.allocator.normalCacheSize (default: 64)
+# io.netty.allocator.maxCachedBufferCapacity (default: 32768)
 
 # JVM_OPTS=""
 # DEBUG_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5000"
