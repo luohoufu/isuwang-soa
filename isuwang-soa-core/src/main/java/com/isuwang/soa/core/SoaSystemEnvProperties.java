@@ -22,6 +22,7 @@ public class SoaSystemEnvProperties {
     private static final String KEY_SOA_CORE_POOL_SIZE = "soa.core.pool.size";
     //private static final String KEY_SOA_MAX_POOL_CORE = "soa.max.pool.core";
     //private static final String KEY_SOA_KEEP_ALIVE_TIME = "soa.keep.alive.time";
+    private static final String KEY_SOA_MAX_READ_BUFFER_SIZE = "soa.max.read.buffer.size";
 
     public static final String SOA_SERVICE_IP = get(KEY_SOA_SERVICE_IP, "127.0.0.1");
     public static final Integer SOA_SERVICE_PORT = Integer.valueOf(get(KEY_SOA_SERVICE_PORT, "9090"));
@@ -38,6 +39,7 @@ public class SoaSystemEnvProperties {
     public static final Integer SOA_CORE_POOL_SIZE = Integer.valueOf(get(KEY_SOA_CORE_POOL_SIZE, (Runtime.getRuntime().availableProcessors() * 2) + ""));
     //public static final Integer SOA_MAX_POOL_SIZE = Integer.valueOf(get(KEY_SOA_MAX_POOL_CORE, SOA_CORE_POOL_SIZE.toString()));
     //public static final Long SOA_KEEP_ALIVE_TIME = Long.valueOf(get(KEY_SOA_KEEP_ALIVE_TIME, "60000"));
+    public static final Long SOA_MAX_READ_BUFFER_SIZE = Long.valueOf(get(KEY_SOA_MAX_READ_BUFFER_SIZE, (1024 * 1024 * 5) + ""));// 5M
 
     public static String get(String key) {
         return get(key, null);

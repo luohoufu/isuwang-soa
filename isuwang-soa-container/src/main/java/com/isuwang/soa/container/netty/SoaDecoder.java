@@ -1,5 +1,7 @@
 package com.isuwang.soa.container.netty;
 
+import com.isuwang.soa.core.SoaException;
+import com.isuwang.soa.core.SoaSystemEnvProperties;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -32,6 +34,9 @@ public class SoaDecoder extends ByteToMessageDecoder {
 
             return;
         }
+
+        if (length > SoaSystemEnvProperties.SOA_MAX_READ_BUFFER_SIZE)
+            throw new SoaException("error", "Exceeds the maximum length:(" + length + " > " + SoaSystemEnvProperties.SOA_MAX_READ_BUFFER_SIZE + ")");
 
         // waiting for complete
         if (in.readableBytes() < length) {
