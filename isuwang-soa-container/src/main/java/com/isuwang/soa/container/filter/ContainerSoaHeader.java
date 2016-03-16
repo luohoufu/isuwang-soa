@@ -1,9 +1,10 @@
 package com.isuwang.soa.container.filter;
 
-import com.isuwang.soa.core.HeaderProxy;
 import com.isuwang.soa.core.IPUtils;
 import com.isuwang.soa.core.InvocationContext;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
+
+import java.util.Optional;
 
 /**
  * Container SoaHeader
@@ -19,11 +20,34 @@ public class ContainerSoaHeader {
         if (headerProxy != null)
             return;
 
-        headerProxy = new HeaderProxy();
+        InvocationContext.Factory.setSoaHeaderProxy(headerProxy = new HeaderProxy());
+    }
 
-        headerProxy.setCallerFrom("soaServer:" + IPUtils.localIp() + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT);
+    static class HeaderProxy implements InvocationContext.Factory.ISoaHeaderProxy {
+        @Override
+        public Optional<String> callerFrom() {
+            return Optional.of("soaServer:" + IPUtils.localIp() + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT);
+        }
 
-        InvocationContext.Factory.setSoaHeaderProxy(headerProxy);
+        @Override
+        public Optional<Integer> customerId() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<String> customerName() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<Integer> operatorId() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<String> operatorName() {
+            return Optional.empty();
+        }
     }
 
 }
