@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+#
+# 发布脚本
+# @author craneding
+# @date 2016年02月01日13:00:00
+# @description Copyright (c) 2015, isuwang.com All Rights Reserved.
+#
+
 workdir=`pwd`
 dirname $0|grep "^/" >/dev/null
 if [ $? -eq 0 ];then
@@ -16,16 +23,33 @@ fi
 
 cd $workdir
 
+
+# config log dir
 logdir=$workdir/../logs
 if [ ! -d "$logdir" ]; then
 	mkdir "$logdir"
 fi
 
-jvm_opts="-Xms256m -Xmx256m -Xloggc:$logdir/gc.log -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGC -XX:+HeapDumpOnOutOfMemoryError"
-debug_opts="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5000"
-soa_base="-Dsoa.base=$workdir/../ -Dsoa.run.mode=native"
-#user_opts="-Dsoa.container.port=9090 -Dsoa.zookeeper.host=127.0.0.1:2181 -Dio.netty.leakDetectionLevel=advanced -XX:MaxDirectMemorySize=128M"
-user_opts=""
+# config java home
+# export JAVA_HOME=""
+# export PATH="$JAVA_HOME/bin:$PATH"
 
-nohup java $jvm_opts $soa_base $debug_opts $user_opts -cp ./isuwang-soa-bootstrap.jar com.isuwang.soa.bootstrap.Bootstrap >> $logdir/catalina.out 2>&1 &
+# vm option
+# soa.container.port default 9090
+# soa.zookeeper.host default 127.0.0.1:2181
+# soa.monitor.enable default true
+# soa.container.usethreadpool default true
+# soa.core.pool.size default Runtime.getRuntime().availableProcessors() * 2
+# soa.remoting.mode default remote (remote/local)
+
+# JVM_OPTS=""
+# DEBUG_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5000"
+# USER_OPTS="-Dsoa.container.port=9090 -Dsoa.zookeeper.host=127.0.0.1:2181 -Dio.netty.leakDetectionLevel=advanced -XX:MaxDirectMemorySize=128M -Dsoa.monitor.enable=false -Dsoa.core.pool.size=100"
+
+JVM_OPTS="-Xms256m -Xmx256m -Xloggc:$logdir/gc.log -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGC -XX:+HeapDumpOnOutOfMemoryError"
+DEBUG_OPTS=""
+SOA_BASE="-Dsoa.base=$workdir/../ -Dsoa.run.mode=native"
+USER_OPTS=""
+
+nohup java $JVM_OPTS $SOA_BASE $DEBUG_OPTS $USER_OPTS -cp ./isuwang-soa-bootstrap.jar com.isuwang.soa.bootstrap.Bootstrap >> $logdir/catalina.out 2>&1 &
 echo $! > $logdir/pid.txt
