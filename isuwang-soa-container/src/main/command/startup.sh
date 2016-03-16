@@ -51,6 +51,7 @@ fi
 # soa.remoting.mode (default: remote [remote/local])
 
 # netty option
+# default : one thread cache is about 1MB
 # io.netty.allocator.tinyCacheSize (default: 512)
 # io.netty.allocator.smallCacheSize (default: 256)
 # io.netty.allocator.normalCacheSize (default: 64)
