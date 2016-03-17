@@ -69,7 +69,7 @@ isuwang-soa-container/target/isuwang-soa-container
 #### 例子工程
 
 ```
-git clone http://git.oa.isuwang.com/tangliu/isuwang-soa-hello.git
+git clone https://github.com/isuwang/isuwang-soa-hello.git
 ```
 
 #### thrift idl 定义服务接口
