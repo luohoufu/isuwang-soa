@@ -338,11 +338,11 @@ mvn clean install
 ```
 # 第一种(简称)
 cd hello-service
-compile isuwangsoa:run -Dsoa.remoting.mode=local
+mvn compile isuwangsoa:run -Dsoa.remoting.mode=local
 
 # 第二种
 cd hello-service
-compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run -Dsoa.remoting.mode=local
+mvn compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run -Dsoa.remoting.mode=local
 ```
 
 * 远程模式(需要启动zookeeper)
@@ -353,11 +353,11 @@ compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run -Dsoa.remoting.mode
 ```
 # 第一种(简称)
 cd hello-service
-compile isuwangsoa:run
+mvn compile isuwangsoa:run
 
 # 第二种
 cd hello-service
-compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run
+mvn compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run
 ```
 
 * 启动可选参数
