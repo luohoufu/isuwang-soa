@@ -17,10 +17,6 @@
         <module>isuwang-soa-remoting-socket</module>
     </modules>
 
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

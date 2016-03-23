@@ -11,11 +11,11 @@
 
     <artifactId>isuwang-soa-monitor</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>isuwang-soa-monitor-api</module>
         <module>isuwang-soa-monitor-influxdb</module>
         <module>isuwang-soa-monitor-druid</module>
     </modules>
-
 
 </project>

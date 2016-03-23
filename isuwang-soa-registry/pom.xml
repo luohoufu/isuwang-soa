@@ -11,14 +11,11 @@
 
     <artifactId>isuwang-soa-registry</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>isuwang-soa-registry-api</module>
         <module>isuwang-soa-registry-zookeeper</module>
     </modules>
-
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
 
     <dependencyManagement>
         <dependencies>
