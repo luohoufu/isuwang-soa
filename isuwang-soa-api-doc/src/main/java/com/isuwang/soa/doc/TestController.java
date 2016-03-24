@@ -51,7 +51,6 @@ public class TestController {
     @Autowired
     private JSONSerializer jsonSerializer;
 
-
     private static String host = "127.0.0.1";
     /**
      * 远程端口
@@ -104,8 +103,8 @@ public class TestController {
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-        }
 
+        }
         return null;
     }
 

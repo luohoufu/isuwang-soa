@@ -730,10 +730,16 @@ class JavaClientGenerator extends CodeGenerator {
               throw new SoaException(SoaBaseCode.NotNull, "{field.name}字段不允许为空");
             </div>}}</div>
           <div>{
-            if(field.dataType.kind == KIND.STRUCT && field.dataType.kind != DataType.KIND.VOID){
+            if(!field.isOptional && field.dataType.kind == KIND.STRUCT && field.dataType.kind != DataType.KIND.VOID){
               <div>
                 if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}() != null)
                 new {field.dataType.qualifiedName.substring(field.dataType.qualifiedName.lastIndexOf(".")+1)}Serializer().validate(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}());
+              </div>}}</div>
+          <div>{
+            if(field.isOptional && field.dataType.kind == KIND.STRUCT && field.dataType.kind != DataType.KIND.VOID){
+              <div>
+                if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}().isPresent())
+                new {field.dataType.qualifiedName.substring(field.dataType.qualifiedName.lastIndexOf(".")+1)}Serializer().validate(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}().get());
               </div>}}</div>
       }
       }
@@ -744,12 +750,12 @@ class JavaClientGenerator extends CodeGenerator {
 
   def getToStringElement(field: Field): Elem = {
     <div>
-      stringBuilder.append("\"").append("{field.name}").append("\":{if(field.dataType.kind == DataType.KIND.STRING) <div>\"</div>}").append( this.{getToStringByDataType(field)}).append("{if(field.dataType.kind == DataType.KIND.STRING) <div>\"</div>},");
+      stringBuilder.append("\"").append("{field.name}").append("\":{if(field.dataType.kind == DataType.KIND.STRING) <div>\"</div>}").append({getToStringByDataType(field)}).append("{if(field.dataType.kind == DataType.KIND.STRING) <div>\"</div>},");
     </div>
   }
 
   def getToStringByDataType(field: Field):Elem = {
-    if(field.dataType.kind == KIND.STRUCT) <div>{field.name}.toString()</div> else <div>{field.name}</div>
+    if(field.dataType.kind == KIND.STRUCT) <div>this.{field.name} == null ? "null" : this.{field.name}.toString()</div> else <div>{field.name}</div>
   }
 
 }
