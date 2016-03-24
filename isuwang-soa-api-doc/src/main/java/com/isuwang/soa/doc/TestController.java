@@ -100,8 +100,10 @@ public class TestController {
             LOGGER.info("soa-response: {} {}ms", jsonResponse, System.currentTimeMillis() - beginTime);
 
             return jsonResponse;
+
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+
         }
         return null;
     }
