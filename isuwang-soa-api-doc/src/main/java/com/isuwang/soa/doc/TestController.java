@@ -51,7 +51,6 @@ public class TestController {
     @Autowired
     private JSONSerializer jsonSerializer;
 
-
     private static String host = "127.0.0.1";
     /**
      * 远程端口
@@ -101,11 +100,9 @@ public class TestController {
             LOGGER.info("soa-response: {} {}ms", jsonResponse, System.currentTimeMillis() - beginTime);
 
             return jsonResponse;
-
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-
         return null;
     }
 
