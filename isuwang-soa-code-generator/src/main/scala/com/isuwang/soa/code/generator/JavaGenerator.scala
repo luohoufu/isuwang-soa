@@ -286,7 +286,7 @@ class JavaGenerator extends CodeGenerator {
         public String toString()<block>
           StringBuilder stringBuilder = new StringBuilder("<block>");
           {toFieldArrayBuffer(struct.getFields).map{(field : Field) =>{
-              getToStringElement(field)
+                getToStringElement(field)
           }
           }
           }
@@ -369,7 +369,9 @@ class JavaGenerator extends CodeGenerator {
 
   def getToStringByDataType(field: Field):Elem = {
 
-    if(field.isOptional)
+    if(field.getDoc != null && field.getDoc.toLowerCase.contains("@logger(level=\"off\")"))
+       <div>"LOGGER_LEVEL_OFF"</div>
+    else if(field.isOptional)
        <div>this.{field.name}.isPresent()?this.{field.name}.get(){if(field.dataType.kind == KIND.STRUCT) <div>.toString()</div>}:null</div>
     else
        <div>this.{field.name}{if(field.dataType.kind == KIND.STRUCT) <div>.toString()</div>}</div>
