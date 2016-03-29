@@ -48,9 +48,9 @@ public class SoaTransPool {
 
     public static class SoaCodecTask implements Runnable {
         private Socket client;
-        private Map<String, SoaBaseProcessor<?>> soaProcessors;
+        private Map<ProcessorKey, SoaBaseProcessor<?>> soaProcessors;
 
-        public SoaCodecTask(Socket client, Map<String, SoaBaseProcessor<?>> soaProcessors) {
+        public SoaCodecTask(Socket client, Map<ProcessorKey, SoaBaseProcessor<?>> soaProcessors) {
             this.client = client;
             this.soaProcessors = soaProcessors;
         }
@@ -79,7 +79,10 @@ public class SoaTransPool {
 
                 context.setSeqid(tMessage.seqid);
 
-                SoaBaseProcessor<?> soaProcessor = soaProcessors.get(soaHeader.getServiceName());
+                SoaBaseProcessor<?> soaProcessor = soaProcessors.get(new ProcessorKey(soaHeader.getServiceName(), soaHeader.getVersionName()));
+                if (soaProcessor == null) {
+                    throw new SoaException(SoaBaseCode.NotFoundServer);
+                }
 
                 soaProcessor.process(protocol, protocol);
 

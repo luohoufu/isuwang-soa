@@ -30,7 +30,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(SoaServerHandler.class);
     private static final Logger SIMPLE_LOGGER = LoggerFactory.getLogger(LoggerUtil.SIMPLE_LOG);
 
-    private static Map<String, SoaBaseProcessor<?>> soaProcessors;
+    private static Map<ProcessorKey, SoaBaseProcessor<?>> soaProcessors;
 
     private final Boolean useThreadPool = SoaSystemEnvProperties.SOA_CONTAINER_USETHREADPOOL;
 
@@ -57,9 +57,9 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         }
     }
 
-    private volatile static ExecutorService executorService = Executors.newFixedThreadPool(SoaSystemEnvProperties.SOA_CORE_POOL_SIZE,  new ServerThreadFactory());
+    private volatile static ExecutorService executorService = Executors.newFixedThreadPool(SoaSystemEnvProperties.SOA_CORE_POOL_SIZE, new ServerThreadFactory());
 
-    public SoaServerHandler(Map<String, SoaBaseProcessor<?>> soaProcessors) {
+    public SoaServerHandler(Map<ProcessorKey, SoaBaseProcessor<?>> soaProcessors) {
         this.soaProcessors = soaProcessors;
     }
 
@@ -158,7 +158,11 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         String responseCode = "-", responseMsg = "-";
         try {
             outputProtocol = new TSoaServiceProtocol(outputSoaTransport, false);
-            SoaBaseProcessor<?> soaProcessor = soaProcessors.get(soaHeader.getServiceName());
+            SoaBaseProcessor<?> soaProcessor = soaProcessors.get(new ProcessorKey(soaHeader.getServiceName(), soaHeader.getVersionName()));
+
+            if (soaProcessor == null) {
+                throw new SoaException(SoaBaseCode.NotFoundServer);
+            }
 
             soaProcessor.process(inputProtocol, outputProtocol);
 

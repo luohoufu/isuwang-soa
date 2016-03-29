@@ -1,5 +1,6 @@
 package com.isuwang.soa.container.registry;
 
+import com.isuwang.soa.core.ProcessorKey;
 import com.isuwang.soa.core.SoaBaseProcessor;
 
 import java.util.Map;
@@ -11,9 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ProcessorCache {
 
-    private static final Map<String, SoaBaseProcessor<?>> processorMap = new ConcurrentHashMap<>();
+    private static final Map<ProcessorKey, SoaBaseProcessor<?>> processorMap = new ConcurrentHashMap<>();
 
-    public static Map<String, SoaBaseProcessor<?>> getProcessorMap() {
+    public static Map<ProcessorKey, SoaBaseProcessor<?>> getProcessorMap() {
         return processorMap;
     }
 

@@ -2,6 +2,7 @@ package com.isuwang.soa.container.registry;
 
 import com.isuwang.soa.container.Container;
 import com.isuwang.soa.container.spring.SpringContainer;
+import com.isuwang.soa.core.ProcessorKey;
 import com.isuwang.soa.core.Service;
 import com.isuwang.soa.core.SoaBaseProcessor;
 import com.isuwang.soa.registry.RegistryAgent;
@@ -51,11 +52,11 @@ public class ZookeeperRegistryContainer implements Container {
                 for (String key : keys) {
                     SoaBaseProcessor<?> processor = processorMap.get(key);
 
-                    ProcessorCache.getProcessorMap().put(processor.getInterfaceClass().getName(), processor);
-
                     if (processor.getInterfaceClass().getClass() != null) {
                         Service service = processor.getInterfaceClass().getAnnotation(Service.class);
 
+                        ProcessorKey processorKey = new ProcessorKey(processor.getInterfaceClass().getName(), service.version());
+                        ProcessorCache.getProcessorMap().put(processorKey, processor);
                         registryAgent.registerService(processor.getInterfaceClass().getName(), service.version());
                     }
                 }
@@ -78,7 +79,7 @@ public class ZookeeperRegistryContainer implements Container {
         registryAgent.stop();
     }
 
-    public static Map<String, SoaBaseProcessor<?>> getProcessorMap() {
+    public static Map<ProcessorKey, SoaBaseProcessor<?>> getProcessorMap() {
         return ProcessorCache.getProcessorMap();
     }
 

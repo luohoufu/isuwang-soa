@@ -2,6 +2,7 @@ package com.isuwang.soa.container.registry;
 
 import com.isuwang.soa.container.Container;
 import com.isuwang.soa.container.spring.SpringContainer;
+import com.isuwang.soa.core.ProcessorKey;
 import com.isuwang.soa.core.Service;
 import com.isuwang.soa.core.SoaBaseProcessor;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
@@ -44,10 +45,11 @@ public class LocalRegistryContainer implements Container, RegistryAgent {
                 for (String key : keys) {
                     SoaBaseProcessor<?> processor = processorMap.get(key);
 
-                    getProcessorMap().put(processor.getInterfaceClass().getName(), processor);
-
                     if (processor.getInterfaceClass().getClass() != null) {
                         Service service = processor.getInterfaceClass().getAnnotation(Service.class);
+
+                        ProcessorKey processorKey = new ProcessorKey(processor.getInterfaceClass().getName(), service.version());
+                        getProcessorMap().put(processorKey, processor);
 
                         this.registerService(processor.getInterfaceClass().getName(), service.version());
                     }
@@ -78,9 +80,9 @@ public class LocalRegistryContainer implements Container, RegistryAgent {
 
     @Override
     public void registerAllServices() {
-        Set<String> keys = ProcessorCache.getProcessorMap().keySet();
+        Set<ProcessorKey> keys = ProcessorCache.getProcessorMap().keySet();
 
-        for (String key : keys) {
+        for (ProcessorKey key : keys) {
             SoaBaseProcessor<?> processor = ProcessorCache.getProcessorMap().get(key);
 
             if (null != processor.getInterfaceClass().getClass()) {
@@ -92,11 +94,11 @@ public class LocalRegistryContainer implements Container, RegistryAgent {
     }
 
     @Override
-    public void setProcessorMap(Map<String, SoaBaseProcessor<?>> processorMap) {
+    public void setProcessorMap(Map<ProcessorKey, SoaBaseProcessor<?>> processorMap) {
     }
 
     @Override
-    public Map<String, SoaBaseProcessor<?>> getProcessorMap() {
+    public Map<ProcessorKey, SoaBaseProcessor<?>> getProcessorMap() {
         return ProcessorCache.getProcessorMap();
     }
 

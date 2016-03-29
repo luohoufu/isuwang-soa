@@ -1,9 +1,6 @@
 package com.isuwang.soa.registry.zookeeper;
 
-import com.isuwang.soa.core.IPUtils;
-import com.isuwang.soa.core.Service;
-import com.isuwang.soa.core.SoaBaseProcessor;
-import com.isuwang.soa.core.SoaSystemEnvProperties;
+import com.isuwang.soa.core.*;
 import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.RegistryAgent;
 import com.isuwang.soa.registry.ServiceInfo;
@@ -27,7 +24,7 @@ public class RegistryAgentImpl implements RegistryAgent {
     private final ZookeeperHelper zooKeeperHelper = new ZookeeperHelper(this);
 
     private ZookeeperWatcher siw;
-    private Map<String, SoaBaseProcessor<?>> processorMap;
+    private Map<ProcessorKey, SoaBaseProcessor<?>> processorMap;
 
     public RegistryAgentImpl() {
         this(true);
@@ -70,9 +67,9 @@ public class RegistryAgentImpl implements RegistryAgent {
         if (processorMap == null)
             return;
 
-        Set<String> keys = processorMap.keySet();
+        Set<ProcessorKey> keys = processorMap.keySet();
 
-        for (String key : keys) {
+        for (ProcessorKey key : keys) {
             SoaBaseProcessor<?> processor = processorMap.get(key);
 
             if (processor.getInterfaceClass().getClass() != null) {
@@ -84,12 +81,12 @@ public class RegistryAgentImpl implements RegistryAgent {
     }
 
     @Override
-    public void setProcessorMap(Map<String, SoaBaseProcessor<?>> processorMap) {
+    public void setProcessorMap(Map<ProcessorKey, SoaBaseProcessor<?>> processorMap) {
         this.processorMap = processorMap;
     }
 
     @Override
-    public Map<String, SoaBaseProcessor<?>> getProcessorMap() {
+    public Map<ProcessorKey, SoaBaseProcessor<?>> getProcessorMap() {
         return this.processorMap;
     }
 

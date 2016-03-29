@@ -1,5 +1,6 @@
 package com.isuwang.soa.registry;
 
+import com.isuwang.soa.core.ProcessorKey;
 import com.isuwang.soa.core.SoaBaseProcessor;
 
 import java.util.List;
@@ -35,12 +36,12 @@ public interface RegistryAgent {
      *
      * @param processorMap 处理器集合
      */
-    void setProcessorMap(Map<String, SoaBaseProcessor<?>> processorMap);
+    void setProcessorMap(Map<ProcessorKey, SoaBaseProcessor<?>> processorMap);
 
     /**
      * 获取处理器集合
      */
-    Map<String, SoaBaseProcessor<?>> getProcessorMap();
+    Map<ProcessorKey, SoaBaseProcessor<?>> getProcessorMap();
 
     /**
      * 加载匹配的服务

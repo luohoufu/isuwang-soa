@@ -2,6 +2,7 @@ package com.isuwang.soa.doc.cache;
 
 
 import com.google.common.collect.TreeMultimap;
+import com.isuwang.soa.core.ProcessorKey;
 import com.isuwang.soa.core.SoaBaseProcessor;
 import com.isuwang.soa.core.metadata.*;
 import com.isuwang.soa.registry.RegistryAgentProxy;
@@ -51,10 +52,10 @@ public class ServiceCache {
         final Map<String, Service> services = new TreeMap<>();
         urlMappings.clear();
 
-        Map<String, SoaBaseProcessor<?>> processorMap = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Server).getProcessorMap();
+        Map<ProcessorKey, SoaBaseProcessor<?>> processorMap = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Server).getProcessorMap();
 
-        Set<String> keys = processorMap.keySet();
-        for (String key : keys) {
+        Set<ProcessorKey> keys = processorMap.keySet();
+        for (ProcessorKey key : keys) {
             SoaBaseProcessor<?> processor = processorMap.get(key);
             if (processor.getInterfaceClass().getClass() != null) {
 
@@ -71,7 +72,7 @@ public class ServiceCache {
                     LOGGER.error(e.getMessage(), e);
                 }
 
-                if(metadata != null) {
+                if (metadata != null) {
                     try (StringReader reader = new StringReader(metadata)) {
                         Service serviceData = JAXB.unmarshal(reader, Service.class);
                         loadResource(serviceData, services);
