@@ -21,6 +21,7 @@ object Scrooge {
       |   -gen STR    Generate code with a dynamically-registered generator.
       |               STR has the form language[val1,val2,val3].
       |               Keys and values are options passed to the generator.
+      |   -v version  Set the version of the Service generated.
       |
       | Available generators (and options):
       |   metadata
@@ -31,14 +32,13 @@ object Scrooge {
     """.stripMargin
 
   def main(args: Array[String]) {
+
     println(s"scrooge:${args.mkString(" ")}")
 
-    //println(help)
-
-    var gen: String = null
     var outDir: String = null
     var resources: Array[String] = null
     var languages: String = ""
+    var version: String = null
 
     try {
       for (index <- 0 until args.length) {
@@ -56,7 +56,6 @@ object Scrooge {
                 throw new FileNotFoundException(s"File[${str}] is not found")
               else if (new File(str).isDirectory || !str.endsWith(".thrift"))
                 throw new FilerException(s"File[${str}] is not a *.thrift")
-
             }
           case "-out" =>
             //获取到outDir
@@ -71,6 +70,7 @@ object Scrooge {
             }
 
           case "-help" => println(help)
+          case "-v" => if(index + 1 < args.length) version = args(index + 1)
           case _ =>
         }
       }
@@ -79,7 +79,7 @@ object Scrooge {
         outDir = System.getProperty("user.dir")
 
       if (resources != null || languages == "") {
-        val services = new ThriftCodeParser().toServices(resources)
+        val services = new ThriftCodeParser().toServices(resources, version)
 
         val languageArray = languages.split(",")
         languageArray.foreach { lang =>

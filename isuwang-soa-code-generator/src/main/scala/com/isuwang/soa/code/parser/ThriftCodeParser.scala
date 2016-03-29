@@ -337,7 +337,7 @@ class ThriftCodeParser {
     results
   }
 
-  def toServices(resources: Array[String]): util.List[core.metadata.Service] = {
+  def toServices(resources: Array[String], serviceVersion: String): util.List[core.metadata.Service] = {
     resources.foreach(resource => {
       val doc = generateDoc(resource)
 
@@ -360,7 +360,10 @@ class ThriftCodeParser {
       service.setEnumDefinitions(enumCache)
       service.setStructDefinitions(structCache)
       service.setMeta(new core.metadata.Service.ServiceMeta {
-        this.version = "1.0.0"
+        if (serviceVersion != null && !serviceVersion.trim.equals(""))
+          this.version = serviceVersion.trim
+        else
+          this.version = "1.0.0"
         this.timeout = 30000
       })
 
