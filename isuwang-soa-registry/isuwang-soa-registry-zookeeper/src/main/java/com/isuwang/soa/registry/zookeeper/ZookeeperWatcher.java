@@ -354,6 +354,9 @@ public class ZookeeperWatcher {
                         case FailOver:
                             propertyMap.put(type, Integer.valueOf(key_values[1]));
                             break;
+                        case Compatible:
+                            propertyMap.put(type, key_values[1].split(","));
+                            break;
                     }
                 }
             }

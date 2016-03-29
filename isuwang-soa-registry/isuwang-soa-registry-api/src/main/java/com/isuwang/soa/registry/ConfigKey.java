@@ -13,7 +13,9 @@ public enum ConfigKey {
 
     LoadBalance("loadBalance"),
 
-    FailOver("failover");
+    FailOver("failover"),
+
+    Compatible("compatible");
 
     private final String value;
 
@@ -37,6 +39,8 @@ public enum ConfigKey {
                 return LoadBalance;
             case "failover":
                 return FailOver;
+            case "compatible":
+                return Compatible;
             default:
                 return null;
         }
