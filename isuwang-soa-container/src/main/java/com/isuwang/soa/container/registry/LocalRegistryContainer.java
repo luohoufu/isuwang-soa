@@ -103,7 +103,7 @@ public class LocalRegistryContainer implements Container, RegistryAgent {
     }
 
     @Override
-    public List<ServiceInfo> loadMatchedServices(String serviceName, String methodName) {
+    public List<ServiceInfo> loadMatchedServices(String serviceName, String versionName, boolean compatible) {
         final List<ServiceInfo> objects = new ArrayList<>();
         objects.add(new ServiceInfo("127.0.0.1", SoaSystemEnvProperties.SOA_CONTAINER_PORT, "*"));
 

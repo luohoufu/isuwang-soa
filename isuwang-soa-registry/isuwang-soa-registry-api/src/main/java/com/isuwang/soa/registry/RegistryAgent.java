@@ -47,10 +47,11 @@ public interface RegistryAgent {
      * 加载匹配的服务
      *
      * @param serviceName 服务名称
-     * @param methodName  方法名称
+     * @param versionName 版本名称
+     * @param compatible  是否兼容模式
      * @return
      */
-    List<ServiceInfo> loadMatchedServices(String serviceName, String methodName);
+    List<ServiceInfo> loadMatchedServices(String serviceName, String versionName, boolean compatible);
 
     /**
      * 获取配置

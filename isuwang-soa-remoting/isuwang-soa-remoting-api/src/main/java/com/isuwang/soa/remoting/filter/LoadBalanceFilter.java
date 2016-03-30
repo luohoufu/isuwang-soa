@@ -39,8 +39,12 @@ public class LoadBalanceFilter implements Filter {
         List<ServiceInfo> usableList;
         if (isLocal)
             usableList = new ArrayList<>();
-        else
-            usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName());
+        else {
+            usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName(), false);
+            if (usableList.size() <= 0) {
+                usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName(), true);
+            }
+        }
 
         String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
         LoadBalanceStratage balance = getLoadBalanceStratage(serviceKey) == null ? LoadBalanceStratage.LeastActive : getLoadBalanceStratage(serviceKey);
@@ -65,6 +69,7 @@ public class LoadBalanceFilter implements Filter {
             String[] infos = callerInfo.split(":");
             context.setCalleeIp(infos[0]);
             context.setCalleePort(Integer.valueOf(infos[1]));
+            context.getHeader().setVersionName(infos[2]);
         } else if (isLocal) {
             context.setCalleeIp(SoaSystemEnvProperties.SOA_SERVICE_IP);
             context.setCalleePort(SoaSystemEnvProperties.SOA_SERVICE_PORT);
@@ -96,7 +101,7 @@ public class LoadBalanceFilter implements Filter {
             chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
             LOGGER.info(serviceInfo.getHost() + ":" + serviceInfo.getPort() + " concurrency：" + serviceInfo.getActiveCount());
 
-            callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort());
+            callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort()) + ":" + serviceInfo.getVersionName();
         }
         return callerInfo;
     }
@@ -117,7 +122,7 @@ public class LoadBalanceFilter implements Filter {
             ServiceInfo serviceInfo = usableList.get(index);
             chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
 
-            callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort());
+            callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort()) + ":" + serviceInfo.getVersionName();
         }
         return callerInfo;
     }
@@ -129,7 +134,7 @@ public class LoadBalanceFilter implements Filter {
             ServiceInfo serviceInfo = usableList.get(roundRobinIndex.get());
             chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
 
-            callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort());
+            callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort()) + ":" + serviceInfo.getVersionName();
         }
         return callerInfo;
     }

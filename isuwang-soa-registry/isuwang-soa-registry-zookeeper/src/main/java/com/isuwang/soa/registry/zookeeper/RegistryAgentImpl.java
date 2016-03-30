@@ -91,8 +91,8 @@ public class RegistryAgentImpl implements RegistryAgent {
     }
 
     @Override
-    public List<ServiceInfo> loadMatchedServices(String serviceName, String methodName) {
-        return siw.getServiceInfo(serviceName, methodName);
+    public List<ServiceInfo> loadMatchedServices(String serviceName, String versionName, boolean compatible) {
+        return siw.getServiceInfo(serviceName, versionName, compatible);
     }
 
     @Override

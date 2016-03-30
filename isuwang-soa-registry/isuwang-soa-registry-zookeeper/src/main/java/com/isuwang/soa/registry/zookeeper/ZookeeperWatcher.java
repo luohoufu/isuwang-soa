@@ -1,6 +1,7 @@
 package com.isuwang.soa.registry.zookeeper;
 
 import com.isuwang.soa.core.SoaSystemEnvProperties;
+import com.isuwang.soa.core.version.Version;
 import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.ServiceInfo;
 import org.apache.zookeeper.*;
@@ -132,11 +133,18 @@ public class ZookeeperWatcher {
         LOGGER.info("关闭连接，清空service info caches");
     }
 
-    public List<ServiceInfo> getServiceInfo(String serviceName, String versionName) {
+    public List<ServiceInfo> getServiceInfo(String serviceName, String versionName, boolean compatible) {
+
         List<ServiceInfo> serverList = caches.get(serviceName);
         List<ServiceInfo> usableList = new ArrayList<>();
+
         if (serverList != null && serverList.size() > 0) {
-            usableList.addAll(serverList.stream().filter(server -> server.getVersionName().equals(versionName)).collect(Collectors.toList()));
+
+            if (!compatible) {
+                usableList.addAll(serverList.stream().filter(server -> server.getVersionName().equals(versionName)).collect(Collectors.toList()));
+            } else {
+                usableList.addAll(serverList.stream().filter(server -> Version.toVersion(server.getVersionName()).compatibleTo(Version.toVersion(versionName))).collect(Collectors.toList()));
+            }
         }
         return usableList;
     }
