@@ -1,4 +1,4 @@
-package com.isuwang.soa.container.filter;
+package com.isuwang.soa.container.filter.slowtime;
 
 import com.isuwang.soa.container.util.LoggerUtil;
 import org.slf4j.Logger;
@@ -16,11 +16,12 @@ public class TaskManager {
 
     private boolean live = false;
 
-    private List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
+    private List<Task> tasks = Collections.synchronizedList(new ArrayList<>());
 
     private Map<Thread, String> lastStackInfo = new ConcurrentHashMap<>();
 
     private static final long DEFAULT_SLEEP_TIME = 3000L;
+    private static final long MAX_PROCESS_TIME = 10 * 1000;
 
     public void addTask(Task task) {
         tasks.add(task);
@@ -65,27 +66,31 @@ public class TaskManager {
 
         while (iterator.hasNext()) {
             final long currentTime = System.currentTimeMillis();
-            final Task task = (Task) iterator.next();
+            final Task task = iterator.next();
 
-            //if task being executing takes to much time, make a record.
-            if (currentTime - task.getStartTime() >= (10 * 1000)) {
+            final long ptime = currentTime - task.getStartTime();
+            if (currentTime - task.getStartTime() >= MAX_PROCESS_TIME) {
 
-                LOGGER.info("Request has been processed exceed specify time:{},{},{},{},{},{},{},{},{},{}", task.getSeqid(), task.getServiceName(), task.getVersionName(),
-                        task.getMethodName(), task.getCallerFrom(), task.getCallerIp(), task.getOperatorId(), task.getOperatorName(), task.getCustomerId(), task.getCustomerName());
-
-                StackTraceElement[] stackElements = task.getCurrentThread().getStackTrace();
+                final StackTraceElement[] stackElements = task.getCurrentThread().getStackTrace();
 
                 if (stackElements != null && stackElements.length > 0) {
+                    final StringBuilder builder = new StringBuilder(task.toString());
+                    builder.append(" ").append(ptime).append("ms");
 
-                    String firstStackInfo = stackElements[0].getClassName() + "." + stackElements[0].getMethodName() + "(" + stackElements[0].getFileName() + ":" + stackElements[0].getLineNumber() + ")";
+                    final String firstStackInfo = stackElements[0].toString();
+
                     if (lastStackInfo.containsKey(task.getCurrentThread()) && lastStackInfo.get(task.getCurrentThread()).equals(firstStackInfo))
-                        LOGGER.info("Same as last check...");
+                        builder.append("\n\t").append("Same as last check...");
                     else {
                         lastStackInfo.put(task.getCurrentThread(), firstStackInfo);
-                        for (int i = 0; i < stackElements.length; i++) {
-                            LOGGER.info(stackElements[i].getClassName() + "." + stackElements[i].getMethodName() + "(" + stackElements[i].getFileName() + ":" + stackElements[i].getLineNumber() + ")");
+
+                        builder.append("\n\tat ").append(firstStackInfo.toString());
+                        for (int i = 1; i < stackElements.length; i++) {
+                            builder.append("\n\tat " + stackElements[i]);
                         }
                     }
+
+                    LOGGER.info("SlowProcess:{}", builder.toString());
                 }
             }
         }

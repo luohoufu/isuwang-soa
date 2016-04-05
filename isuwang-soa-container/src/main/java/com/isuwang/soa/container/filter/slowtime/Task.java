@@ -1,4 +1,4 @@
-package com.isuwang.soa.container.filter;
+package com.isuwang.soa.container.filter.slowtime;
 
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.TransactionContext;
@@ -31,7 +31,6 @@ public class Task {
     private String customerName;
 
     private Thread currentThread;
-
 
     public Task(TransactionContext context) {
 
@@ -146,5 +145,19 @@ public class Task {
 
     public void setCurrentThread(Thread currentThread) {
         this.currentThread = currentThread;
+    }
+
+    @Override
+    public String toString() {
+        return seqid + " "
+                + serviceName + " "
+                + methodName + " "
+                + callerFrom + " "
+                + callerIp + " "
+                + operatorId + " "
+                + operatorName + " "
+                + customerId + " "
+                + customerName
+                ;
     }
 }
