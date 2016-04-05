@@ -13,8 +13,6 @@ import com.isuwang.soa.registry.ServiceInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -35,10 +33,9 @@ public class LocalRegistryContainer implements Container, RegistryAgent {
         for (Object ctx : ctxs) {
             Class<?> contextClass = contexts.get(ctx);
 
-            InputStream filterInput = null;
-
             try {
                 Method method = contextClass.getMethod("getBeansOfType", Class.class);
+                @SuppressWarnings("unchecked")
                 Map<String, SoaBaseProcessor<?>> processorMap = (Map<String, SoaBaseProcessor<?>>) method.invoke(ctx, contextClass.getClassLoader().loadClass(SoaBaseProcessor.class.getName()));
 
                 Set<String> keys = processorMap.keySet();
@@ -56,12 +53,6 @@ public class LocalRegistryContainer implements Container, RegistryAgent {
                 }
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
-            } finally {
-                if (filterInput != null)
-                    try {
-                        filterInput.close();
-                    } catch (IOException e) {
-                    }
             }
         }
 
