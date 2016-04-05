@@ -30,6 +30,8 @@ public class Task {
 
     private String customerName;
 
+    private Thread currentThread;
+
 
     public Task(TransactionContext context) {
 
@@ -46,6 +48,8 @@ public class Task {
         this.operatorName = soaHeader.getOperatorName().isPresent() ? soaHeader.getOperatorName().get() : null;
         this.customerId = soaHeader.getCustomerId().isPresent() ? soaHeader.getCustomerId().get() : null;
         this.customerName = soaHeader.getCustomerName().isPresent() ? soaHeader.getCustomerName().get() : null;
+
+        this.currentThread = Thread.currentThread();
     }
 
     public Integer getSeqid() {
@@ -134,5 +138,13 @@ public class Task {
 
     public void setCallerIp(String callerIp) {
         this.callerIp = callerIp;
+    }
+
+    public Thread getCurrentThread() {
+        return currentThread;
+    }
+
+    public void setCurrentThread(Thread currentThread) {
+        this.currentThread = currentThread;
     }
 }

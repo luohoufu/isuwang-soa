@@ -4,10 +4,8 @@ import com.isuwang.soa.container.util.LoggerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by tangliu on 2016/2/1.
@@ -20,6 +18,8 @@ public class TaskManager {
 
     private List<Task> tasks = Collections.synchronizedList(new ArrayList<Task>());
 
+    private Map<Thread, String> lastStackInfo = new ConcurrentHashMap<>();
+
     private static final long DEFAULT_SLEEP_TIME = 3000L;
 
     public void addTask(Task task) {
@@ -27,6 +27,7 @@ public class TaskManager {
     }
 
     public void remove(Task task) {
+        lastStackInfo.remove(task.getCurrentThread());
         tasks.remove(task);
     }
 
@@ -71,6 +72,21 @@ public class TaskManager {
 
                 LOGGER.info("Request has been processed exceed specify time:{},{},{},{},{},{},{},{},{},{}", task.getSeqid(), task.getServiceName(), task.getVersionName(),
                         task.getMethodName(), task.getCallerFrom(), task.getCallerIp(), task.getOperatorId(), task.getOperatorName(), task.getCustomerId(), task.getCustomerName());
+
+                StackTraceElement[] stackElements = task.getCurrentThread().getStackTrace();
+
+                if (stackElements != null && stackElements.length > 0) {
+
+                    String firstStackInfo = stackElements[0].getClassName() + "." + stackElements[0].getMethodName() + "(" + stackElements[0].getFileName() + ":" + stackElements[0].getLineNumber() + ")";
+                    if (lastStackInfo.containsKey(task.getCurrentThread()) && lastStackInfo.get(task.getCurrentThread()).equals(firstStackInfo))
+                        LOGGER.info("Same as last check...");
+                    else {
+                        lastStackInfo.put(task.getCurrentThread(), firstStackInfo);
+                        for (int i = 0; i < stackElements.length; i++) {
+                            LOGGER.info(stackElements[i].getClassName() + "." + stackElements[i].getMethodName() + "(" + stackElements[i].getFileName() + ":" + stackElements[i].getLineNumber() + ")");
+                        }
+                    }
+                }
             }
         }
 
@@ -78,5 +94,4 @@ public class TaskManager {
 
         Thread.sleep(DEFAULT_SLEEP_TIME);
     }
-
 }
