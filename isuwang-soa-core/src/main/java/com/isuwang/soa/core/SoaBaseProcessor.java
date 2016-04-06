@@ -58,14 +58,14 @@ public class SoaBaseProcessor<I> implements TProcessor {
 
             SoaHeader soaHeader = (SoaHeader) chain.getAttribute(ContainerFilterChain.ATTR_KEY_HEADER);
 
-            LOGGER.info("{} {} {} request header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), soaProcessFunction.getReqSerializer().toString(args));
+            LOGGER.info("{} {} {} request header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), formatToString(soaProcessFunction.getReqSerializer().toString(args)));
             long startTime = System.currentTimeMillis();
 
             Object result = null;
             try {
                 result = soaProcessFunction.getResult(iface, args);
 
-                LOGGER.info("{} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), soaProcessFunction.getResSerializer().toString(result));
+                LOGGER.info("{} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), formatToString(soaProcessFunction.getResSerializer().toString(result)));
             } finally {
                 chain.setAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME, System.currentTimeMillis() - startTime);
             }
@@ -81,6 +81,19 @@ public class SoaBaseProcessor<I> implements TProcessor {
         filterChain.doFilter();
 
         return true;
+    }
+
+    private static String formatToString(String msg) {
+        if (msg == null)
+            return msg;
+
+        int len = msg.length();
+        int max_len = 128;
+
+        if (len > max_len)
+            msg = msg.substring(0, 128) + "...(" + len + ")";
+
+        return msg;
     }
 
     public Map<String, SoaProcessFunction<I, ?, ?, ? extends TBeanSerializer<?>, ? extends TBeanSerializer<?>>> getProcessMapView() {

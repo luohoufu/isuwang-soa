@@ -69,8 +69,7 @@ public class TaskManager {
             final Task task = iterator.next();
 
             final long ptime = currentTime - task.getStartTime();
-            if (currentTime - task.getStartTime() >= MAX_PROCESS_TIME) {
-
+            if (ptime >= MAX_PROCESS_TIME) {
                 final StackTraceElement[] stackElements = task.getCurrentThread().getStackTrace();
 
                 if (stackElements != null && stackElements.length > 0) {
