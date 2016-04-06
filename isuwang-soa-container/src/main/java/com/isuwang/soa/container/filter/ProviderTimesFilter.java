@@ -1,8 +1,10 @@
 package com.isuwang.soa.container.filter;
 
 import com.isuwang.soa.core.SoaHeader;
+import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
+import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import com.isuwang.soa.remoting.filter.StubFilterChain;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -21,12 +23,13 @@ public class ProviderTimesFilter implements Filter {
     @Override
     public void doFilter(FilterChain chain) throws TException {
         final long startTime = System.currentTimeMillis();
-        final SoaHeader soaHeader = (SoaHeader) chain.getAttribute(StubFilterChain.ATTR_KEY_HEADER);
+        final SoaHeader soaHeader = (SoaHeader) chain.getAttribute(ContainerFilterChain.ATTR_KEY_HEADER);
+        final TransactionContext context = (TransactionContext) chain.getAttribute(ContainerFilterChain.ATTR_KEY_CONTEXT);
 
         try {
             chain.doFilter();
         } finally {
-            LOGGER.info("{} {} {} 耗时:{}ms", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), System.currentTimeMillis() - startTime);
+            LOGGER.info("{} {} {} {} 耗时:{}ms", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), context.getSeqid(), System.currentTimeMillis() - startTime);
         }
     }
 
