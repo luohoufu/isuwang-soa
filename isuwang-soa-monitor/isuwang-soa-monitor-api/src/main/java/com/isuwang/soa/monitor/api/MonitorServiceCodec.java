@@ -826,7 +826,7 @@ public class MonitorServiceCodec {
         public String toString() {
             StringBuilder stringBuilder = new StringBuilder("{");
 
-            stringBuilder.append("\"").append("qpsStats").append("\":").append(this.qpsStats).append(",");
+            stringBuilder.append("\"").append("qpsStats").append("\":").append(qpsStats).append(",");
 
             if (stringBuilder.lastIndexOf(",") > 0)
                 stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));
@@ -840,6 +840,11 @@ public class MonitorServiceCodec {
 
     public static class uploadQPSStat_result {
 
+
+        @Override
+        public String toString() {
+            return "{}";
+        }
 
     }
 
@@ -1028,7 +1033,7 @@ public class MonitorServiceCodec {
         public String toString() {
             StringBuilder stringBuilder = new StringBuilder("{");
 
-            stringBuilder.append("\"").append("platformProcessDatas").append("\":").append(this.platformProcessDatas).append(",");
+            stringBuilder.append("\"").append("platformProcessDatas").append("\":").append(platformProcessDatas).append(",");
 
             if (stringBuilder.lastIndexOf(",") > 0)
                 stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));
@@ -1042,6 +1047,11 @@ public class MonitorServiceCodec {
 
     public static class uploadPlatformProcessData_result {
 
+
+        @Override
+        public String toString() {
+            return "{}";
+        }
 
     }
 
@@ -1230,7 +1240,7 @@ public class MonitorServiceCodec {
         public String toString() {
             StringBuilder stringBuilder = new StringBuilder("{");
 
-            stringBuilder.append("\"").append("dataSourceStat").append("\":").append(this.dataSourceStat).append(",");
+            stringBuilder.append("\"").append("dataSourceStat").append("\":").append(dataSourceStat).append(",");
 
             if (stringBuilder.lastIndexOf(",") > 0)
                 stringBuilder.deleteCharAt(stringBuilder.lastIndexOf(","));
@@ -1244,6 +1254,11 @@ public class MonitorServiceCodec {
 
     public static class uploadDataSourceStat_result {
 
+
+        @Override
+        public String toString() {
+            return "{}";
+        }
 
     }
 

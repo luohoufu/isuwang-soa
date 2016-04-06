@@ -89,7 +89,12 @@ class JavaClientGenerator extends CodeGenerator {
 
             {toFieldArrayBuffer(method.response.getFields()).map{(field:Field)=>
               if(field.getDataType().getKind() == DataType.KIND.VOID) {
-                <div></div>
+                <div>
+                  @Override
+                  public String toString()<block>
+                      return "<block></block>";
+                   </block>
+                </div>
               } else {
                 <div>
                   private {toDataTypeTemplate(method.response.getFields.get(0).getDataType)} success;

@@ -2,8 +2,8 @@
 <service namespace="com.isuwang.soa.monitor.api.service" name="MonitorService">
     <doc>
 
-        监控服务
-    </doc>
+ 监控服务
+</doc>
     <meta>
         <version>1.0.0</version>
         <timeout>30000</timeout>
@@ -12,16 +12,16 @@
         <method name="uploadQPSStat">
             <doc>
 
-                上送QPS信息
-            </doc>
+ 上送QPS信息
+</doc>
             <request name="uploadQPSStat_args">
                 <fields>
                     <field tag="1" name="qpsStats" optional="false" privacy="false">
                         <dataType>
                             <kind>LIST</kind>
                             <valueType>
-                                <kind>STRUCT</kind>
-                                <ref>com.isuwang.soa.monitor.api.domain.QPSStat</ref>
+<kind>STRUCT</kind>
+<ref>com.isuwang.soa.monitor.api.domain.QPSStat</ref>
                             </valueType>
                         </dataType>
                         <doc></doc>
@@ -42,16 +42,16 @@
         <method name="uploadPlatformProcessData">
             <doc>
 
-                上送平台处理数据
-            </doc>
+ 上送平台处理数据
+</doc>
             <request name="uploadPlatformProcessData_args">
                 <fields>
                     <field tag="1" name="platformProcessDatas" optional="false" privacy="false">
                         <dataType>
                             <kind>LIST</kind>
                             <valueType>
-                                <kind>STRUCT</kind>
-                                <ref>com.isuwang.soa.monitor.api.domain.PlatformProcessData</ref>
+<kind>STRUCT</kind>
+<ref>com.isuwang.soa.monitor.api.domain.PlatformProcessData</ref>
                             </valueType>
                         </dataType>
                         <doc></doc>
@@ -72,16 +72,16 @@
         <method name="uploadDataSourceStat">
             <doc>
 
-                上送DataSource信息
-            </doc>
+ 上送DataSource信息
+</doc>
             <request name="uploadDataSourceStat_args">
                 <fields>
                     <field tag="1" name="dataSourceStat" optional="false" privacy="false">
                         <dataType>
                             <kind>LIST</kind>
                             <valueType>
-                                <kind>STRUCT</kind>
-                                <ref>com.isuwang.soa.monitor.api.domain.DataSourceStat</ref>
+<kind>STRUCT</kind>
+<ref>com.isuwang.soa.monitor.api.domain.DataSourceStat</ref>
                             </valueType>
                         </dataType>
                         <doc></doc>
@@ -104,8 +104,8 @@
         <struct namespace="com.isuwang.soa.monitor.api.domain" name="QPSStat">
             <doc>
 
-                QPS Stat
-            </doc>
+ QPS Stat
+</doc>
             <fields>
                 <field tag="1" name="period" optional="false" privacy="true">
                     <dataType>
@@ -113,8 +113,8 @@
                     </dataType>
                     <doc>
 
-                        时间间隔:单位秒
-                    </doc>
+ 时间间隔:单位秒
+</doc>
                 </field>
                 <field tag="2" name="analysisTime" optional="false" privacy="true">
                     <dataType>
@@ -122,8 +122,8 @@
                     </dataType>
                     <doc>
 
-                        统计分析时间(时间戳)
-                    </doc>
+ 统计分析时间(时间戳)
+</doc>
                 </field>
                 <field tag="3" name="serverIP" optional="false" privacy="true">
                     <dataType>
@@ -131,8 +131,8 @@
                     </dataType>
                     <doc>
 
-                        服务器IP
-                    </doc>
+ 服务器IP
+</doc>
                 </field>
                 <field tag="4" name="serverPort" optional="false" privacy="true">
                     <dataType>
@@ -140,8 +140,8 @@
                     </dataType>
                     <doc>
 
-                        服务器端口
-                    </doc>
+ 服务器端口
+</doc>
                 </field>
                 <field tag="5" name="callCount" optional="false" privacy="true">
                     <dataType>
@@ -149,8 +149,8 @@
                     </dataType>
                     <doc>
 
-                        调用次数
-                    </doc>
+ 调用次数
+</doc>
                 </field>
                 <field tag="6" name="serviceName" optional="false" privacy="true">
                     <dataType>
@@ -158,8 +158,8 @@
                     </dataType>
                     <doc>
 
-                        服务名称
-                    </doc>
+ 服务名称
+</doc>
                 </field>
                 <field tag="7" name="methodName" optional="false" privacy="true">
                     <dataType>
@@ -167,8 +167,8 @@
                     </dataType>
                     <doc>
 
-                        方法名称
-                    </doc>
+ 方法名称
+</doc>
                 </field>
                 <field tag="8" name="versionName" optional="false" privacy="true">
                     <dataType>
@@ -176,16 +176,16 @@
                     </dataType>
                     <doc>
 
-                        版本号
-                    </doc>
+ 版本号
+</doc>
                 </field>
             </fields>
         </struct>
         <struct namespace="com.isuwang.soa.monitor.api.domain" name="PlatformProcessData">
             <doc>
 
-                平台处理数据
-            </doc>
+ 平台处理数据
+</doc>
             <fields>
                 <field tag="1" name="period" optional="false" privacy="true">
                     <dataType>
@@ -193,8 +193,8 @@
                     </dataType>
                     <doc>
 
-                        时间间隔:单位分钟
-                    </doc>
+ 时间间隔:单位分钟
+</doc>
                 </field>
                 <field tag="2" name="analysisTime" optional="false" privacy="true">
                     <dataType>
@@ -202,8 +202,8 @@
                     </dataType>
                     <doc>
 
-                        统计分析时间(时间戳)
-                    </doc>
+ 统计分析时间(时间戳)
+</doc>
                 </field>
                 <field tag="3" name="serviceName" optional="false" privacy="true">
                     <dataType>
@@ -211,8 +211,8 @@
                     </dataType>
                     <doc>
 
-                        服务名称
-                    </doc>
+ 服务名称
+</doc>
                 </field>
                 <field tag="4" name="methodName" optional="false" privacy="true">
                     <dataType>
@@ -220,8 +220,8 @@
                     </dataType>
                     <doc>
 
-                        方法名称
-                    </doc>
+ 方法名称
+</doc>
                 </field>
                 <field tag="5" name="versionName" optional="false" privacy="true">
                     <dataType>
@@ -229,8 +229,8 @@
                     </dataType>
                     <doc>
 
-                        版本号
-                    </doc>
+ 版本号
+</doc>
                 </field>
                 <field tag="6" name="serverIP" optional="false" privacy="true">
                     <dataType>
@@ -238,8 +238,8 @@
                     </dataType>
                     <doc>
 
-                        服务器IP
-                    </doc>
+ 服务器IP
+</doc>
                 </field>
                 <field tag="7" name="serverPort" optional="false" privacy="true">
                     <dataType>
@@ -247,8 +247,8 @@
                     </dataType>
                     <doc>
 
-                        服务器端口
-                    </doc>
+ 服务器端口
+</doc>
                 </field>
                 <field tag="8" name="pMinTime" optional="false" privacy="true">
                     <dataType>
@@ -256,8 +256,8 @@
                     </dataType>
                     <doc>
 
-                        平台最小耗时(单位:毫秒)
-                    </doc>
+ 平台最小耗时(单位:毫秒)
+</doc>
                 </field>
                 <field tag="9" name="pMaxTime" optional="false" privacy="true">
                     <dataType>
@@ -265,8 +265,8 @@
                     </dataType>
                     <doc>
 
-                        平台最大耗时(单位:毫秒)
-                    </doc>
+ 平台最大耗时(单位:毫秒)
+</doc>
                 </field>
                 <field tag="10" name="pAverageTime" optional="false" privacy="true">
                     <dataType>
@@ -274,8 +274,8 @@
                     </dataType>
                     <doc>
 
-                        平台平均耗时(单位:毫秒)
-                    </doc>
+ 平台平均耗时(单位:毫秒)
+</doc>
                 </field>
                 <field tag="11" name="pTotalTime" optional="false" privacy="true">
                     <dataType>
@@ -283,8 +283,8 @@
                     </dataType>
                     <doc>
 
-                        平台总耗时(单位:毫秒)
-                    </doc>
+ 平台总耗时(单位:毫秒)
+</doc>
                 </field>
                 <field tag="12" name="iMinTime" optional="false" privacy="true">
                     <dataType>
@@ -292,8 +292,8 @@
                     </dataType>
                     <doc>
 
-                        接口服务最小耗时(单位:毫秒)
-                    </doc>
+ 接口服务最小耗时(单位:毫秒)
+</doc>
                 </field>
                 <field tag="13" name="iMaxTime" optional="false" privacy="true">
                     <dataType>
@@ -301,8 +301,8 @@
                     </dataType>
                     <doc>
 
-                        接口服务最大耗时(单位:毫秒)
-                    </doc>
+ 接口服务最大耗时(单位:毫秒)
+</doc>
                 </field>
                 <field tag="14" name="iAverageTime" optional="false" privacy="true">
                     <dataType>
@@ -310,8 +310,8 @@
                     </dataType>
                     <doc>
 
-                        接口服务平均耗时(单位:毫秒)
-                    </doc>
+ 接口服务平均耗时(单位:毫秒)
+</doc>
                 </field>
                 <field tag="15" name="iTotalTime" optional="false" privacy="true">
                     <dataType>
@@ -319,8 +319,8 @@
                     </dataType>
                     <doc>
 
-                        接口服务总耗时(单位:毫秒)
-                    </doc>
+ 接口服务总耗时(单位:毫秒)
+</doc>
                 </field>
                 <field tag="16" name="totalCalls" optional="false" privacy="true">
                     <dataType>
@@ -328,8 +328,8 @@
                     </dataType>
                     <doc>
 
-                        总调用次数
-                    </doc>
+ 总调用次数
+</doc>
                 </field>
                 <field tag="17" name="succeedCalls" optional="false" privacy="true">
                     <dataType>
@@ -337,8 +337,8 @@
                     </dataType>
                     <doc>
 
-                        成功调用次数
-                    </doc>
+ 成功调用次数
+</doc>
                 </field>
                 <field tag="18" name="failCalls" optional="false" privacy="true">
                     <dataType>
@@ -346,8 +346,8 @@
                     </dataType>
                     <doc>
 
-                        失败调用次数
-                    </doc>
+ 失败调用次数
+</doc>
                 </field>
                 <field tag="19" name="requestFlow" optional="false" privacy="true">
                     <dataType>
@@ -355,8 +355,8 @@
                     </dataType>
                     <doc>
 
-                        请求的流量(单位:字节)
-                    </doc>
+ 请求的流量(单位:字节)
+</doc>
                 </field>
                 <field tag="20" name="responseFlow" optional="false" privacy="true">
                     <dataType>
@@ -364,16 +364,16 @@
                     </dataType>
                     <doc>
 
-                        响应的流量(单位:字节)
-                    </doc>
+ 响应的流量(单位:字节)
+</doc>
                 </field>
             </fields>
         </struct>
         <struct namespace="com.isuwang.soa.monitor.api.domain" name="DataSourceStat">
             <doc>
 
-                DataSource Stat
-            </doc>
+ DataSource Stat
+</doc>
             <fields>
                 <field tag="1" name="period" optional="false" privacy="true">
                     <dataType>
@@ -381,8 +381,8 @@
                     </dataType>
                     <doc>
 
-                        时间间隔:单位秒
-                    </doc>
+ 时间间隔:单位秒
+</doc>
                 </field>
                 <field tag="2" name="analysisTime" optional="false" privacy="true">
                     <dataType>
@@ -390,8 +390,8 @@
                     </dataType>
                     <doc>
 
-                        统计分析时间(时间戳)
-                    </doc>
+ 统计分析时间(时间戳)
+</doc>
                 </field>
                 <field tag="3" name="serverIP" optional="false" privacy="true">
                     <dataType>
@@ -399,8 +399,8 @@
                     </dataType>
                     <doc>
 
-                        服务器IP
-                    </doc>
+ 服务器IP
+</doc>
                 </field>
                 <field tag="4" name="serverPort" optional="false" privacy="true">
                     <dataType>
@@ -408,8 +408,8 @@
                     </dataType>
                     <doc>
 
-                        服务器端口
-                    </doc>
+ 服务器端口
+</doc>
                 </field>
                 <field tag="5" name="url" optional="false" privacy="true">
                     <dataType>
@@ -417,8 +417,8 @@
                     </dataType>
                     <doc>
 
-                        连接地址
-                    </doc>
+ 连接地址
+</doc>
                 </field>
                 <field tag="6" name="userName" optional="false" privacy="true">
                     <dataType>
@@ -426,8 +426,8 @@
                     </dataType>
                     <doc>
 
-                        用户名
-                    </doc>
+ 用户名
+</doc>
                 </field>
                 <field tag="7" name="identity" optional="false" privacy="true">
                     <dataType>
@@ -435,8 +435,8 @@
                     </dataType>
                     <doc>
 
-                        编号
-                    </doc>
+ 编号
+</doc>
                 </field>
                 <field tag="8" name="dbType" optional="false" privacy="true">
                     <dataType>
@@ -444,8 +444,8 @@
                     </dataType>
                     <doc>
 
-                        数据库类型
-                    </doc>
+ 数据库类型
+</doc>
                 </field>
                 <field tag="9" name="poolingCount" optional="false" privacy="true">
                     <dataType>
@@ -453,8 +453,8 @@
                     </dataType>
                     <doc>
 
-                        池中连接数
-                    </doc>
+ 池中连接数
+</doc>
                 </field>
                 <field tag="10" name="poolingPeak" optional="true" privacy="true">
                     <dataType>
@@ -462,8 +462,8 @@
                     </dataType>
                     <doc>
 
-                        池中连接数峰值
-                    </doc>
+ 池中连接数峰值
+</doc>
                 </field>
                 <field tag="11" name="poolingPeakTime" optional="true" privacy="true">
                     <dataType>
@@ -471,8 +471,8 @@
                     </dataType>
                     <doc>
 
-                        池中连接数峰值时间
-                    </doc>
+ 池中连接数峰值时间
+</doc>
                 </field>
                 <field tag="13" name="activeCount" optional="false" privacy="true">
                     <dataType>
@@ -480,8 +480,8 @@
                     </dataType>
                     <doc>
 
-                        活跃连接数
-                    </doc>
+ 活跃连接数
+</doc>
                 </field>
                 <field tag="14" name="activePeak" optional="true" privacy="true">
                     <dataType>
@@ -489,8 +489,8 @@
                     </dataType>
                     <doc>
 
-                        活跃连接数峰值
-                    </doc>
+ 活跃连接数峰值
+</doc>
                 </field>
                 <field tag="15" name="activePeakTime" optional="true" privacy="true">
                     <dataType>
@@ -498,8 +498,8 @@
                     </dataType>
                     <doc>
 
-                        活跃连接数峰值时间
-                    </doc>
+ 活跃连接数峰值时间
+</doc>
                 </field>
                 <field tag="16" name="executeCount" optional="false" privacy="true">
                     <dataType>
@@ -507,8 +507,8 @@
                     </dataType>
                     <doc>
 
-                        执行数
-                    </doc>
+ 执行数
+</doc>
                 </field>
                 <field tag="17" name="errorCount" optional="false" privacy="true">
                     <dataType>
@@ -516,8 +516,8 @@
                     </dataType>
                     <doc>
 
-                        错误数
-                    </doc>
+ 错误数
+</doc>
                 </field>
             </fields>
         </struct>
