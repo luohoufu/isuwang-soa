@@ -143,6 +143,9 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     }
 
     protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, TransactionContext context, Long startTime, PlatformProcessData processData) {
+
+        final long waittingTime = System.currentTimeMillis() - startTime;
+
         final ByteBuf outputBuf = ctx.alloc().buffer(8192);
 
         TransactionContext.Factory.setCurrentInstance(context);
@@ -232,6 +235,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
                         .append(" ").append(finalResponseMsg)
                         .append(" ").append(processData.getRequestFlow())
                         .append(" ").append(outputBuf.writerIndex())
+                        .append(" ").append(waittingTime)
                         .append(" ").append(totalTime);
                 SIMPLE_LOGGER.info(builder.toString());
             });
