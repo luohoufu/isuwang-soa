@@ -66,6 +66,12 @@ isuwang-soa-container/target/isuwang-soa-container
 
 ### 服务开发简易说明
 
+#### 安装soa项目到本地maven仓库
+
+```
+mvn clean install
+```
+
 #### 例子工程
 
 ```
@@ -154,39 +160,13 @@ java -jar isuwang-soa-code-generator-1.0-SNAPSHOT-jar-with-dependencies.jar -gen
 
 `hello-api`工程会被服务端和客户端依赖。
 
-新建已经maven工程，即`hello-api`工程，依赖于`isuwang-soa-remoting-api`:
+新建maven工程，即`hello-api`工程，依赖于`isuwang-soa-remoting-api`:
 ```
 <dependency>
     <groupId>com.isuwang</groupId>
     <artifactId>isuwang-soa-remoting-api</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
-```
-优先从公司私服获取依赖包：
-```
-<repositories>
-    <repository>
-        <id>maven-isuwang-com</id>
-        <url>http://nexus.oa.isuwang.com/content/groups/public/</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>maven-net-cn</id>
-        <name>Maven China Mirror</name>
-        <url>http://repo1.maven.org/maven2/</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-</repositories>
 ```
 
 将上一步中生成的java代码，拷贝入对应的package。将上一步中生成的xml文件，拷贝入`resources`文件夹。示例如图：
@@ -275,42 +255,6 @@ cd isuwang-soa/isuwang-soa-maven-plugin
 mvn clean install
 ```
 
-* pom.xml依赖自动安装
-
-`hello-service`添加maven插件：
-
-```
-<pluginRepositories>
-    <pluginRepository>
-        <id>maven-isuwang-com</id>
-        <url>http://nexus.oa.isuwang.com/content/groups/public/</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </pluginRepository>
-
-    <pluginRepository>
-        <id>maven-net-cn</id>
-        <name>Maven China Mirror</name>
-        <url>http://repo1.maven.org/maven2/</url>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </pluginRepository>
-</pluginRepositories>
-...
-<plugin>
-    <groupId>com.isuwang</groupId>
-    <artifactId>isuwangsoa-maven-plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
-</plugin>
-```
 
 ##### Maven启动服务容器
 
@@ -432,12 +376,12 @@ System.out.println(client.sayHello("LiLei"));
 
 * 启动服务后，在浏览器访问地址：[http://localhost:8080/index.htm](http://localhost:8080/index.htm),点击`api`标签，即可看到当前运行的服务信息：
 
-![API站点页面](http://7xnl6z.com1.z0.glb.clouddn.com/com.isuwang.soa.api_website.png)
+![API站点页面](http://7xnl6z.com1.z0.glb.clouddn.com/com.isuwang.soa1.png)
     
 * 点击对应服务，可以查看该服务相关信息，包括全名称、版本号、方法列表、结构体和枚举类型列表等，点击对应项目可查看详情。
 * 从方法详情页面点击在线测试，进入在线测试页面：
 
-![在线测试页面](http://7xnl6z.com1.z0.glb.clouddn.com/com.isuwang.soa.api_test_page.png)
+![在线测试页面](http://7xnl6z.com1.z0.glb.clouddn.com/com.isuwang.soa2.png)
 
 * 输入必填项参数，点击提交请求，即可请求本机当前运行的服务，并获得返回数据：
 
@@ -447,9 +391,9 @@ System.out.println(client.sayHello("LiLei"));
 
 * 控制台可以看到相应的请求信息：
 
-其中soa-threadPool-1是后台服务打印日志
+其中trans-pool-1-thread-2是后台服务打印日志
 
-![控制台打印信息](http://7xnl6z.com1.z0.glb.clouddn.com/com.isuwang.soa.api_test_info.png)
+![控制台打印信息](http://7xnl6z.com1.z0.glb.clouddn.com/com.isuwang.soa4.png)
 
 
 
