@@ -68,6 +68,8 @@ module api {
                     return "<a href='" + structurl + "'>" + dataType.qualifiedName.substring(dataType.qualifiedName.lastIndexOf(".") + 1) + "</a>"
                 case api.model.KIND.DATE:
                     return "Date"
+                case api.model.KIND.BIGDECIMAL:
+                    return "BigDecimal"
                 default:
                     return "Unknown"
             }

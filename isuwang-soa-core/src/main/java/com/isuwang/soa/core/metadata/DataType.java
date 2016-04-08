@@ -8,7 +8,7 @@ public class DataType {
 
     @XmlEnum
     public static enum KIND {
-        VOID, BOOLEAN, BYTE, SHORT, INTEGER, LONG, DOUBLE, STRING, BINARY, MAP, LIST, SET, ENUM, STRUCT, DATE;
+        VOID, BOOLEAN, BYTE, SHORT, INTEGER, LONG, DOUBLE, STRING, BINARY, MAP, LIST, SET, ENUM, STRUCT, DATE, BIGDECIMAL;
     }
 
     public KIND kind;

@@ -8,6 +8,7 @@ import com.isuwang.soa.doc.restful.InvocationInfo;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.*;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -63,6 +64,10 @@ public abstract class TBaseBeanSerializer implements TBeanSerializer<InvocationI
                 } catch (ParseException e) {
                 }
                 oprot.writeI64(time);
+                break;
+            case BIGDECIMAL:
+                String bigDecimal = isJsonElement ? jsonElement.getAsBigDecimal().toString() : new BigDecimal((String) value).toString();
+                oprot.writeString(bigDecimal);
                 break;
             case MAP: {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -305,6 +310,9 @@ public abstract class TBaseBeanSerializer implements TBeanSerializer<InvocationI
 
             case DATE:
                 return TType.I64;
+
+            case BIGDECIMAL:
+                return TType.STRING;
 
             default:
                 break;

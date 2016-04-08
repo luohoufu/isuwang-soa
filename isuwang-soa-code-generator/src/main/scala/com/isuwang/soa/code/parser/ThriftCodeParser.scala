@@ -132,12 +132,17 @@ class ThriftCodeParser {
         } else if (clazz == TI64.getClass) {
           dataType.setKind(DataType.KIND.LONG)
 
-          //2015-2-18 In order to generate Date type in List/Map/Set
-          if (docString.contains("@datatype(name=\"date\")"))
+          //2016-2-18 In order to generate Date type
+          if (docString.toLowerCase.contains("@datatype(name=\"date\")"))
             dataType.setKind(DataType.KIND.DATE)
 
         } else if (clazz == TDouble.getClass) {
           dataType.setKind(DataType.KIND.DOUBLE)
+
+          //2016-4-08 In order to generate BigDecimal type
+          if (docString.toLowerCase.contains("@datatype(name=\"bigdecimal\")"))
+            dataType.setKind(DataType.KIND.BIGDECIMAL)
+
         } else if (clazz == TByte.getClass) {
           dataType.setKind(DataType.KIND.BYTE)
         } else if (clazz == TBool.getClass) {
@@ -232,12 +237,8 @@ class ThriftCodeParser {
           val optional0 = field.requiredness.isOptional
           val docSrting0 = toDocString(field.docstring)
           var dataType0: DataType = null
-          if (docSrting0 == "@datatype(name=\"date\")") {
-            dataType0 = new DataType()
-            dataType0.setKind(DataType.KIND.DATE)
-          } else {
-            dataType0 = toDataType(field.fieldType, doc0, docSrting0)
-          }
+
+          dataType0 = toDataType(field.fieldType, doc0, docSrting0)
 
           new core.metadata.Field {
             this.setTag(tag0)
@@ -290,13 +291,15 @@ class ThriftCodeParser {
 
           val tag = index + 1
           val name = field.name
-          val docSrting = ""
+
+          var docSrting = ""
+          if (s.functions.get(tmpIndex).args.get(index).docstring.isDefined)
+            docSrting = toDocString(s.functions.get(tmpIndex).args.get(index).docstring)
+
           val f = field.field_type.getClass.getDeclaredField("fieldType");
           f.setAccessible(true)
           val dataType = toDataType(f.get(field.field_type).asInstanceOf[FieldType], doc, docSrting)
-          if (dataType.getKind == DataType.KIND.LONG && name.startsWith("_date_")) {
-            dataType.setKind(DataType.KIND.DATE);
-          }
+
           val tfiled = new core.metadata.Field()
           tfiled.setTag(tag)
           tfiled.setName(name)
@@ -306,7 +309,10 @@ class ThriftCodeParser {
           request.getFields.add(tfiled)
         }
 
-        val docSrting = ""
+        var docSrting = ""
+        if (s.functions.get(tmpIndex).docstring.isDefined)
+          docSrting = toDocString(s.functions.get(tmpIndex).docstring)
+
         val f = functionField.return_type.getClass.getDeclaredField("fieldType");
         f.setAccessible(true)
 

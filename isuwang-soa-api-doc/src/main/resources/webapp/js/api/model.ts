@@ -16,6 +16,7 @@ module api.model {
         public static ENUM = "ENUM"
         public static STRUCT = "STRUCT"
         public static DATE = "DATE"
+        public static BIGDECIMAL = "BIGDECIMAL"
     }
 
     export class DataType {

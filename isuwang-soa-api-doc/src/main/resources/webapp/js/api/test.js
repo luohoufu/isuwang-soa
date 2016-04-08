@@ -101,6 +101,9 @@ function getDataTypeElement(dataType, name, service, optional, doc) {
         case 'DATE':
             return createInputGroup(name, "Date", optional, doc);
 
+        case 'BIGDECIMAL':
+            return createInputGroup(name, "BigDecimal", optional, doc);
+
         case 'SHORT':
             return createInputGroup(name, 'Short', optional, doc);
 
@@ -562,6 +565,11 @@ function getJsonSample(dataType, service) {
                 }
             }
             return {};
+
+        case 'DATE':
+            return "2016/04/13 16:00";
+        case 'BIGDECIMAL':
+            return "1234567.123456789123456";
         default :
             return "";
     }

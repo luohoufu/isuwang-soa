@@ -11,6 +11,7 @@ import org.apache.thrift.protocol.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -140,6 +141,9 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 java.util.Date date = new java.util.Date(time);
                 value = new JsonPrimitive(sdf.format(date));
+                break;
+            case BIGDECIMAL:
+                value = new JsonPrimitive(new BigDecimal(iprot.readString()));
                 break;
             case MAP:
                 //if(schemeField.type == TType.MAP) {
@@ -300,9 +304,7 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 throw new TException("not fund " + key + " in request's method.");
 
             oprot.writeFieldBegin(new TField(field.getName(), dataType2Byte(field.getDataType()), (short) field.getTag()));
-
             writeField(service, field.getDataType(), oprot, value);
-
             oprot.writeFieldEnd();
         }
 

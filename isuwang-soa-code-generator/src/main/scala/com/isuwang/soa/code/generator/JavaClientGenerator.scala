@@ -436,6 +436,7 @@ class JavaClientGenerator extends CodeGenerator {
       case KIND.STRING => <div>String</div>
       case KIND.BINARY => <div>java.nio.ByteBuffer</div>
       case KIND.DATE => <div>java.util.Date</div>
+      case KIND.BIGDECIMAL => <div>java.math.BigDecimal</div>
       case KIND.MAP =>
         return {<div>java.util.Map{lt}{toDataTypeTemplate(dataType.getKeyType())}, {toDataTypeTemplate(dataType.getValueType())}{gt}</div>}
       case KIND.LIST =>
@@ -468,6 +469,7 @@ class JavaClientGenerator extends CodeGenerator {
       case KIND.ENUM => <div>org.apache.thrift.protocol.TType.I32</div>
       case KIND.STRUCT => <div>org.apache.thrift.protocol.TType.STRUCT</div>
       case KIND.DATE => <div>org.apache.thrift.protocol.TType.I64</div>
+      case KIND.BIGDECIMAL => <div>org.apache.thrift.protocol.TType.STRING</div>
       case _ => <div></div>
     }
   }
@@ -485,13 +487,15 @@ class JavaClientGenerator extends CodeGenerator {
       case KIND.STRING => <div>oprot.writeString(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>});</div>
       case KIND.ENUM => <div>oprot.writeI32(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>}.getValue());</div>
       case KIND.DATE =>
-        return {
           <div>
             java.util.Date {field.name} = bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>};
             oprot.writeI64({field.name}.getTime());
           </div>
-        }
-
+      case KIND.BIGDECIMAL =>
+          <div>
+            java.math.BigDecimal {field.name} = bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>};
+            oprot.writeString({field.name}.toString());
+          </div>
       case KIND.LIST => return{
         <div>oprot.writeListBegin(new org.apache.thrift.protocol.TList({toTDateType(field.dataType.valueType)}, bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>}.size()));
               for({toDataTypeTemplate(field.dataType.valueType)} item : bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>})<block>
@@ -507,6 +511,7 @@ class JavaClientGenerator extends CodeGenerator {
               case KIND.LONG => <div>oprot.writeI64(item);</div>
               case KIND.ENUM => <div>oprot.writeI32(item.getValue());</div>
               case KIND.DATE => <div>oprot.writeI64(item.getTime());</div>
+              case KIND.BIGDECIMAL => <div>oprot.writeString(item.toString());</div>
               case _ => <div></div>
             }
           }
@@ -525,6 +530,8 @@ class JavaClientGenerator extends CodeGenerator {
               case KIND.SHORT => <div>oprot.writeI16(item.getKey());</div>
               case KIND.LONG => <div>oprot.writeI64(item.getKey());</div>
               case KIND.ENUM => <div>oprot.writeI32(item.getKey().getValue());</div>
+              case KIND.DATE => <div>oprot.writeI64(item.getKey().getTime());</div>
+              case KIND.BIGDECIMAL => <div>oprot.writeString(item.getKey().toString());</div>
               case _ => <div></div>
              }
           }
@@ -538,6 +545,8 @@ class JavaClientGenerator extends CodeGenerator {
                case KIND.SHORT => <div>oprot.writeI16(item.getValue());</div>
                case KIND.LONG => <div>oprot.writeI64(item.getValue());</div>
                case KIND.ENUM => <div>oprot.writeI32(item.getValue().getValue());</div>
+               case KIND.DATE => <div>oprot.writeI64(item.getValue().getTime());</div>
+               case KIND.BIGDECIMAL => <div>oprot.writeString(item.getValue().toString());</div>
                case KIND.STRUCT => <div>     new {field.dataType.valueType.qualifiedName.substring(field.dataType.valueType.qualifiedName.lastIndexOf(".")+1)}Serializer().write(item.getValue(), oprot);</div>
                case _ => <div></div>
              }
@@ -578,6 +587,13 @@ class JavaClientGenerator extends CodeGenerator {
             bean.set{field.name.charAt(0).toUpper + field.name.substring(1)}({if(field.optional) <div>Optional.of(</div>}date{if(field.optional) <div>)</div>});
           </div>
         }
+      case KIND.BIGDECIMAL =>
+        return {
+          <div>
+            java.math.BigDecimal bigDecimal = new java.math.BigDecimal(iprot.readString());
+            bean.set{field.name.charAt(0).toUpper + field.name.substring(1)}({if(field.optional) <div>Optional.of(</div>}bigDecimal{if(field.optional) <div>)</div>});
+            </div>
+        }
       case KIND.LIST =>
         return {
           <div><block>
@@ -597,6 +613,7 @@ class JavaClientGenerator extends CodeGenerator {
                 case KIND.STRUCT => <div>{field.dataType.valueType.qualifiedName} _elem1 = new {field.dataType.valueType.qualifiedName}();
                   new {field.dataType.valueType.qualifiedName.substring(field.dataType.valueType.qualifiedName.lastIndexOf(".")+1)}Serializer().read(_elem1, iprot);</div>
                 case KIND.DATE => <div>Long time = iprot.readI64(); java.util.Date _elem1 = new java.util.Date(time);</div>
+                case KIND.BIGDECIMAL => <div>java.math.BigDecimal _elem1 = new java.math.BigDecimal(iprot.readString());</div>
                 case _ => <div></div>
               }
               }
@@ -625,6 +642,8 @@ class JavaClientGenerator extends CodeGenerator {
               case KIND.ENUM => <div>{field.dataType.valueType.qualifiedName} _val5 = {field.dataType.valueType.qualifiedName}.findByValue(iprot.readI32());</div>
               case KIND.STRUCT => <div>{field.dataType.valueType.qualifiedName} _val5 = new {field.dataType.valueType.qualifiedName}();
                 new {field.dataType.valueType.qualifiedName.substring(field.dataType.valueType.qualifiedName.lastIndexOf(".")+1)}Serializer().read(_val5, iprot);</div>
+              case KIND.DATE => <div>Long time = iprot.readI64(); java.util.Date _val5 = new java.util.Date(time);</div>
+              case KIND.BIGDECIMAL => <div>java.math.BigDecimal _val5 = new java.math.BigDecimal(iprot.readString());</div>
               case _ => <div></div>
             }
             }

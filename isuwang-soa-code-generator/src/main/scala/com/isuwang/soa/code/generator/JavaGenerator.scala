@@ -33,7 +33,6 @@ class JavaGenerator extends CodeGenerator {
     val namespaces:util.Set[String] = new util.HashSet[String]();
     for (index <- (0 until services.size())) {
       val service = services.get(index)
-
       namespaces.add(service.getNamespace);
 
       for(enumIndex <- (0 until service.getEnumDefinitions.size())) {
@@ -47,8 +46,6 @@ class JavaGenerator extends CodeGenerator {
 
         namespaces.add(structDefinition.getNamespace)
       }
-
-      //namespaces.add(service.namespace.substring(0, service.namespace.lastIndexOf(".")) + "Codec." + service.name)
     }
 
     for (index <- (0 until services.size())) {
@@ -347,6 +344,7 @@ class JavaGenerator extends CodeGenerator {
       case KIND.STRING => <div>String</div>
       case KIND.BINARY => <div>java.nio.ByteBuffer</div>
       case KIND.DATE => <div>java.util.Date</div>
+      case KIND.BIGDECIMAL => <div>java.math.BigDecimal</div>
       case KIND.MAP =>
         return {<div>java.util.Map{lt}{toDataTypeTemplate(dataType.getKeyType())}, {toDataTypeTemplate(dataType.getValueType())}{gt}</div>}
       case KIND.LIST =>
