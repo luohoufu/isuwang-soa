@@ -629,7 +629,23 @@ class JavaClientGenerator extends CodeGenerator {
             org.apache.thrift.protocol.TMap _map3 = iprot.readMapBegin();
             bean.set{field.name.charAt(0).toUpper + field.name.substring(1)}({if(field.optional) <div>Optional.of(</div>}new java.util.HashMap{lt}{gt}(2 * _map3.size){if(field.optional) <div>)</div>});
             for(int _i6 = 0; _i6 {lt} _map3.size; ++ _i6)<block>
-            {if(field.dataType.keyType.kind.equals(KIND.STRING)) <div>  String _key4 = iprot.readString();</div>}
+            {
+            field.dataType.keyType.kind match {
+              case KIND.BOOLEAN => <div>boolean _key4 = iprot.readBool();</div>
+              case KIND.BYTE => <div>byte _key4 = iprot.readByte();</div>
+              case KIND.SHORT => <div>short _key4 = iprot.readI16();</div>
+              case KIND.LONG => <div>long _key4 = iprot.readI64();</div>
+              case KIND.STRING => <div>  String _key4 = iprot.readString();</div>
+              case KIND.INTEGER => <div> int _key4 = iprot.readI32(); </div>
+              case KIND.DOUBLE => <div> double _key4 = iprot.readDouble();</div>
+              case KIND.ENUM => <div>{field.dataType.valueType.qualifiedName} _key4 = {field.dataType.valueType.qualifiedName}.findByValue(iprot.readI32());</div>
+              case KIND.STRUCT => <div>{field.dataType.valueType.qualifiedName} _key4 = new {field.dataType.valueType.qualifiedName}();
+                new {field.dataType.valueType.qualifiedName.substring(field.dataType.valueType.qualifiedName.lastIndexOf(".")+1)}Serializer().read(_key4, iprot);</div>
+              case KIND.DATE => <div>Long time = iprot.readI64(); java.util.Date _key4 = new java.util.Date(time);</div>
+              case KIND.BIGDECIMAL => <div>java.math.BigDecimal _key4 = new java.math.BigDecimal(iprot.readString());</div>
+              case _ => <div></div>
+            }
+            }
             {
             field.dataType.valueType.kind match{
               case KIND.BOOLEAN => <div>boolean _val5 = iprot.readBool();</div>
