@@ -116,6 +116,8 @@ service HelloService {
 }
 ```
 
+> [thrift idl补充说明](#thrift_explain)
+
 #### 服务接口代码生成：
 
 > 打包服务接口代码工程(`isuwang-soa-code-generator`): `mvn clean package` 
@@ -397,10 +399,51 @@ System.out.println(client.sayHello("LiLei"));
 
 
 
+#### Thrift IDL 补充说明
+<span id="thrift_explain"/>
+##### Optional类型
 
+请求发送和结果返回前，将对实体中所有非Optional类型字段进行校验，若不为Optional类型且为`null`，将直接抛错；
 
+struct描述时，若字段类型为optional,则在生成java代码时，该字段将会被转为Optional类型，请求发送和结果返回时，不再对该字段做判空校验，例：
 
+```
+/**
+* 文章来源
+*/
+6: optional string source,
+```
 
+##### Date类型
+
+1. 在struct描述中，若字段类型为`i64`，且注释中包含`@datatype(name="date")`字符串, 则在java代码生成时，将自动转换为`java.util.Date`类型，例：
+
+```
+/**
+* @datatype(name="date")
+**/
+8: i64 createdAt,
+```
+
+2. 在service描述中，如果方法参数类型为`i64`，且参数名以`_date_`开头，则在java代码生成时，将自动转换为`java.util.Date`类型，例：
+
+```
+service HolidayService {
+    list<holiday_domain.DailySchedule> selectEntitiesByRange(1: i64 _date_1, 2: i64 _date_2);
+}
+```
+
+##### 忽略日志
+
+框架默认打印所有请求内容和返回内容，若不想打印某字段，可以在struct描述时，在该字段注释中添加`@logger(level="off")`字符串，例：
+
+```
+/**
+ * @logger(level="off") 
+ * 文章内容,不打印
+ */
+5: optional string content,
+```
 
 
 
