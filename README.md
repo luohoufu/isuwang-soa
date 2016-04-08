@@ -116,7 +116,7 @@ service HelloService {
 }
 ```
 
-> [thrift idl补充说明](#thrift_explain)
+> [thrift idl补充说明](#thrift)
 
 #### 服务接口代码生成：
 
@@ -399,8 +399,8 @@ System.out.println(client.sayHello("LiLei"));
 
 
 
-#### Thrift IDL 补充说明
-<span id="thrift_explain"/>
+<h4 id="thrift"> Thrift IDL 补充说明</h4>
+
 ##### Optional类型
 
 请求发送和结果返回前，将对实体中所有非Optional类型字段进行校验，若不为Optional类型且为`null`，将直接抛错；
