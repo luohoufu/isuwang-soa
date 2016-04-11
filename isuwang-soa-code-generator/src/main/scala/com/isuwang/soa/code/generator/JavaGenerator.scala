@@ -97,16 +97,10 @@ class JavaGenerator extends CodeGenerator {
 
 
       println(s"生成Codec:${service.name}Codec.java")
-      //because of some reason the response of each method is always optional, which is not true,so correct it here
-      for (methodIndex <- (0 until service.getMethods.size())) {
-        val method = service.getMethods().get(methodIndex)
-        method.getResponse.getFields.get(0).setOptional(false);
-      }
       val codecTemplate = new StringTemplate(new JavaClientGenerator().toCodecTemplate(service, namespaces))
       val codecWriter = new PrintWriter(new File(rootDir(outDir, service.namespace.substring(0, service.namespace.lastIndexOf("."))), s"${service.name}Codec.java"), "UTF-8")
       codecWriter.write(codecTemplate.toString())
       codecWriter.close()
-
       println(s"生成Codec:${service.name}Codec.java 完成")
 
 

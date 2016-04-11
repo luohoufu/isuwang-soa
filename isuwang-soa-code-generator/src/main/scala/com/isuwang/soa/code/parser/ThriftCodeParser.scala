@@ -246,6 +246,7 @@ class ThriftCodeParser {
             this.setOptional(optional0)
             this.setDoc(docSrting0)
             this.setDataType(dataType0)
+            this.setPrivacy(true)
           }
         }
 
@@ -281,7 +282,11 @@ class ThriftCodeParser {
         method.setRequest(request)
         method.setResponse(response)
         method.setDoc(toDocString(s.functions(tmpIndex).docstring))
-        //method.setDoc()
+
+        if (method.getDoc != null && method.getDoc.contains("@IsSoaTransactionProcess"))
+          method.setSoaTransactionProcess(true)
+        else
+          method.setSoaTransactionProcess(false)
 
         request.setFields(new util.ArrayList[core.metadata.Field]())
         response.setFields(new util.ArrayList[core.metadata.Field]())
@@ -329,7 +334,7 @@ class ThriftCodeParser {
         tfiled.setName("success")
         tfiled.setDoc(docSrting)
         tfiled.setDataType(dataType)
-        tfiled.setOptional(true)
+        tfiled.setOptional(false)
         response.getFields.add(tfiled)
 
         methods.add(method)
@@ -372,11 +377,6 @@ class ThriftCodeParser {
           this.version = "1.0.0"
         this.timeout = 30000
       })
-
-      for (struct: core.metadata.Struct <- service.getStructDefinitions) {
-        for (field: com.isuwang.soa.core.metadata.Field <- struct.getFields)
-          field.setPrivacy(true)
-      }
     }
 
     return serviceCache;

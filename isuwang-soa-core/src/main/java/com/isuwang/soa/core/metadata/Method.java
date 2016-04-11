@@ -17,6 +17,8 @@ public class Method {
     public Struct request;
     public Struct response;
 
+    public boolean isSoaTransactionProcess;
+
     public String getName() {
         return name;
     }
@@ -57,4 +59,12 @@ public class Method {
         this.response = response;
     }
 
+
+    public boolean isSoaTransactionProcess() {
+        return isSoaTransactionProcess;
+    }
+
+    public void setSoaTransactionProcess(boolean soaTransactionProcess) {
+        isSoaTransactionProcess = soaTransactionProcess;
+    }
 }
