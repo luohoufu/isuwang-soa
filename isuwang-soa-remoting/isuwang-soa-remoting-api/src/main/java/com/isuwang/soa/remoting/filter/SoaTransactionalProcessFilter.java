@@ -9,7 +9,7 @@ import org.apache.thrift.TException;
 /**
  * Created by tangliu on 2016/4/11.
  */
-public class SoaTransactionProcessFilter implements Filter {
+public class SoaTransactionalProcessFilter implements Filter {
     @Override
     public void doFilter(FilterChain chain) throws TException {
 
@@ -17,6 +17,7 @@ public class SoaTransactionProcessFilter implements Filter {
 
         if (TransactionContext.hasCurrentInstance() && context.getIsSoaTransactionProcess()) {// in container and is a transaction process
 //            new SoaTransactionalProcessTemplate().execute(() -> chain.doFilter());
+            chain.doFilter();
         } else {
             chain.doFilter();
         }

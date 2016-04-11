@@ -46,6 +46,7 @@ public class SoaBaseProcessor<I> implements TProcessor {
         filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_LOGID, logId);
         filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_CONTEXT, context);
         filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_HEADER, context.getHeader());
+        filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_IFACE, iface);
         filterChain.setAttribute(DispatchFilter.ATTR_KEY_CONTAINER_DISPATCH_ACTION, (DispatchFilter.DispatchAction) chain -> {
 
             // read

@@ -1,6 +1,6 @@
 <soa-remoting>
     <soa-remoting-filters>
-        <soa-remoting-filter name="transactionFilter" ref="com.isuwang.soa.remoting.filter.SoaTransactionProcessFilter"/>
+        <soa-remoting-filter name="transactionFilter" ref="com.isuwang.soa.remoting.filter.SoaTransactionalProcessFilter"/>
         <soa-remoting-filter name="networkTimeFilter" ref="com.isuwang.soa.remoting.filter.NetworkTimesFilter"/>
         <soa-remoting-filter name="networkLogFilter" ref="com.isuwang.soa.remoting.filter.NetworkLogFilter"/>
         <soa-remoting-filter name="loadBalanceFilter" ref="com.isuwang.soa.remoting.filter.LoadBalanceFilter"/>
