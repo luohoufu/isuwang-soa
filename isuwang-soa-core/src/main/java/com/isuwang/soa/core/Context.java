@@ -26,6 +26,8 @@ public class Context {
 
     private boolean isSoaTransactionProcess;
 
+    private boolean isSoaGlobalTransactional;
+
     public int getFailedTimes() {
         return failedTimes;
     }
@@ -99,6 +101,14 @@ public class Context {
 
     public void setIsSoaTransactionProcess(boolean isSoaTransactionProcess) {
         this.isSoaTransactionProcess = isSoaTransactionProcess;
+    }
+
+    public boolean getIsSoaGlobalTransactional() {
+        return isSoaGlobalTransactional;
+    }
+
+    public void setIsSoaGlobalTransactional(boolean isSoaGlobalTransactional) {
+        this.isSoaGlobalTransactional = isSoaGlobalTransactional;
     }
 
     public static enum CodecProtocol {

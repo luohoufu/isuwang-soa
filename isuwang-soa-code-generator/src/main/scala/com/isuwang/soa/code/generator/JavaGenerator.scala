@@ -137,11 +137,12 @@ class JavaGenerator extends CodeGenerator {
         protected boolean isSoaTransactionalProcess()<block>{
 
           var isSoaTransactionProcess: Boolean  = false;
-          for(method:Method <- service.methods){
-            if(method.isSoaTransactionProcess){
+
+          toMethodArrayBuffer(service.methods).map{(method:Method)=>{
+            if(method.isSoaTransactionProcess)
               isSoaTransactionProcess = true
-            }
-          }
+          }}
+
           if(isSoaTransactionProcess)
             <div>return true;</div>
           else

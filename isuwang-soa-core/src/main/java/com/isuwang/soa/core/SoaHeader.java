@@ -62,6 +62,17 @@ public class SoaHeader {
      */
     private Optional<String> customerName = Optional.empty();
 
+
+    /**
+     * 全局事务id
+     */
+    private Optional<Integer> transactionId = Optional.empty();
+
+    /**
+     * 当前过程所属序列号
+     */
+    private Optional<Integer> transactionSequence = Optional.empty();
+
     public String toString() {
 
         StringBuilder sb = new StringBuilder("{");
@@ -69,6 +80,8 @@ public class SoaHeader {
         sb.append("\"").append("serviceName").append("\":\"").append(this.serviceName).append("\",");
         sb.append("\"").append("methodName").append("\":\"").append(this.methodName).append("\",");
         sb.append("\"").append("versionName").append("\":\"").append(this.versionName).append("\",");
+        sb.append("\"").append("transactionId").append("\":\"").append(this.transactionId.isPresent() ? this.transactionId.get() : null).append("\",");
+        sb.append("\"").append("transactionSequence").append("\":\"").append(this.transactionSequence.isPresent() ? this.transactionSequence.get() : null).append("\",");
         sb.append("\"").append("callerFrom").append("\":\"").append(this.callerFrom.isPresent() ? this.callerFrom.get() : null).append("\",");
         sb.append("\"").append("callerIp").append("\":\"").append(this.callerIp.isPresent() ? this.callerIp.get() : null).append("\",");
         sb.append("\"").append("operatorId").append("\":").append(this.operatorId.isPresent() ? this.operatorId.get() : null).append(",");
@@ -169,5 +182,21 @@ public class SoaHeader {
 
     public void setCallerFrom(Optional<String> callerFrom) {
         this.callerFrom = callerFrom;
+    }
+
+    public Optional<Integer> getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(Optional<Integer> transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public Optional<Integer> getTransactionSequence() {
+        return transactionSequence;
+    }
+
+    public void setTransactionSequence(Optional<Integer> transactionSequence) {
+        this.transactionSequence = transactionSequence;
     }
 }

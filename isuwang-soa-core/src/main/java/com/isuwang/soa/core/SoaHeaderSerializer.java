@@ -103,6 +103,21 @@ public class SoaHeaderSerializer implements TBeanSerializer<SoaHeader> {
                         TProtocolUtil.skip(iprot, schemeField.type);
                     }
                     break;
+                case 19:
+                    if (schemeField.type == TType.I32) {
+                        bean.setTransactionId(Optional.of(iprot.readI32()));
+                    } else {
+                        TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    break;
+                case 20:
+                    if (schemeField.type == TType.I32) {
+                        bean.setTransactionSequence(Optional.of(iprot.readI32()));
+                    } else {
+                        TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    break;
+
                 default:
                     TProtocolUtil.skip(iprot, schemeField.type);
             }
@@ -174,6 +189,16 @@ public class SoaHeaderSerializer implements TBeanSerializer<SoaHeader> {
         if (bean.getCustomerName().isPresent()) {
             oprot.writeFieldBegin(new TField("customerName", TType.STRING, (short) 18));
             oprot.writeString(bean.getCustomerName().get());
+            oprot.writeFieldEnd();
+        }
+        if (bean.getTransactionId().isPresent()) {
+            oprot.writeFieldBegin(new TField("transactionId", TType.I32, (short) 19));
+            oprot.writeI32(bean.getTransactionId().get());
+            oprot.writeFieldEnd();
+        }
+        if (bean.getTransactionSequence().isPresent()) {
+            oprot.writeFieldBegin(new TField("transactionSequence", TType.I32, (short) 20));
+            oprot.writeI32(bean.getTransactionSequence().get());
             oprot.writeFieldEnd();
         }
 

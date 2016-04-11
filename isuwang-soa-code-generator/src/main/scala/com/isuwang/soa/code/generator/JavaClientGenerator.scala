@@ -183,6 +183,13 @@ class JavaClientGenerator extends CodeGenerator {
                @Override
                public {method.name}_result getResult(I iface, {method.name}_args args) throws TException<block>
                    {method.name}_result result = new {method.name}_result();
+
+                    final boolean isSoaGlobalTransactional = iface.getClass().isAnnotationPresent(SoaGlobalTransactional.class);
+                    if(isSoaGlobalTransactional)<block>
+                        final TransactionContext context = (TransactionContext) chain.getAttribute(ContainerFilterChain.ATTR_KEY_CONTEXT);
+                        context.setIsSoaGlobalTransactional(true);
+                    </block>
+
               {toFieldArrayBuffer(method.getResponse().getFields()).map{(field:Field)=>
                   if(field.getDataType().getKind() == DataType.KIND.VOID) {
                     <div>
