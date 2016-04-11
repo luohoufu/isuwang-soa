@@ -38,5 +38,15 @@ public class TransactionContext extends Context {
         }
     }
 
-
+    /**
+     * call by client checking whether thread is in container
+     *
+     * @return
+     */
+    public static boolean hasCurrentInstance() {
+        if (Factory.threadLocal.get() == null)
+            return false;
+        else
+            return true;
+    }
 }

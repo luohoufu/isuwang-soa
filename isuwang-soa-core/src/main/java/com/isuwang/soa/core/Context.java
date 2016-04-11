@@ -24,6 +24,8 @@ public class Context {
 
     private int failedTimes = 0;
 
+    private boolean isSoaTransactionProcess;
+
     public int getFailedTimes() {
         return failedTimes;
     }
@@ -89,6 +91,14 @@ public class Context {
 
     public void setSeqid(Integer seqid) {
         this.seqid = seqid;
+    }
+
+    public boolean getIsSoaTransactionProcess() {
+        return isSoaTransactionProcess;
+    }
+
+    public void setIsSoaTransactionProcess(boolean isSoaTransactionProcess) {
+        this.isSoaTransactionProcess = isSoaTransactionProcess;
     }
 
     public static enum CodecProtocol {

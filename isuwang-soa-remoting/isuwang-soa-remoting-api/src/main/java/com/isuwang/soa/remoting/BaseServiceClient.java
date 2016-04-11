@@ -108,7 +108,7 @@ public class BaseServiceClient {
         SoaHeader soaHeader = new SoaHeader();
 
         InvocationContext.Factory.ISoaHeaderProxy headerProxy = InvocationContext.Factory.getSoaHeaderProxy();
-        if(headerProxy != null) {
+        if (headerProxy != null) {
             soaHeader.setCallerFrom(headerProxy.callerFrom());
             soaHeader.setCustomerId(headerProxy.customerId());
             soaHeader.setCustomerName(headerProxy.customerName());
@@ -130,11 +130,16 @@ public class BaseServiceClient {
             soaHeader.setCallerFrom(Optional.of(SoaSystemEnvProperties.SOA_SERVICE_CALLERFROM));
 
 
-
         context.setHeader(soaHeader);
 
         if (context.getCalleeTimeout() <= 0)
             context.setCalleeTimeout(SoaSystemEnvProperties.SOA_SERVICE_TIMEOUT);
+
+        context.setIsSoaTransactionProcess(isSoaTransactionalProcess());
+    }
+
+    protected boolean isSoaTransactionalProcess() {
+        return false;
     }
 
     protected void destoryContext() {

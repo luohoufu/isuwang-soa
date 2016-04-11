@@ -133,6 +133,22 @@ class JavaGenerator extends CodeGenerator {
           super("{service.namespace}.{service.name}", "{service.meta.version}");
         </block>
 
+        @Override
+        protected boolean isSoaTransactionalProcess()<block>{
+
+          var isSoaTransactionProcess: Boolean  = false;
+          for(method:Method <- service.methods){
+            if(method.isSoaTransactionProcess){
+              isSoaTransactionProcess = true
+            }
+          }
+          if(isSoaTransactionProcess)
+            <div>return true;</div>
+          else
+            <div>return false;</div>
+          }
+        </block>
+
         {
         toMethodArrayBuffer(service.methods).map{(method:Method)=>{
           <div>
