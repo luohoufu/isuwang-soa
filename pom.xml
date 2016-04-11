@@ -20,6 +20,7 @@
         <module>isuwang-soa-bootstrap</module>
         <module>isuwang-soa-api-doc</module>
         <module>isuwang-soa-monitor</module>
+        <module>isuwang-soa-transaction</module>
     </modules>
 
     <properties>
