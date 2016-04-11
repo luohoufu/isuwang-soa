@@ -24,6 +24,7 @@ public class SoaSystemEnvProperties {
     //private static final String KEY_SOA_KEEP_ALIVE_TIME = "soa.keep.alive.time";
     private static final String KEY_SOA_MAX_READ_BUFFER_SIZE = "soa.max.read.buffer.size";
     private static final String KEY_SOA_LOCAL_HOST_NAME = "soa.local.host.name";
+    private static final String KEY_SOA_TRANSACTIONAL_ENABLE = "soa.transactional.enable";
 
     public static final String SOA_SERVICE_IP = get(KEY_SOA_SERVICE_IP, "127.0.0.1");
     public static final Integer SOA_SERVICE_PORT = Integer.valueOf(get(KEY_SOA_SERVICE_PORT, "9090"));
@@ -43,6 +44,7 @@ public class SoaSystemEnvProperties {
     public static final Long SOA_MAX_READ_BUFFER_SIZE = Long.valueOf(get(KEY_SOA_MAX_READ_BUFFER_SIZE, (1024 * 1024 * 5) + ""));// 5M
 
     public static final String SOA_LOCAL_HOST_NAME = get(KEY_SOA_LOCAL_HOST_NAME);
+    public static final boolean SOA_TRANSACTIONAL_ENABLE = Boolean.valueOf(get(KEY_SOA_TRANSACTIONAL_ENABLE, "false"));
 
     public static String get(String key) {
         return get(key, null);
