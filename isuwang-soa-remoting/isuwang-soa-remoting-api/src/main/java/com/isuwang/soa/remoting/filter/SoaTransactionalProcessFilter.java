@@ -1,6 +1,7 @@
 package com.isuwang.soa.remoting.filter;
 
 import com.isuwang.soa.core.InvocationContext;
+import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
@@ -17,7 +18,7 @@ public class SoaTransactionalProcessFilter implements Filter {
 
         final InvocationContext context = (InvocationContext) chain.getAttribute(StubFilterChain.ATTR_KEY_CONTEXT);
 
-        if (TransactionContext.hasCurrentInstance() && context.isSoaTransactionProcess()) {// in container and is a transaction process
+        if (SoaSystemEnvProperties.SOA_TRANSACTIONAL_ENABLE && TransactionContext.hasCurrentInstance() && context.isSoaTransactionProcess()) {// in container and is a transaction process
             Object req = chain.getAttribute(StubFilterChain.ATTR_KEY_REQUEST);
 
             new GlobalTransactionProcessTemplate<>(req).execute(new GlobalTransactionCallbackWithoutResult() {

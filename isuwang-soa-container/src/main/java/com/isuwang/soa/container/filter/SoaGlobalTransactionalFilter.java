@@ -2,6 +2,7 @@ package com.isuwang.soa.container.filter;
 
 import com.isuwang.soa.core.SoaGlobalTransactional;
 import com.isuwang.soa.core.SoaHeader;
+import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
@@ -25,7 +26,7 @@ public class SoaGlobalTransactionalFilter implements Filter {
             context.setSoaGlobalTransactional(true);
         }
 
-        if (soaHeader.getTransactionId().isPresent()) {// in a global transaction
+        if (soaHeader.getTransactionId().isPresent() || !SoaSystemEnvProperties.SOA_TRANSACTIONAL_ENABLE) {// in a global transaction
             chain.doFilter();
         } else {
             if (context.isSoaGlobalTransactional()) {

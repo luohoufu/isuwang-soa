@@ -1,7 +1,16 @@
 package com.isuwang.soa.container.transaction;
 
 import com.isuwang.soa.container.Container;
+import com.isuwang.soa.container.spring.SpringContainer;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * TransactionContainer
@@ -10,18 +19,43 @@ import com.isuwang.soa.core.SoaSystemEnvProperties;
  * @date 16/4/11
  */
 public class TransactionContainer implements Container {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringContainer.class);
+
+    private ClassPathXmlApplicationContext context;
 
     @Override
     public void start() {
         if (SoaSystemEnvProperties.SOA_TRANSACTIONAL_ENABLE) {
             //GlobalTransactionFactory.setGlobalTransactionService();
             //GlobalTransactionFactory.setGlobalTransactionProcessService();
+
+            String configPath = System.getProperty(SpringContainer.SPRING_CONFIG);
+            if (configPath == null || configPath.length() <= 0) {
+                configPath = SpringContainer.DEFAULT_SPRING_CONFIG;
+            }
+
+            try {
+                List<String> xmlPaths = new ArrayList<>();
+
+                Enumeration<URL> resources = TransactionContainer.class.getClassLoader().getResources(configPath);
+
+                while (resources.hasMoreElements()) {
+                    URL nextElement = resources.nextElement();
+                    xmlPaths.add(nextElement.toString());
+                }
+
+                context = new ClassPathXmlApplicationContext(xmlPaths.toArray(new String[0]));
+                context.start();
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         }
     }
 
     @Override
     public void stop() {
-
+        if(context != null)
+            context.stop();
     }
 
 }

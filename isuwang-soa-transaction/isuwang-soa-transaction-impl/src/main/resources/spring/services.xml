@@ -77,4 +77,5 @@
 
     <tx:annotation-driven transaction-manager="transactionManager_dataSource"/>
 
+    <bean id="globalTransactionManager" class="com.isuwang.soa.transaction.GlobalTransactionManager" init-method="init" destroy-method="destory" />
 </beans>
