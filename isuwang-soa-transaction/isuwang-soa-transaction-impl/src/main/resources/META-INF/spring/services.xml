@@ -3,11 +3,18 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:soa="http://soa-springtag.isuwang.com/schema/service"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
 
          http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <bean id="globalTransactionService" class="com.isuwang.soa.transaction.service.GlobalTransactionServiceImpl"/>
+    <soa:service ref="globalTransactionService"/>
+
+    <bean id="globalTransactionProcessService"
+          class="com.isuwang.soa.transaction.service.GlobalTransactionProcessServiceImpl"/>
+    <soa:service ref="globalTransactionProcessService"/>
 
     <!--参数配置-->
     <context:property-placeholder location="classpath:config.properties" local-override="false"
@@ -25,7 +32,7 @@
     </bean>
 
     <!-- 数据库和事务配置 -->
-    <bean id="kuangsuwang_dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
+    <bean id="transaction_dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
           destroy-method="close">
         <!-- 基本属性 url、user、password -->
         <property name="url" value="${DB_KUAISUWANG_URL}"/>
@@ -70,9 +77,9 @@
     </bean>
 
     <bean id="transactionManager_dataSource" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="kuangsuwang_dataSource"/>
+        <property name="dataSource" ref="transaction_dataSource"/>
         <property name="defaultTimeout" value="30"/>
-        <qualifier value="kuaisuwang"/>
+        <qualifier value="transaction"/>
     </bean>
 
     <tx:annotation-driven transaction-manager="transactionManager_dataSource"/>
