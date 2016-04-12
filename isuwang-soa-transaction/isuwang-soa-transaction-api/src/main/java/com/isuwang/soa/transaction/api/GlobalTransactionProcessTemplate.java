@@ -3,6 +3,7 @@ package com.isuwang.soa.transaction.api;
 import com.google.gson.Gson;
 import com.isuwang.soa.core.InvocationContext;
 import com.isuwang.soa.core.SoaException;
+import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.transaction.api.domain.TGlobalTransactionProcess;
 import com.isuwang.soa.transaction.api.domain.TGlobalTransactionProcessExpectedStatus;
 import com.isuwang.soa.transaction.api.domain.TGlobalTransactionProcessStatus;
@@ -17,7 +18,13 @@ import java.util.Date;
  * @author craneding
  * @date 16/4/11
  */
-public class GlobalTransactionProcessTemplate {
+public class GlobalTransactionProcessTemplate<REQ> {
+
+    private REQ req;
+
+    public GlobalTransactionProcessTemplate(REQ req) {
+        this.req = req;
+    }
 
     public <T> T execute(GlobalTransactionCallback<T> action) throws TException {
         final GlobalTransactionProcessService service = GlobalTransactionFactory.getGlobalTransactionProcessService();
@@ -28,20 +35,23 @@ public class GlobalTransactionProcessTemplate {
         T result = null;
 
         try {
-            InvocationContext context = InvocationContext.Factory.getCurrentInstance();
+            InvocationContext invocationContext = InvocationContext.Factory.getCurrentInstance();
+            TransactionContext transactionContext = TransactionContext.Factory.getCurrentInstance();
+
+            transactionContext.setCurrentTransactionSequence(transactionContext.getCurrentTransactionSequence() + 1);
 
             transactionProcess = new TGlobalTransactionProcess();
             transactionProcess.setCreatedAt(new Date());
             transactionProcess.setCreatedBy(0);
             transactionProcess.setExpectedStatus(TGlobalTransactionProcessExpectedStatus.Success);
-            transactionProcess.setMethodName(context.getHeader().getMethodName());
-            transactionProcess.setRequestJson(context.getHeader().toString());
-            transactionProcess.setRollbackMethodName(context.getHeader().getMethodName() + "_rollback");
-            transactionProcess.setServiceName(context.getHeader().getServiceName());
+            transactionProcess.setMethodName(invocationContext.getHeader().getMethodName());
+            transactionProcess.setRequestJson(req == null ? null : new Gson().toJson(req));
+            transactionProcess.setRollbackMethodName(invocationContext.getHeader().getMethodName() + "_rollback");
+            transactionProcess.setServiceName(invocationContext.getHeader().getServiceName());
             transactionProcess.setStatus(TGlobalTransactionProcessStatus.New);
-            transactionProcess.setTransactionId(context.getHeader().getTransactionId().get());
-            transactionProcess.setTransactionSequence(context.getHeader().getTransactionSequence().get());
-            transactionProcess.setVersionName(context.getHeader().getVersionName());
+            transactionProcess.setTransactionId(invocationContext.getHeader().getTransactionId().get());
+            transactionProcess.setTransactionSequence(transactionContext.getCurrentTransactionSequence());
+            transactionProcess.setVersionName(invocationContext.getHeader().getVersionName());
 
             transactionProcess = service.create(transactionProcess);
 

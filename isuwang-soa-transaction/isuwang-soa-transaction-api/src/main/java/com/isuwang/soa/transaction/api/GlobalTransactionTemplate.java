@@ -1,5 +1,6 @@
 package com.isuwang.soa.transaction.api;
 
+import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.transaction.api.domain.TGlobalTransaction;
 import com.isuwang.soa.transaction.api.domain.TGlobalTransactionsStatus;
 import com.isuwang.soa.transaction.api.service.GlobalTransactionService;
@@ -17,6 +18,7 @@ public class GlobalTransactionTemplate {
 
     public <T> T execute(GlobalTransactionCallback<T> action) throws TException {
         final GlobalTransactionService service = GlobalTransactionFactory.getGlobalTransactionService();
+        final TransactionContext context = TransactionContext.Factory.getCurrentInstance();
 
         boolean success = false;
 
@@ -30,6 +32,9 @@ public class GlobalTransactionTemplate {
 
             service.create(globalTransaction);
 
+
+            context.setCurrentTransactionSequence(0);
+
             T result = action.doInTransaction();
 
             success = true;
@@ -37,7 +42,7 @@ public class GlobalTransactionTemplate {
             return result;
         } finally {
             if (globalTransaction.getId() != null) {
-                service.update(globalTransaction.getId(), success ? TGlobalTransactionsStatus.Success : TGlobalTransactionsStatus.Fail);
+                service.update(globalTransaction.getId(), context.getCurrentTransactionSequence(), success ? TGlobalTransactionsStatus.Success : TGlobalTransactionsStatus.Fail);
             }
         }
     }

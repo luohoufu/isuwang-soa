@@ -135,7 +135,7 @@ public class BaseServiceClient {
         if (context.getCalleeTimeout() <= 0)
             context.setCalleeTimeout(SoaSystemEnvProperties.SOA_SERVICE_TIMEOUT);
 
-        context.setIsSoaTransactionProcess(isSoaTransactionalProcess());
+        context.setSoaTransactionProcess(isSoaTransactionalProcess());
     }
 
     protected boolean isSoaTransactionalProcess() {

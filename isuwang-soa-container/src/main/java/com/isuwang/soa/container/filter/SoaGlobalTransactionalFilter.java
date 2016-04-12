@@ -22,13 +22,13 @@ public class SoaGlobalTransactionalFilter implements Filter {
 
         final boolean isSoaGlobalTransactional = iface.getClass().isAnnotationPresent(SoaGlobalTransactional.class);
         if (isSoaGlobalTransactional) {
-            context.setIsSoaGlobalTransactional(true);
+            context.setSoaGlobalTransactional(true);
         }
 
         if (soaHeader.getTransactionId().isPresent()) {// in a global transaction
             chain.doFilter();
         } else {
-            if (context.getIsSoaGlobalTransactional()) {
+            if (context.isSoaGlobalTransactional()) {
                 new GlobalTransactionTemplate().execute(new GlobalTransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult() throws TException {

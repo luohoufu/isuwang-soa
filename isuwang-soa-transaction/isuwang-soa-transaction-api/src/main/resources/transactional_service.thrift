@@ -6,7 +6,7 @@ service GlobalTransactionService {
 
    transactional_domain.TGlobalTransaction create(1:transactional_domain.TGlobalTransaction globalTransaction),
 
-   void update(1:i32 globalTransactionId, 2:transactional_domain.TGlobalTransactionsStatus status),
+   void update(1:i32 globalTransactionId, 2:i32 currSequence, 3:transactional_domain.TGlobalTransactionsStatus status),
 
 }
 
