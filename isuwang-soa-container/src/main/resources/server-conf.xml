@@ -6,6 +6,7 @@
         <soa-server-container name="nettyContainer" ref="com.isuwang.soa.container.netty.NettyContainer"/>
         <soa-server-container name="filterContainer" ref="com.isuwang.soa.container.filter.FilterContainer"/>
         <soa-server-container name="versionContainer" ref="com.isuwang.soa.container.version.VersionContainer"/>
+        <soa-server-container name="transactionContainer" ref="com.isuwang.soa.container.transaction.TransactionContainer"/>
     </soa-server-containers>
 
     <soa-filters>

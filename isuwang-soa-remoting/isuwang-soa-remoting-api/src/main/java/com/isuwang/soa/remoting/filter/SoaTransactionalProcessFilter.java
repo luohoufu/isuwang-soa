@@ -17,8 +17,10 @@ public class SoaTransactionalProcessFilter implements Filter {
 
         final InvocationContext context = (InvocationContext) chain.getAttribute(StubFilterChain.ATTR_KEY_CONTEXT);
 
-        if (TransactionContext.hasCurrentInstance() && context.getIsSoaTransactionProcess()) {// in container and is a transaction process
-            new GlobalTransactionProcessTemplate().execute(new GlobalTransactionCallbackWithoutResult() {
+        if (TransactionContext.hasCurrentInstance() && context.isSoaTransactionProcess()) {// in container and is a transaction process
+            Object req = chain.getAttribute(StubFilterChain.ATTR_KEY_REQUEST);
+
+            new GlobalTransactionProcessTemplate<>(req).execute(new GlobalTransactionCallbackWithoutResult() {
                 @Override
                 protected void doInTransactionWithoutResult() throws TException {
                     chain.doFilter();

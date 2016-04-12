@@ -2,7 +2,6 @@ package com.isuwang.soa.container.transaction;
 
 import com.isuwang.soa.container.Container;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
-import com.isuwang.soa.transaction.api.GlobalTransactionFactory;
 
 /**
  * TransactionContainer
@@ -12,12 +11,11 @@ import com.isuwang.soa.transaction.api.GlobalTransactionFactory;
  */
 public class TransactionContainer implements Container {
 
-    GlobalTransactionFactory transactionalManager = new GlobalTransactionFactory();
-
     @Override
     public void start() {
         if (SoaSystemEnvProperties.SOA_TRANSACTIONAL_ENABLE) {
-
+            //GlobalTransactionFactory.setGlobalTransactionService();
+            //GlobalTransactionFactory.setGlobalTransactionProcessService();
         }
     }
 

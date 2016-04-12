@@ -28,6 +28,8 @@ public class Context {
 
     private boolean isSoaGlobalTransactional;
 
+    private Integer currentTransactionSequence;
+
     public int getFailedTimes() {
         return failedTimes;
     }
@@ -95,20 +97,28 @@ public class Context {
         this.seqid = seqid;
     }
 
-    public boolean getIsSoaTransactionProcess() {
+    public boolean isSoaTransactionProcess() {
         return isSoaTransactionProcess;
     }
 
-    public void setIsSoaTransactionProcess(boolean isSoaTransactionProcess) {
-        this.isSoaTransactionProcess = isSoaTransactionProcess;
+    public void setSoaTransactionProcess(boolean soaTransactionProcess) {
+        isSoaTransactionProcess = soaTransactionProcess;
     }
 
-    public boolean getIsSoaGlobalTransactional() {
+    public boolean isSoaGlobalTransactional() {
         return isSoaGlobalTransactional;
     }
 
-    public void setIsSoaGlobalTransactional(boolean isSoaGlobalTransactional) {
-        this.isSoaGlobalTransactional = isSoaGlobalTransactional;
+    public void setSoaGlobalTransactional(boolean soaGlobalTransactional) {
+        isSoaGlobalTransactional = soaGlobalTransactional;
+    }
+
+    public Integer getCurrentTransactionSequence() {
+        return currentTransactionSequence;
+    }
+
+    public void setCurrentTransactionSequence(Integer currentTransactionSequence) {
+        this.currentTransactionSequence = currentTransactionSequence;
     }
 
     public static enum CodecProtocol {

@@ -7,7 +7,7 @@ import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import com.isuwang.soa.transaction.api.GlobalTransactionCallbackWithoutResult;
-import com.isuwang.soa.transaction.api.GlobalTransactionProcessTemplate;
+import com.isuwang.soa.transaction.api.GlobalTransactionTemplate;
 import org.apache.thrift.TException;
 
 /**
@@ -22,14 +22,14 @@ public class SoaGlobalTransactionalFilter implements Filter {
 
         final boolean isSoaGlobalTransactional = iface.getClass().isAnnotationPresent(SoaGlobalTransactional.class);
         if (isSoaGlobalTransactional) {
-            context.setIsSoaGlobalTransactional(true);
+            context.setSoaGlobalTransactional(true);
         }
 
         if (soaHeader.getTransactionId().isPresent()) {// in a global transaction
             chain.doFilter();
         } else {
-            if (context.getIsSoaGlobalTransactional()) {
-                new GlobalTransactionProcessTemplate().execute(new GlobalTransactionCallbackWithoutResult() {
+            if (context.isSoaGlobalTransactional()) {
+                new GlobalTransactionTemplate().execute(new GlobalTransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult() throws TException {
                         chain.doFilter();
