@@ -3,9 +3,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
-         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
     <bean id="globalTransactionService" class="com.isuwang.soa.transaction.service.GlobalTransactionServiceImpl"/>
     <!--
@@ -85,5 +86,11 @@
 
     <tx:annotation-driven transaction-manager="transactionManager_dataSource"/>
 
-    <bean id="globalTransactionManager" class="com.isuwang.soa.transaction.GlobalTransactionManager" init-method="init" destroy-method="destory" />
+    <bean id="globalTransactionManager" class="com.isuwang.soa.transaction.GlobalTransactionManager" />
+
+    <task:annotation-driven scheduler="qbScheduler" mode="proxy" />
+    <task:scheduler id="qbScheduler" pool-size="10" />
+    <task:scheduled-tasks scheduler="qbScheduler">
+        <task:scheduled ref="globalTransactionManager" method="doJob" cron="0 0/1 * * * ?" initial-delay="30000" />
+    </task:scheduled-tasks>
 </beans>
