@@ -45,8 +45,38 @@ public class RunContainerPlugin extends SoaAbstractMojo {
 
                 URL[] urls = ((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs();
 
-                List<URL> urlList = new ArrayList<>(Arrays.asList(urls));
-                Iterator<URL> iterator = urlList.iterator();
+                List<URL> shareUrls = new ArrayList<>(Arrays.asList(urls));
+                Iterator<URL> iterator = shareUrls.iterator();
+                while (iterator.hasNext()) {
+                    URL url = iterator.next();
+
+                    if (url.getFile().matches("^.*/isuwang-soa-transaction.*\\.jar$")) {
+                        iterator.remove();
+
+                        continue;
+                    }
+
+                    if (url.getFile().matches("^.*/isuwang-soa-container.*\\.jar$")) {
+                        iterator.remove();
+
+                        continue;
+                    }
+
+                    if (url.getFile().matches("^.*/isuwang-soa-bootstrap.*\\.jar$")) {
+                        iterator.remove();
+
+                        continue;
+                    }
+
+                    if (url.getFile().matches("^.*" + project.getArtifact().getFile().getAbsoluteFile() + ".*$")) {
+                        iterator.remove();
+
+                        continue;
+                    }
+                }
+
+                List<URL> appUrls = new ArrayList<>(Arrays.asList(urls));
+                iterator = appUrls.iterator();
                 while (iterator.hasNext()) {
                     URL url = iterator.next();
 
@@ -61,11 +91,29 @@ public class RunContainerPlugin extends SoaAbstractMojo {
 
                         continue;
                     }
+
+                    if (url.getFile().matches("^.*/isuwang-soa-transaction.*\\.jar$")) {
+                        iterator.remove();
+
+                        continue;
+                    }
                 }
 
-                ClassLoaderManager.shareClassLoader = new ShareClassLoader(urls);
-                ClassLoaderManager.platformClassLoader = new PlatformClassLoader(urls);
-                ClassLoaderManager.appClassLoaders.add(new AppClassLoader(urlList.toArray(new URL[urlList.size()])));
+                List<URL> platformUrls = new ArrayList<>(Arrays.asList(urls));
+                iterator = platformUrls.iterator();
+                while (iterator.hasNext()) {
+                    URL url = iterator.next();
+
+                    if (url.getFile().matches("^.*" + project.getArtifact().getFile().getAbsoluteFile() + ".*$")) {
+                        iterator.remove();
+
+                        continue;
+                    }
+                }
+
+                ClassLoaderManager.shareClassLoader = new ShareClassLoader(platformUrls.toArray(new URL[shareUrls.size()]));
+                ClassLoaderManager.platformClassLoader = new PlatformClassLoader(platformUrls.toArray(new URL[platformUrls.size()]));
+                ClassLoaderManager.appClassLoaders.add(new AppClassLoader(appUrls.toArray(new URL[appUrls.size()])));
 
                 Bootstrap.main(new String[]{});
             } catch (Exception e) {

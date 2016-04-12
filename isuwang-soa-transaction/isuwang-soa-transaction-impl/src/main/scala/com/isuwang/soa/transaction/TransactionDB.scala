@@ -11,6 +11,6 @@ import com.isuwang.soa.transaction.db.dbc.DbcResources
 object TransactionDB extends DB {
 
   override def withDataSource(): DataSource = {
-    DbcResources.kuaisuwangDataSorce
+    DbcResources.transactionDataSorce
   }
 }

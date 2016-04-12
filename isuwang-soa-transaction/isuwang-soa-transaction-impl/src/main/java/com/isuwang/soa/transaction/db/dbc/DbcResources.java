@@ -11,11 +11,11 @@ import javax.sql.DataSource;
 @Service
 public class DbcResources {
 
-    public static DataSource kuaisuwangDataSorce;
+    public static DataSource transactionDataSorce;
 
-    @Resource(name = "kuangsuwang_dataSource")
-    public void setKuaisuwangDataSorce(DataSource dataSource) {
-        DbcResources.kuaisuwangDataSorce = dataSource;
+    @Resource(name = "transaction_dataSource")
+    public void setTransactionDataSorce(DataSource dataSource) {
+        DbcResources.transactionDataSorce = dataSource;
     }
 
 }

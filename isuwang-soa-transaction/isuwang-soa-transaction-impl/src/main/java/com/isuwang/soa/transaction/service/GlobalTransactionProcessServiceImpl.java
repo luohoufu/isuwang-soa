@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Created by tangliu on 2016/4/12.
  */
-@Transactional(value = "transaction", rollbackFor = Exception.class)
+@Transactional(value = "globalTransaction", rollbackFor = Exception.class)
 public class GlobalTransactionProcessServiceImpl implements GlobalTransactionProcessService {
 
     @Override

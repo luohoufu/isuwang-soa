@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class GlobalTransactionManager {
 
     public void init() {
-
+        System.out.println("init");
     }
 
     public void destory() {
-
+        System.out.println("destory");
     }
 
-    @Transactional(value = "kuaisuwang", rollbackFor = Exception.class)
+    @Transactional(value = "globalTransaction", rollbackFor = Exception.class)
     public void doJob() {
 
     }
