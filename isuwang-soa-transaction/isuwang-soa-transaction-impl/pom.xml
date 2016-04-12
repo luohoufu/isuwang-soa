@@ -11,12 +11,44 @@
 
     <artifactId>isuwang-soa-transaction-impl</artifactId>
 
+    <properties>
+        <org.springframework-version>4.2.4.RELEASE</org.springframework-version>
+        <druid-version>1.0.17</druid-version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.isuwang</groupId>
             <artifactId>isuwang-soa-transaction-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.36</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.isuwang</groupId>
+            <artifactId>isuwang-scala-dbc</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+
+        <!-- alibaba -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid-version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>
