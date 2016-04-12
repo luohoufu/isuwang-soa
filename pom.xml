@@ -21,6 +21,7 @@
         <module>isuwang-soa-api-doc</module>
         <module>isuwang-soa-monitor</module>
         <module>isuwang-soa-transaction</module>
+        <module>isuwang-scala-dbc</module>
     </modules>
 
     <properties>
