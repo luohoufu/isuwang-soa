@@ -8,5 +8,12 @@ package com.isuwang.soa.transaction.api;
  */
 public class SoaTransactionalManager {
 
+    public static void createGlobalTransactions() {
+
+    }
+
+    public static void updateGlobalTransactions() {
+
+    }
 
 }
