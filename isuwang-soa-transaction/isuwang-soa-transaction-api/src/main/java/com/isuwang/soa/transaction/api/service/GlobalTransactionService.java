@@ -19,7 +19,7 @@ public interface GlobalTransactionService {
     /**
      *
      **/
-    void update(Integer globalTransactionId, Integer currSequence, com.isuwang.soa.transaction.api.domain.TGlobalTransactionsStatus status) throws com.isuwang.soa.core.SoaException;
+    void update(Integer globalTransactionId, com.isuwang.soa.transaction.api.domain.TGlobalTransactionsStatus status) throws com.isuwang.soa.core.SoaException;
 
 }
         
