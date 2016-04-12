@@ -1,6 +1,7 @@
 package com.isuwang.soa.transaction.api;
 
 import com.isuwang.soa.core.SoaException;
+import org.apache.thrift.TException;
 
 /**
  * Soa Transactional Process Template
@@ -8,11 +9,11 @@ import com.isuwang.soa.core.SoaException;
  * @author craneding
  * @date 16/4/11
  */
-public class SoaTransactionalProcessTemplate {
+public class GlobalTransactionProcessTemplate {
 
-    public <T> T execute(SoaTransactionalProcessCallback<T> action) throws SoaException {
+    public <T> T execute(GlobalTransactionCallback<T> action) throws TException {
         try {
-            T result = action.doInTransactionProcess();
+            T result = action.doInTransaction();
 
             return result;
         } catch (SoaException e) {

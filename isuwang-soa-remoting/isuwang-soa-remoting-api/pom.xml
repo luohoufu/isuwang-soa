@@ -21,6 +21,12 @@
             <groupId>com.isuwang</groupId>
             <artifactId>isuwang-soa-registry-api</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.isuwang</groupId>
+            <artifactId>isuwang-soa-transaction-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

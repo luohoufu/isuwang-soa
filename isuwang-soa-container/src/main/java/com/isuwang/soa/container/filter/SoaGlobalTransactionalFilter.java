@@ -6,6 +6,8 @@ import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
+import com.isuwang.soa.transaction.api.GlobalTransactionCallbackWithoutResult;
+import com.isuwang.soa.transaction.api.GlobalTransactionProcessTemplate;
 import org.apache.thrift.TException;
 
 /**
@@ -27,8 +29,12 @@ public class SoaGlobalTransactionalFilter implements Filter {
             chain.doFilter();
         } else {
             if (context.getIsSoaGlobalTransactional()) {
-//                new SoaGlobalTransactionalTemplate().execute(() -> chain.doFilter());
-                chain.doFilter();
+                new GlobalTransactionProcessTemplate().execute(new GlobalTransactionCallbackWithoutResult() {
+                    @Override
+                    protected void doInTransactionWithoutResult() throws TException {
+                        chain.doFilter();
+                    }
+                });
             } else {
                 chain.doFilter();
             }
