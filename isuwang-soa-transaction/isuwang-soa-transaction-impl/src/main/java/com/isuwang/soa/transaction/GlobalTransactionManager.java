@@ -52,7 +52,7 @@ public class GlobalTransactionManager {
                     if (process.getExpectedStatus() != TGlobalTransactionProcessExpectedStatus.HasRollback)
                         new GlobalTransactionProcessExpectedStatusUpdateAction(process.getId(), TGlobalTransactionProcessExpectedStatus.HasRollback).execute();
 
-                    String responseJson = process.getResponseJson();
+                    String responseJson;
                     Service service = null;
                     //call roll back method
                     try {

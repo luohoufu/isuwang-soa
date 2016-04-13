@@ -52,6 +52,8 @@ public class GlobalTransactionProcessTemplate<REQ> {
             transactionProcess.setTransactionId(invocationContext.getHeader().getTransactionId().get());
             transactionProcess.setTransactionSequence(transactionContext.getCurrentTransactionSequence());
             transactionProcess.setVersionName(invocationContext.getHeader().getVersionName());
+            transactionProcess.setRedoTimes(0);
+            transactionProcess.setNextRedoTime(new Date(new Date().getTime() + 30 * 1000));
 
             transactionProcess = service.create(transactionProcess);
 

@@ -29,7 +29,7 @@ class GlobalTransactionProcessFindAction(transactionId: Int) extends Action[java
       sql"""
          SELECT *
          FROM global_transaction_process
-         WHERE transaction_id = ${transactionId} and (status = 2 OR status = 4)
+         WHERE transaction_id = ${transactionId} and (status = 2 OR status = 4) and next_redo_time < now()
          ORDER BY transaction_sequence DESC
        """
     rows[GlobalTransactionProcess](selectSql).toThrifts[TGlobalTransactionProcess]
