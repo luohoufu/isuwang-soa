@@ -41,6 +41,7 @@ public class GlobalTransactionTemplate {
             return result;
         } finally {
             if (globalTransaction.getId() != null) {
+                context.setCurrentTransactionId(globalTransaction.getId());
                 service.update(globalTransaction.getId(), context.getCurrentTransactionSequence(), success ? TGlobalTransactionsStatus.Success : TGlobalTransactionsStatus.Fail);
             }
         }

@@ -49,7 +49,10 @@ public class SpringContainer implements Container {
 
                 while (resources.hasMoreElements()) {
                     URL nextElement = resources.nextElement();
-                    xmlPaths.add(nextElement.toString());
+
+                    // not load isuwang-soa-transaction-impl
+                    if(!nextElement.getFile().matches(".*isuwang-soa-transaction-impl.*"))
+                        xmlPaths.add(nextElement.toString());
                 }
 
                 // ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new Object[]{xmlPaths.toArray(new String[0])});

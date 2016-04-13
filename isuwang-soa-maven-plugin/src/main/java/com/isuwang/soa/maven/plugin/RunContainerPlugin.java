@@ -50,7 +50,7 @@ public class RunContainerPlugin extends SoaAbstractMojo {
                 while (iterator.hasNext()) {
                     URL url = iterator.next();
 
-                    if (url.getFile().matches("^.*/isuwang-soa-transaction.*\\.jar$")) {
+                    if (url.getFile().matches("^.*/isuwang-soa-transaction-impl.*\\.jar$")) {
                         iterator.remove();
 
                         continue;
@@ -92,17 +92,23 @@ public class RunContainerPlugin extends SoaAbstractMojo {
                         continue;
                     }
 
-                    if (url.getFile().matches("^.*/isuwang-soa-transaction.*\\.jar$")) {
-                        iterator.remove();
-
-                        continue;
-                    }
+                    //if (url.getFile().matches("^.*/isuwang-soa-transaction.*\\.jar$")) {
+                    //    iterator.remove();
+                    //
+                    //    continue;
+                    //}
                 }
 
                 List<URL> platformUrls = new ArrayList<>(Arrays.asList(urls));
                 iterator = platformUrls.iterator();
                 while (iterator.hasNext()) {
                     URL url = iterator.next();
+
+                    //if (url.getFile().matches("^.*/isuwang-soa-transaction.*\\.jar$")) {
+                    //   iterator.remove();
+                    //
+                    //    continue;
+                    //}
 
                     if (url.getFile().matches("^.*" + project.getArtifact().getFile().getAbsoluteFile() + ".*$")) {
                         iterator.remove();

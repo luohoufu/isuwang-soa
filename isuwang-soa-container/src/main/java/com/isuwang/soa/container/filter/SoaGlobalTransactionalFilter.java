@@ -11,6 +11,13 @@ import com.isuwang.soa.transaction.api.GlobalTransactionCallbackWithoutResult;
 import com.isuwang.soa.transaction.api.GlobalTransactionTemplate;
 import org.apache.thrift.TException;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 /**
  * Created by tangliu on 2016/4/11.
  */
@@ -21,7 +28,12 @@ public class SoaGlobalTransactionalFilter implements Filter {
         final TransactionContext context = (TransactionContext) chain.getAttribute(ContainerFilterChain.ATTR_KEY_CONTEXT);
         final Object iface = chain.getAttribute(ContainerFilterChain.ATTR_KEY_IFACE);
 
-        final boolean isSoaGlobalTransactional = iface.getClass().isAnnotationPresent(SoaGlobalTransactional.class);
+        List<Method> methods = new ArrayList<>(Arrays.asList(iface.getClass().getMethods()))
+                .stream()
+                .filter(m -> m.getName().equals(soaHeader.getMethodName()))
+                .collect(toList());
+
+        final boolean isSoaGlobalTransactional = !methods.isEmpty() ? methods.get(0).isAnnotationPresent(SoaGlobalTransactional.class) : false;
         if (isSoaGlobalTransactional) {
             context.setSoaGlobalTransactional(true);
         }

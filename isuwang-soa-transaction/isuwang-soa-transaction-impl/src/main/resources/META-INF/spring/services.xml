@@ -91,6 +91,6 @@
     <task:annotation-driven scheduler="qbScheduler" mode="proxy" />
     <task:scheduler id="qbScheduler" pool-size="10" />
     <task:scheduled-tasks scheduler="qbScheduler">
-        <task:scheduled ref="globalTransactionManager" method="doJob" cron="0 0/1 * * * ?" initial-delay="30000" />
+        <task:scheduled ref="globalTransactionManager" method="doJob" cron="0 0/1 * * * ?" />
     </task:scheduled-tasks>
 </beans>

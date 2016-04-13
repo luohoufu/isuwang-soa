@@ -28,7 +28,9 @@ public class Context {
 
     private boolean isSoaGlobalTransactional;
 
-    private Integer currentTransactionSequence;
+    private Integer currentTransactionSequence = 0;
+
+    private Integer currentTransactionId = 0;
 
     public int getFailedTimes() {
         return failedTimes;
@@ -119,6 +121,14 @@ public class Context {
 
     public void setCurrentTransactionSequence(Integer currentTransactionSequence) {
         this.currentTransactionSequence = currentTransactionSequence;
+    }
+
+    public Integer getCurrentTransactionId() {
+        return currentTransactionId;
+    }
+
+    public void setCurrentTransactionId(Integer currentTransactionId) {
+        this.currentTransactionId = currentTransactionId;
     }
 
     public static enum CodecProtocol {
