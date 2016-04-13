@@ -46,7 +46,7 @@ class GlobalTransactionProcessUpdateAction(processId: Int, responseJson: String,
                 set
                   status = ${status.getValue},
                   responseJson = ${responseJson},
-                  updated_at = ${updatedAt},
+                  updated_at = ${updatedAt}
                 where id = ${processId}
             """
       )

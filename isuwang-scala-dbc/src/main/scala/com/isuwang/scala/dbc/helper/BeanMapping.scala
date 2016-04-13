@@ -61,7 +61,7 @@ object BeanMapping {
     case ClassOfSQLTimestamp | ClassOfUtilDate => true
     case ClassOfString => true
     case ClassOfByteArray => true
-
+    case ClassOfEnum => true
     case ClassOfTEnum => true
     case ClassOfByteBuffer => true
     case ClassOfOption => true

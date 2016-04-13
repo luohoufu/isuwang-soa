@@ -1,5 +1,6 @@
 package com.isuwang.soa.transaction;
 
+import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.metadata.Service;
 import com.isuwang.soa.remoting.fake.json.JSONPost;
 import com.isuwang.soa.remoting.fake.metadata.MetadataClient;
@@ -66,18 +67,21 @@ public class GlobalTransactionManager {
                         }
 
                         //获取服务的ip和端口
+                        JSONPost jsonPost = null;
                         String callerInfo = LoadBalanceFilter.getCallerInfo(process.getServiceName(), process.getVersionName(), process.getRollbackMethodName());
                         if (callerInfo != null) {
 
                             String[] infos = callerInfo.split(":");
+                            jsonPost = new JSONPost(infos[0], Integer.valueOf(infos[1]));
 
-                            JSONPost jsonPost = new JSONPost(infos[0], Integer.valueOf(infos[1]));
-                            //调用回滚方法
-                            responseJson = jsonPost.callServiceMethod(process.getServiceName(), process.getVersionName(), process.getRollbackMethodName(), process.getRequestJson(), service);
-
-                            //更新事务过程表为已回滚
-                            new GlobalTransactionProcessUpdateAction(process.getId(), responseJson, TGlobalTransactionProcessStatus.HasRollback).execute();
+                        } else if (SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local")) {
+                            jsonPost = new JSONPost(SoaSystemEnvProperties.SOA_SERVICE_IP, SoaSystemEnvProperties.SOA_SERVICE_PORT);
                         }
+                        //调用回滚方法
+                        responseJson = jsonPost.callServiceMethod(process.getServiceName(), process.getVersionName(), process.getRollbackMethodName(), process.getRequestJson(), service);
+
+                        //更新事务过程表为已回滚
+                        new GlobalTransactionProcessUpdateAction(process.getId(), responseJson, TGlobalTransactionProcessStatus.HasRollback).execute();
 
                     } catch (Exception e) {
 

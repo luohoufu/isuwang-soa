@@ -269,19 +269,31 @@ public class JSONSerializer extends TBaseBeanSerializer {
         entries.addAll(params.getAsJsonObject().entrySet());
 
         // entries like { requestHeader: , arg1: arg2, }
+        if (dataInfo.getMethod().getName().endsWith("_rollback")) {
 
-        for (Map.Entry<String, JsonElement> entry : entries) {
-            String key = entry.getKey();
-            JsonElement value = entry.getValue();
-
+            String key = dataInfo.getMethod().getRequest().getFields().get(0).getName();
             Field field = findField(key, dataInfo.getMethod().getRequest());
 
-            if (field == null)
-                throw new TException("not fund " + key + " in request's method.");
+            JsonElement value = params.getAsJsonObject().get("request");
 
             oprot.writeFieldBegin(new TField(field.getName(), dataType2Byte(field.getDataType()), (short) field.getTag()));
             writeField(service, field.getDataType(), oprot, value);
             oprot.writeFieldEnd();
+
+        } else {
+            for (Map.Entry<String, JsonElement> entry : entries) {
+                String key = entry.getKey();
+                JsonElement value = entry.getValue();
+
+                Field field = findField(key, dataInfo.getMethod().getRequest());
+
+                if (field == null)
+                    throw new TException("not fund " + key + " in request's method.");
+
+                oprot.writeFieldBegin(new TField(field.getName(), dataType2Byte(field.getDataType()), (short) field.getTag()));
+                writeField(service, field.getDataType(), oprot, value);
+                oprot.writeFieldEnd();
+            }
         }
 
         oprot.writeFieldStop();

@@ -46,6 +46,7 @@ public class GlobalTransactionProcessTemplate<REQ> {
             transactionProcess.setExpectedStatus(TGlobalTransactionProcessExpectedStatus.Success);
             transactionProcess.setMethodName(invocationContext.getHeader().getMethodName());
             transactionProcess.setRequestJson(req == null ? null : new Gson().toJson(req));
+            transactionProcess.setResponseJson("");
             transactionProcess.setRollbackMethodName(invocationContext.getHeader().getMethodName() + "_rollback");
             transactionProcess.setServiceName(invocationContext.getHeader().getServiceName());
             transactionProcess.setStatus(TGlobalTransactionProcessStatus.New);
@@ -80,7 +81,7 @@ public class GlobalTransactionProcessTemplate<REQ> {
             final TGlobalTransactionProcessStatus status = success ? TGlobalTransactionProcessStatus.Success : (unknown ? TGlobalTransactionProcessStatus.Unknown : TGlobalTransactionProcessStatus.Fail);
 
             if (transactionProcess.getId() != null) {
-                service.update(transactionProcess.getId(), result == null ? null : new Gson().toJson(result), status);
+                service.update(transactionProcess.getId(), result == null ? "" : new Gson().toJson(result), status);
             }
         }
     }

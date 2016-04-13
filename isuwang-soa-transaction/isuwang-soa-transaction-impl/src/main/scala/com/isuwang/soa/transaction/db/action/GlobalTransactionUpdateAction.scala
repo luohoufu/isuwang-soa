@@ -57,7 +57,7 @@ class GlobalTransactionUpdateAction(transactionId: Int, currSequence: Int, statu
             """
       )
 
-      LOGGER.info("更新全局事务表({})后,状态({}),当前过程序列号({})", transactionId.toString, status.getValue.toString, currSequence.toString);
+      LOGGER.info("更新全局事务({})后,状态({}),当前过程序列号({})", transactionId.toString, status.getValue.toString, currSequence.toString);
     }
 
   }

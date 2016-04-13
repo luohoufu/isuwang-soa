@@ -53,6 +53,9 @@ public class JSONPost {
      */
     public String callServiceMethod(String serviceName, String versionName, String methodName, String jsonParameter, com.isuwang.soa.core.metadata.Service service) throws Exception {
 
+        if (jsonParameter == null)
+            jsonParameter = "{}";
+
         jsonSerializer.setService(service);
 
         ObjectMapper objectMapper = new ObjectMapper();

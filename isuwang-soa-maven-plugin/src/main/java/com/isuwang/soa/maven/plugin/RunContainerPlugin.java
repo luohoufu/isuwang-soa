@@ -68,7 +68,12 @@ public class RunContainerPlugin extends SoaAbstractMojo {
                         continue;
                     }
 
-                    if (url.getFile().matches("^.*" + project.getArtifact().getFile().getAbsoluteFile() + ".*$")) {
+                    String regex = project.getArtifact().getFile().getAbsolutePath();
+
+                    if (File.separator.equals("\\"))
+                        regex = regex.replace(File.separator, File.separator + File.separator);
+
+                    if (url.getFile().matches("^.*" + regex + ".*$")) {
                         iterator.remove();
 
                         continue;
@@ -110,7 +115,12 @@ public class RunContainerPlugin extends SoaAbstractMojo {
                     //    continue;
                     //}
 
-                    if (url.getFile().matches("^.*" + project.getArtifact().getFile().getAbsoluteFile() + ".*$")) {
+                    String regex = project.getArtifact().getFile().getAbsolutePath();
+
+                    if (File.separator.equals("\\"))
+                        regex = regex.replace(File.separator, File.separator + File.separator);
+
+                    if (url.getFile().matches("^.*" + regex + ".*$")) {
                         iterator.remove();
 
                         continue;
