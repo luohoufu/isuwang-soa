@@ -86,7 +86,7 @@ class GlobalTransactionProcessExpectedStatusUpdateAction(processId: Int, status:
 
       val process = processOpt.get
 
-      LOGGER.info("更新事务过程({})前,过程目标状态({})", process.id.toString, process.expectedStatus.toString)
+      LOGGER.info("更新事务过程({})前,过程目标状态({})", process.id, process.expectedStatus)
 
       esql(
         sql"""
@@ -98,7 +98,7 @@ class GlobalTransactionProcessExpectedStatusUpdateAction(processId: Int, status:
             """
       )
 
-      LOGGER.info("更新事务过程({})后,过程目标状态({})", process.id.toString, status.getValue.toString)
+      LOGGER.info("更新事务过程({})后,过程目标状态({})", process.id, status.getValue)
     }
 
   }

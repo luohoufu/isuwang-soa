@@ -1,4 +1,4 @@
-package com.isuwang.soa.doc.cache;
+package com.isuwang.soa.remoting.fake.metadata;
 
 import com.isuwang.soa.core.SoaBaseCode;
 import com.isuwang.soa.core.SoaException;

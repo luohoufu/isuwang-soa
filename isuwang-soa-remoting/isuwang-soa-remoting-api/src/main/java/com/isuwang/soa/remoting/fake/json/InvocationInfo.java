@@ -1,4 +1,4 @@
-package com.isuwang.soa.doc.restful;
+package com.isuwang.soa.remoting.fake.json;
 
 import java.io.Serializable;
 

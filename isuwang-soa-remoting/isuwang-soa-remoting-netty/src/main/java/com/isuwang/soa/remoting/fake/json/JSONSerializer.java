@@ -1,15 +1,10 @@
-package com.isuwang.soa.doc.codec;
+package com.isuwang.soa.remoting.fake.json;//package com.isuwang.soa.remoting.fake.json;
 
 import com.google.gson.*;
 import com.isuwang.soa.core.SoaException;
 import com.isuwang.soa.core.metadata.*;
-import com.isuwang.soa.doc.cache.ServiceCache;
-import com.isuwang.soa.doc.restful.DataInfo;
-import com.isuwang.soa.doc.restful.InvocationInfo;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -24,11 +19,14 @@ import java.util.Set;
  * @author craneding
  * @date 15/4/26
  */
-@Component
 public class JSONSerializer extends TBaseBeanSerializer {
 
-    @Autowired
-    private ServiceCache serviceCache;
+    private Service service;
+
+    public void setService(Service service) {
+        this.service = service;
+    }
+
 
     @Override
     public void read(InvocationInfo invocationInfo, TProtocol iprot) throws TException {
@@ -160,11 +158,6 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 iprot.readMapEnd();
 
                 value = jsonMap;
-//                } else {
-//                    TProtocolUtil.skip(iprot, schemeField.type);
-//
-//                    return null;
-//                }
                 break;
             case LIST:
 //                if(schemeField.type == TType.LIST) {
@@ -178,11 +171,6 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 iprot.readListEnd();
 
                 value = jsonElements;
-//                } else {
-//                    TProtocolUtil.skip(iprot, schemeField.type);
-//
-//                    return null;
-//                }
                 break;
             case SET:
 //                if(schemeField.type == TType.SET) {
@@ -196,11 +184,7 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 iprot.readSetEnd();
 
                 value = jsonElements1;
-//                } else {
-//                    TProtocolUtil.skip(iprot, schemeField.type);
 //
-//                    return null;
-//                }
                 break;
             case ENUM:
                 TEnum tEnum = findEnum(dataType.getQualifiedName(), service);
@@ -210,7 +194,6 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 value = new JsonPrimitive(enumItemLabel);
                 break;
             case STRUCT:
-//                if(schemeField.type == TType.STRUCT) {
                 iprot.readStructBegin();
 
                 Struct struct = findStruct(dataType.getQualifiedName(), service);
@@ -232,11 +215,6 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 iprot.readStructEnd();
 
                 value = jsonObject;
-//                } else {
-//                    TProtocolUtil.skip(iprot, schemeField.type);
-//
-//                    return null;
-//                }
                 break;
         }
 
@@ -272,8 +250,6 @@ public class JSONSerializer extends TBaseBeanSerializer {
 
         if (methodName == null)
             throw new TException("not fund method name in request.");
-
-        Service service = serviceCache.getService(serviceName.getAsString(), version.getAsString());
 
         if (service == null)
             throw new TException("not fund service(" + serviceName.getAsString() + "," + version.getAsString() + ") in cache.");
