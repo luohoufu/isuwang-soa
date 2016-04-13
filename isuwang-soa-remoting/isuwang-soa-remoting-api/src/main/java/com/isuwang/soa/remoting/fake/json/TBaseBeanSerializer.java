@@ -1,10 +1,9 @@
-package com.isuwang.soa.doc.codec;
+package com.isuwang.soa.remoting.fake.json;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.isuwang.soa.core.metadata.*;
-import com.isuwang.soa.doc.restful.InvocationInfo;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.*;
 

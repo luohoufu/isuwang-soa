@@ -30,10 +30,9 @@ public class GlobalTransactionTemplate {
             globalTransaction.setCurrSequence(0);
             globalTransaction.setStatus(TGlobalTransactionsStatus.New);
 
-            service.create(globalTransaction);
+            globalTransaction = service.create(globalTransaction);
 
             context.setCurrentTransactionSequence(0);
-
 
             T result = action.doInTransaction();
 

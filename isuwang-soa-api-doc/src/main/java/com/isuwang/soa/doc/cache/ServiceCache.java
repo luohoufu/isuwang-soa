@@ -6,6 +6,7 @@ import com.isuwang.soa.core.ProcessorKey;
 import com.isuwang.soa.core.SoaBaseProcessor;
 import com.isuwang.soa.core.metadata.*;
 import com.isuwang.soa.registry.RegistryAgentProxy;
+import com.isuwang.soa.remoting.fake.metadata.MetadataClient;
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

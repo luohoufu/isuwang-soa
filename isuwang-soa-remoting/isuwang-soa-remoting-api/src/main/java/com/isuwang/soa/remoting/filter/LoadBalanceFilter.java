@@ -78,7 +78,43 @@ public class LoadBalanceFilter implements Filter {
         chain.doFilter();
     }
 
-    private LoadBalanceStratage getLoadBalanceStratage(String key) {
+
+    public static String getCallerInfo(String serviceName, String versionName, String methodName) {
+
+        final boolean isLocal = SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local");
+        String callerInfo = null;
+
+        List<ServiceInfo> usableList;
+        if (isLocal)
+            usableList = new ArrayList<>();
+        else {
+            usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(serviceName, versionName, false);
+            if (usableList.size() <= 0) {
+                usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(serviceName, versionName, true);
+            }
+        }
+
+        String serviceKey = serviceName + "." + versionName + "." + methodName + ".consumer";
+        LoadBalanceStratage balance = getLoadBalanceStratage(serviceKey) == null ? LoadBalanceStratage.LeastActive : getLoadBalanceStratage(serviceKey);
+
+        switch (balance) {
+            case Random:
+                callerInfo = random(callerInfo, usableList, null);
+                break;
+            case RoundRobin:
+                callerInfo = roundRobin(callerInfo, usableList, null);
+                break;
+            case LeastActive:
+                callerInfo = leastActive(callerInfo, usableList, null);
+                break;
+            case ConsistentHash:
+                break;
+        }
+
+        return callerInfo;
+    }
+
+    private static LoadBalanceStratage getLoadBalanceStratage(String key) {
         RegistryAgent currentInstance = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client);
         if (currentInstance == null)
             return null;
@@ -90,7 +126,7 @@ public class LoadBalanceFilter implements Filter {
         return null;
     }
 
-    private String random(String callerInfo, List<ServiceInfo> usableList, FilterChain chain) {
+    private static String random(String callerInfo, List<ServiceInfo> usableList, FilterChain chain) {
         //随机选择一个可用server
         if (usableList.size() > 0) {
             final Random random = new Random();
@@ -98,7 +134,8 @@ public class LoadBalanceFilter implements Filter {
             final int index = random.nextInt(usableList.size());
 
             ServiceInfo serviceInfo = usableList.get(index);
-            chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
+            if (chain != null)
+                chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
             LOGGER.info(serviceInfo.getHost() + ":" + serviceInfo.getPort() + " concurrency：" + serviceInfo.getActiveCount());
 
             callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort()) + ":" + serviceInfo.getVersionName();
@@ -106,7 +143,7 @@ public class LoadBalanceFilter implements Filter {
         return callerInfo;
     }
 
-    private String leastActive(String callerInfo, List<ServiceInfo> usableList, FilterChain chain) {
+    private static String leastActive(String callerInfo, List<ServiceInfo> usableList, FilterChain chain) {
 
         if (usableList.size() > 0) {
 
@@ -120,19 +157,22 @@ public class LoadBalanceFilter implements Filter {
             }
 
             ServiceInfo serviceInfo = usableList.get(index);
-            chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
+            if (chain != null)
+                chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
 
             callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort()) + ":" + serviceInfo.getVersionName();
         }
         return callerInfo;
     }
 
-    private String roundRobin(String callerInfo, List<ServiceInfo> usableList, FilterChain chain) {
+    private static String roundRobin(String callerInfo, List<ServiceInfo> usableList, FilterChain chain) {
 
         if (usableList.size() > 0) {
             roundRobinIndex = new AtomicInteger(roundRobinIndex.incrementAndGet() % usableList.size());
             ServiceInfo serviceInfo = usableList.get(roundRobinIndex.get());
-            chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
+
+            if (chain != null)
+                chain.setAttribute(StubFilterChain.ATTR_KEY_SERVERINFO, serviceInfo);
 
             callerInfo = serviceInfo.getHost() + ":" + String.valueOf(serviceInfo.getPort()) + ":" + serviceInfo.getVersionName();
         }

@@ -3,7 +3,7 @@ package com.isuwang.soa.transaction
 import java.sql.ResultSet
 
 import TransactionDB._
-import com.isuwang.soa.transaction.db.domain.{GlobalTransaction, GlobalTransactionProces}
+import com.isuwang.soa.transaction.db.domain.{GlobalTransaction, GlobalTransactionProcess}
 import wangzx.scala_commons.sql._
 
 /**
@@ -11,15 +11,15 @@ import wangzx.scala_commons.sql._
   */
 object TransactionSQL {
 
-  def getTransactionProcessForUpdate(id: Int): Option[GlobalTransactionProces] = {
-    row[GlobalTransactionProces](sql"select * from global_transaction_process where id = ${id} for update");
+  def getTransactionProcessForUpdate(id: Int): Option[GlobalTransactionProcess] = {
+    row[GlobalTransactionProcess](sql"select * from global_transaction_process where id = ${id} for update");
   }
 
   def getTransactionForUpdate(id: Int): Option[GlobalTransaction] = {
     row[GlobalTransaction](sql"select * from global_transactions where id = ${id} for update");
   }
 
-  def insertTransactionProcess(E: GlobalTransactionProces): Int = {
+  def insertTransactionProcess(E: GlobalTransactionProcess): Int = {
     var id = 0
 
     val sqlInsert =
@@ -37,6 +37,7 @@ object TransactionSQL {
             requestJson = ${E.requestJson},
             responseJson = ${E.responseJson},
             redo_times = ${E.redoTimes},
+            next_redo_time = ${E.nextRedoTime},
             created_at = ${E.createdAt},
             updated_at = ${E.updatedAt},
             created_by = ${E.createdBy},
@@ -58,7 +59,7 @@ object TransactionSQL {
          insert into global_transactions
          set
             status = ${E.status},
-            curr_sequence = ${E.currSequence}
+            curr_sequence = ${E.currSequence},
             created_at = ${E.createdAt},
             updated_at = ${E.updatedAt},
             created_by = ${E.createdBy},

@@ -1,4 +1,4 @@
-package com.isuwang.soa.doc.restful;
+package com.isuwang.soa.remoting.fake.json;
 
 
 import com.isuwang.soa.core.metadata.Method;

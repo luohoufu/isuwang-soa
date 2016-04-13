@@ -1,4 +1,4 @@
-package com.isuwang.soa.doc.cache;
+package com.isuwang.soa.remoting.fake.metadata;
 
 import com.isuwang.soa.remoting.BaseServiceClient;
 import org.apache.thrift.TException;
