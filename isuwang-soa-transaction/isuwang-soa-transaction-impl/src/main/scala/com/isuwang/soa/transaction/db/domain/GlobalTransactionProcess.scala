@@ -7,7 +7,7 @@ import wangzx.scala_commons.sql._
   * @author Generated
   */
 @Table(value = "global_transaction_process", camelToUnderscore = true)
-class GlobalTransactionProces extends java.io.Serializable {
+class GlobalTransactionProcess extends java.io.Serializable {
   /**
     *
     */

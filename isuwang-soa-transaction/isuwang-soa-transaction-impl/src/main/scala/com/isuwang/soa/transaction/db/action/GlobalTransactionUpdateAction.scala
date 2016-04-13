@@ -38,9 +38,6 @@ class GlobalTransactionUpdateAction(transactionId: Int, currSequence: Int, statu
     val now: Date = DateUtils.resetMillisecond(new Date)
     val updatedAt = new Timestamp(now.getTime)
 
-    val header = TransactionContext.Factory.getCurrentInstance().getHeader
-    val updatedBy = if (header.getOperatorId.isPresent) header.getOperatorId.get else 0
-
     if (!transactionOpt.isDefined)
       throw new SoaException(ErrorCode.NOTEXIST.getCode, ErrorCode.NOTEXIST.getMsg)
     else {
@@ -54,9 +51,8 @@ class GlobalTransactionUpdateAction(transactionId: Int, currSequence: Int, statu
                 update global_transactions
                 set
                   status = ${status.getValue},
-                  curr_sequence = ${currSequence}
+                  curr_sequence = ${currSequence},
                   updated_at = ${updatedAt}
-                  updated_by = ${updatedBy}
                 where id = ${transactionId}
             """
       )

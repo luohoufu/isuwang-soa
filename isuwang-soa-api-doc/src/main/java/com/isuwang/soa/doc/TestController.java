@@ -49,7 +49,7 @@ public class TestController {
     }
 
     @Autowired
-    private JSONSerializer jsonSerializer;
+    private static JSONSerializer jsonSerializer;
 
     private static String host = "127.0.0.1";
     /**
@@ -57,59 +57,71 @@ public class TestController {
      */
     private static int port = 9090;
 
+    public static void setHost(String host) {
+        TestController.host = host;
+    }
+
+    public static void setPort(int port) {
+        TestController.port = port;
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String test(HttpServletRequest req) {
 
         String jsonParameter = req.getParameter("parameter");
         String serviceName = req.getParameter("serviceName");
-        String version = req.getParameter("version");
+        String versionName = req.getParameter("version");
         String methodName = req.getParameter("methodName");
 
         try {
-            //生成json请求参数
-            ObjectMapper objectMapper = new ObjectMapper();
-            StringWriter out = new StringWriter();
-            @SuppressWarnings("unchecked")
-            Map<String, Map<String, Object>> params = objectMapper.readValue(jsonParameter, Map.class);
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("serviceName", serviceName);
-            map.put("version", version);
-            map.put("methodName", methodName);
-            map.put("params", params);
-
-            objectMapper.writeValue(out, map);
-
-            //发起请求
-            final InvocationInfo invocationInfo = new InvocationInfo();
-            final DataInfo request = new DataInfo();
-            request.setConsumesType("JSON");
-            request.setConsumesValue(out.toString());
-            request.setServiceName(serviceName);
-            request.setVersion(version);
-            request.setMethodName(methodName);
-            invocationInfo.setDataInfo(request);
-
-            final long beginTime = System.currentTimeMillis();
-
-            LOGGER.info("soa-request: {}", out.toString());
-
-            String jsonResponse = post(invocationInfo);
-
-            LOGGER.info("soa-response: {} {}ms", jsonResponse, System.currentTimeMillis() - beginTime);
-
-            return jsonResponse;
-
+            return callServiceMethod(serviceName, versionName, methodName, jsonParameter);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-
         }
         return null;
     }
 
+    public static String callServiceMethod(String serviceName, String versionName, String methodName, String jsonParameter) throws Exception {
 
-    private void initContext(DataInfo data) {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        StringWriter out = new StringWriter();
+
+        @SuppressWarnings("unchecked")
+        Map<String, Map<String, Object>> params = objectMapper.readValue(jsonParameter, Map.class);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("serviceName", serviceName);
+        map.put("version", versionName);
+        map.put("methodName", methodName);
+        map.put("params", params);
+
+        objectMapper.writeValue(out, map);
+
+        //发起请求
+        final InvocationInfo invocationInfo = new InvocationInfo();
+        final DataInfo request = new DataInfo();
+        request.setConsumesType("JSON");
+        request.setConsumesValue(out.toString());
+        request.setServiceName(serviceName);
+        request.setVersion(versionName);
+        request.setMethodName(methodName);
+        invocationInfo.setDataInfo(request);
+
+        final long beginTime = System.currentTimeMillis();
+
+        LOGGER.info("soa-request: {}", out.toString());
+
+        String jsonResponse = post(invocationInfo);
+
+        LOGGER.info("soa-response: {} {}ms", jsonResponse, System.currentTimeMillis() - beginTime);
+
+        return jsonResponse;
+    }
+
+
+    private static void initContext(DataInfo data) {
         InvocationContext context = InvocationContext.Factory.getCurrentInstance();
 
         context.setSeqid(1);
@@ -129,7 +141,7 @@ public class TestController {
         context.setCalleeTimeout(45000);
     }
 
-    String post(InvocationInfo invocationInfo) {
+    private static String post(InvocationInfo invocationInfo) {
 
         String jsonResponse = "{}";
 
@@ -206,7 +218,7 @@ public class TestController {
             jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", "9999", "系统繁忙，请稍后再试[9999]！", "{}");
 
         } finally {
-            if (client != null){
+            if (client != null) {
                 client.close();
                 client.shutdown();
             }

@@ -8,7 +8,7 @@ import com.isuwang.scala.dbc.Assert._
 import com.isuwang.soa.core.TransactionContext
 import com.isuwang.soa.transaction.TransactionSQL
 import com.isuwang.soa.transaction.api.domain.{TGlobalTransaction, TGlobalTransactionProcess}
-import com.isuwang.soa.transaction.db.domain.{GlobalTransaction, GlobalTransactionProces}
+import com.isuwang.soa.transaction.db.domain.{GlobalTransaction, GlobalTransactionProcess}
 import com.isuwang.soa.transaction.utils.{DateUtils, ErrorCode}
 import org.slf4j.{LoggerFactory, Logger}
 
@@ -34,8 +34,6 @@ class GlobalTransactionCreateAction(dto: TGlobalTransaction) extends Action[TGlo
 
     val now: Date = DateUtils.resetMillisecond(new Date)
 
-    val header = TransactionContext.Factory.getCurrentInstance().getHeader
-
     val transaction: GlobalTransaction = new GlobalTransaction {
 
       this.status = dto.getStatus.getValue
@@ -43,9 +41,8 @@ class GlobalTransactionCreateAction(dto: TGlobalTransaction) extends Action[TGlo
 
       this.createdAt = new Timestamp(now.getTime)
       this.updatedAt = new Timestamp(now.getTime)
-      this.createdBy = if (header.getOperatorId.isPresent) header.getOperatorId.get else 0
-      this.updatedBy = if (header.getOperatorId.isPresent) header.getOperatorId.get else 0
-
+      this.createdBy = dto.getCreatedBy
+      this.updatedBy = dto.getCreatedBy
     }
 
     dto.setId(TransactionSQL.insertTransaction(transaction))

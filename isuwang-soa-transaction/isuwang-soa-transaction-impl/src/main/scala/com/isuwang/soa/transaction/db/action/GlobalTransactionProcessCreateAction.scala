@@ -8,7 +8,7 @@ import com.isuwang.scala.dbc.Assert._
 import com.isuwang.soa.core.TransactionContext
 import com.isuwang.soa.transaction.TransactionSQL
 import com.isuwang.soa.transaction.api.domain.TGlobalTransactionProcess
-import com.isuwang.soa.transaction.db.domain.GlobalTransactionProces
+import com.isuwang.soa.transaction.db.domain.GlobalTransactionProcess
 import com.isuwang.soa.transaction.utils.{DateUtils, ErrorCode}
 import org.slf4j.{LoggerFactory, Logger}
 
@@ -42,9 +42,7 @@ class GlobalTransactionProcessCreateAction(dto: TGlobalTransactionProcess) exten
 
     val now: Date = DateUtils.resetMillisecond(new Date)
 
-    val header = TransactionContext.Factory.getCurrentInstance().getHeader
-
-    val process: GlobalTransactionProces = new GlobalTransactionProces {
+    val process: GlobalTransactionProcess = new GlobalTransactionProcess {
 
       this.transactionId = dto.getTransactionId
       this.transactionSequence = dto.getTransactionSequence
@@ -59,8 +57,9 @@ class GlobalTransactionProcessCreateAction(dto: TGlobalTransactionProcess) exten
       this.redoTimes = 0
       this.updatedAt = new Timestamp(now.getTime)
       this.createdAt = new Timestamp(now.getTime)
-      this.createdBy = if (header.getOperatorId.isPresent) header.getOperatorId.get else 0
-      this.updatedBy = if (header.getOperatorId.isPresent) header.getOperatorId.get else 0
+      this.createdBy = dto.getCreatedBy
+      this.updatedBy = dto.getCreatedBy
+      this.nextRedoTime = new Timestamp(dto.getNextRedoTime.getTime)
 
     }
 
