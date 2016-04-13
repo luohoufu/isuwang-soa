@@ -41,7 +41,7 @@ object TransactionSQL {
             created_at = ${E.createdAt},
             updated_at = ${E.updatedAt},
             created_by = ${E.createdBy},
-            updated_by = ${E.updatedBy},
+            updated_by = ${E.updatedBy}
         """
     esqlWithGenerateKey(sqlInsert) { rs: ResultSet =>
       if (rs.next()) id = rs.getInt(1)
@@ -63,7 +63,7 @@ object TransactionSQL {
             created_at = ${E.createdAt},
             updated_at = ${E.updatedAt},
             created_by = ${E.createdBy},
-            updated_by = ${E.updatedBy},
+            updated_by = ${E.updatedBy}
         """
     esqlWithGenerateKey(sqlInsert) { rs: ResultSet =>
       if (rs.next()) id = rs.getInt(1)
