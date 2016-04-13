@@ -49,7 +49,7 @@ public class GlobalTransactionProcessTemplate<REQ> {
             transactionProcess.setRollbackMethodName(invocationContext.getHeader().getMethodName() + "_rollback");
             transactionProcess.setServiceName(invocationContext.getHeader().getServiceName());
             transactionProcess.setStatus(TGlobalTransactionProcessStatus.New);
-            transactionProcess.setTransactionId(invocationContext.getHeader().getTransactionId().get());
+            transactionProcess.setTransactionId(transactionContext.getCurrentTransactionId());
             transactionProcess.setTransactionSequence(transactionContext.getCurrentTransactionSequence());
             transactionProcess.setVersionName(invocationContext.getHeader().getVersionName());
 

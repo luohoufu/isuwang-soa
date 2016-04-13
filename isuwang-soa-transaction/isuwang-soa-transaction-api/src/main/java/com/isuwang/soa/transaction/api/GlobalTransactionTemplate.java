@@ -32,8 +32,8 @@ public class GlobalTransactionTemplate {
 
             service.create(globalTransaction);
 
-
             context.setCurrentTransactionSequence(0);
+
 
             T result = action.doInTransaction();
 
@@ -42,6 +42,7 @@ public class GlobalTransactionTemplate {
             return result;
         } finally {
             if (globalTransaction.getId() != null) {
+                context.setCurrentTransactionId(globalTransaction.getId());
                 service.update(globalTransaction.getId(), context.getCurrentTransactionSequence(), success ? TGlobalTransactionsStatus.Success : TGlobalTransactionsStatus.Fail);
             }
         }

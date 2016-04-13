@@ -1,15 +1,14 @@
 package com.isuwang.soa.core;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Created by tangliu on 2016/4/11.
  */
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Inherited
+@Documented
 public @interface SoaGlobalTransactional {
 
 }
