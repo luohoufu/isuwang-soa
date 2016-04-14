@@ -99,7 +99,7 @@ public class JSONSerializer extends TBaseBeanSerializer {
         iprot.readStructEnd();
 
         responseJSON.add("success", jsonArray.size() > 0 ? jsonArray.get(0) : null);
-        responseJSON.addProperty("responseCode", "0");
+        responseJSON.addProperty("responseCode", "0000");
         responseJSON.addProperty("responseMsg", "成功");
 
         invocationInfo.setResponseData(responseJSON.toString());

@@ -1,5 +1,6 @@
 package com.isuwang.soa.monitor.api;
 
+import com.isuwang.soa.core.SoaException;
 import com.isuwang.soa.monitor.api.MonitorServiceCodec.*;
 import com.isuwang.soa.remoting.BaseServiceClient;
 import org.apache.thrift.TException;
@@ -10,11 +11,16 @@ public class MonitorServiceClient extends BaseServiceClient {
         super("com.isuwang.soa.monitor.api.service.MonitorService", "1.0.0");
     }
 
+    @Override
+    protected boolean isSoaTransactionalProcess() {
+        return false;
+    }
+
 
     /**
      * 上送QPS信息
      **/
-    public void uploadQPSStat(java.util.List<com.isuwang.soa.monitor.api.domain.QPSStat> qpsStats) throws TException {
+    public void uploadQPSStat(java.util.List<com.isuwang.soa.monitor.api.domain.QPSStat> qpsStats) throws SoaException {
         initContext("uploadQPSStat");
 
         try {
@@ -25,6 +31,10 @@ public class MonitorServiceClient extends BaseServiceClient {
             uploadQPSStat_result response = sendBase(uploadQPSStat_args, new uploadQPSStat_result(), new UploadQPSStat_argsSerializer(), new UploadQPSStat_resultSerializer());
 
 
+        } catch (SoaException e) {
+            throw e;
+        } catch (TException e) {
+            throw new SoaException(e);
         } finally {
             destoryContext();
         }
@@ -33,7 +43,7 @@ public class MonitorServiceClient extends BaseServiceClient {
     /**
      * 上送平台处理数据
      **/
-    public void uploadPlatformProcessData(java.util.List<com.isuwang.soa.monitor.api.domain.PlatformProcessData> platformProcessDatas) throws TException {
+    public void uploadPlatformProcessData(java.util.List<com.isuwang.soa.monitor.api.domain.PlatformProcessData> platformProcessDatas) throws SoaException {
         initContext("uploadPlatformProcessData");
 
         try {
@@ -44,6 +54,10 @@ public class MonitorServiceClient extends BaseServiceClient {
             uploadPlatformProcessData_result response = sendBase(uploadPlatformProcessData_args, new uploadPlatformProcessData_result(), new UploadPlatformProcessData_argsSerializer(), new UploadPlatformProcessData_resultSerializer());
 
 
+        } catch (SoaException e) {
+            throw e;
+        } catch (TException e) {
+            throw new SoaException(e);
         } finally {
             destoryContext();
         }
@@ -52,7 +66,7 @@ public class MonitorServiceClient extends BaseServiceClient {
     /**
      * 上送DataSource信息
      **/
-    public void uploadDataSourceStat(java.util.List<com.isuwang.soa.monitor.api.domain.DataSourceStat> dataSourceStat) throws TException {
+    public void uploadDataSourceStat(java.util.List<com.isuwang.soa.monitor.api.domain.DataSourceStat> dataSourceStat) throws SoaException {
         initContext("uploadDataSourceStat");
 
         try {
@@ -63,6 +77,10 @@ public class MonitorServiceClient extends BaseServiceClient {
             uploadDataSourceStat_result response = sendBase(uploadDataSourceStat_args, new uploadDataSourceStat_result(), new UploadDataSourceStat_argsSerializer(), new UploadDataSourceStat_resultSerializer());
 
 
+        } catch (SoaException e) {
+            throw e;
+        } catch (TException e) {
+            throw new SoaException(e);
         } finally {
             destoryContext();
         }
@@ -72,12 +90,16 @@ public class MonitorServiceClient extends BaseServiceClient {
     /**
      * getServiceMetadata
      **/
-    public String getServiceMetadata() throws TException {
+    public String getServiceMetadata() throws SoaException {
         initContext("getServiceMetadata");
         try {
             getServiceMetadata_args getServiceMetadata_args = new getServiceMetadata_args();
             getServiceMetadata_result response = sendBase(getServiceMetadata_args, new getServiceMetadata_result(), new GetServiceMetadata_argsSerializer(), new GetServiceMetadata_resultSerializer());
             return response.getSuccess();
+        } catch (SoaException e) {
+            throw e;
+        } catch (TException e) {
+            throw new SoaException(e);
         } finally {
             destoryContext();
         }
