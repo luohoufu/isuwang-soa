@@ -1,6 +1,6 @@
 package com.isuwang.soa.transaction.api.domain;
 
-public enum TGlobalTransactionProcessExpectedStatus {
+public enum TGlobalTransactionProcessExpectedStatus implements org.apache.thrift.TEnum {
 
     /**
      *

@@ -221,7 +221,7 @@ class JavaGenerator extends CodeGenerator {
     return {
       <div>package {enum.namespace};
 
-        public enum {enum.name}<block>
+        public enum {enum.name} implements org.apache.thrift.TEnum<block>
         {
           toEnumItemArrayBuffer(enum.enumItems).map{(enumItem: EnumItem)=>{
           <div>
