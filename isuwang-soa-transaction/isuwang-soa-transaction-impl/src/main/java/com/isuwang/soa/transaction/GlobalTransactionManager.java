@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,9 @@ public class GlobalTransactionManager {
 
                 LOGGER.info("全局事务编号:{} 事务过程数量:{} 事务过程编号集合:{}", globalTransaction.getId(), transactionProcessList.size(), transactionProcessList.stream().map(gt -> gt.getId()).collect(toList()));
 
+                if (transactionProcessList.isEmpty())
+                    continue;
+
                 int i = 0;
                 for (; i < transactionProcessList.size(); i++) {
                     TGlobalTransactionProcess process = transactionProcessList.get(i);
@@ -65,6 +69,11 @@ public class GlobalTransactionManager {
                     LOGGER.info("全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:开始处理",
                             globalTransaction.getId(), process.getId(), process.getTransactionSequence(),
                             process.getStatus().name(), TGlobalTransactionProcessExpectedStatus.HasRollback.name());
+
+                    if (process.getNextRedoTime().after(new Date())) {
+                        LOGGER.info("全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 未到下次处理时间，跳出", globalTransaction.getId(), process.getId(), process.getTransactionSequence());
+                        break;
+                    }
 
                     //更新process的期望状态为“已回滚”
                     if (process.getExpectedStatus() != TGlobalTransactionProcessExpectedStatus.HasRollback)
@@ -135,7 +144,7 @@ public class GlobalTransactionManager {
                     LOGGER.info("全局事务编号:{} 已完成", globalTransaction.getId());
                 } else {
                     //部分回滚
-                    new GlobalTransactionUpdateAction(globalTransaction.getId(), i > 0 ? transactionProcessList.get(i - 1).getTransactionSequence() : 0, TGlobalTransactionsStatus.PartiallyRollback).execute();
+                    new GlobalTransactionUpdateAction(globalTransaction.getId(), i >= 0 ? transactionProcessList.get(i).getTransactionSequence() : 0, TGlobalTransactionsStatus.PartiallyRollback).execute();
 
                     LOGGER.info("全局事务编号:{} 部分完成", globalTransaction.getId());
                 }

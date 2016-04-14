@@ -30,7 +30,7 @@ class GlobalTransactionProcessFindAction(transactionId: Int) extends Action[java
       sql"""
          SELECT *
          FROM global_transaction_process
-         WHERE transaction_id = ${transactionId} and (status = ${TGlobalTransactionProcessStatus.Success.getValue()} OR status = ${TGlobalTransactionProcessStatus.Unknown.getValue()}) and next_redo_time < now()
+         WHERE transaction_id = ${transactionId} and (status = ${TGlobalTransactionProcessStatus.Success.getValue()} OR status = ${TGlobalTransactionProcessStatus.Unknown.getValue()})
          ORDER BY transaction_sequence DESC
        """
     rows[GlobalTransactionProcess](selectSql).toThrifts[TGlobalTransactionProcess]
