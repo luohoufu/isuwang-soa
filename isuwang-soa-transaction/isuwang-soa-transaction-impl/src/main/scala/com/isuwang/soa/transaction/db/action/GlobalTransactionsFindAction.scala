@@ -3,7 +3,7 @@ package com.isuwang.soa.transaction.db.action
 import com.isuwang.scala.dbc.Action
 import com.isuwang.scala.dbc.Implicit._
 import com.isuwang.soa.transaction.TransactionDB._
-import com.isuwang.soa.transaction.api.domain.TGlobalTransaction
+import com.isuwang.soa.transaction.api.domain.{TGlobalTransaction, TGlobalTransactionsStatus}
 import com.isuwang.soa.transaction.db.domain.GlobalTransaction
 import wangzx.scala_commons.sql._
 
@@ -24,7 +24,7 @@ class GlobalTransactionsFindAction() extends Action[java.util.List[TGlobalTransa
       sql"""
          SELECT id, status, curr_sequence
          FROM global_transactions
-         WHERE status = 3 or status = 5
+         WHERE status = ${TGlobalTransactionsStatus.Fail.getValue()} or status = ${TGlobalTransactionsStatus.PartiallyRollback.getValue()}
        """
     rows[GlobalTransaction](selectSql).toThrifts[TGlobalTransaction]
   }
