@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Global Transaction Manager
  *
@@ -44,6 +46,8 @@ public class GlobalTransactionManager {
 
             List<TGlobalTransaction> globalTransactionList = new GlobalTransactionsFindAction().execute();
 
+            LOGGER.info("全局事务数量:{} 编号集合:{}", globalTransactionList.size(), globalTransactionList.stream().map(gt -> gt.getId()).collect(toList()));
+
             for (TGlobalTransaction globalTransaction : globalTransactionList) {
 
                 globalTransaction = new GlobalTransactionFindByIdAction(globalTransaction.getId()).execute();
@@ -52,10 +56,15 @@ public class GlobalTransactionManager {
 
                 List<TGlobalTransactionProcess> transactionProcessList = new GlobalTransactionProcessFindAction(globalTransaction.getId()).execute();
 
+                LOGGER.info("全局事务编号:{} 事务过程数量:{} 事务过程编号集合:{}", globalTransaction.getId(), transactionProcessList.size(), transactionProcessList.stream().map(gt -> gt.getId()).collect(toList()));
+
                 int i = 0;
                 for (; i < transactionProcessList.size(); i++) {
-
                     TGlobalTransactionProcess process = transactionProcessList.get(i);
+
+                    LOGGER.info("全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:开始处理",
+                            globalTransaction.getId(), process.getId(), process.getTransactionSequence(),
+                            process.getStatus().name(), TGlobalTransactionProcessExpectedStatus.HasRollback.name());
 
                     //更新process的期望状态为“已回滚”
                     if (process.getExpectedStatus() != TGlobalTransactionProcessExpectedStatus.HasRollback)
@@ -102,7 +111,13 @@ public class GlobalTransactionManager {
                         //更新事务过程表为已回滚
                         new GlobalTransactionProcessUpdateAction(process.getId(), responseJson, TGlobalTransactionProcessStatus.HasRollback).execute();
 
+                        LOGGER.info("全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:已完成",
+                                globalTransaction.getId(), process.getId(), process.getTransactionSequence(),
+                                process.getStatus().name(), TGlobalTransactionProcessExpectedStatus.HasRollback.name());
                     } catch (Exception e) {
+                        LOGGER.info("全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:异常({})",
+                                globalTransaction.getId(), process.getId(), process.getTransactionSequence(),
+                                process.getStatus().name(), TGlobalTransactionProcessExpectedStatus.HasRollback.name(), e.getMessage());
 
                         //更新事务过程表的重试次数和下次重试时间
                         new GlobalTransactionProcessUpdateAfterRollbackFail(process.getId()).execute();
@@ -117,9 +132,12 @@ public class GlobalTransactionManager {
                     //已回滚
                     new GlobalTransactionUpdateAction(globalTransaction.getId(), i > 0 ? transactionProcessList.get(i - 1).getTransactionSequence() : 0, TGlobalTransactionsStatus.HasRollback).execute();
 
+                    LOGGER.info("全局事务编号:{} 已完成", globalTransaction.getId());
                 } else {
                     //部分回滚
                     new GlobalTransactionUpdateAction(globalTransaction.getId(), i > 0 ? transactionProcessList.get(i - 1).getTransactionSequence() : 0, TGlobalTransactionsStatus.PartiallyRollback).execute();
+
+                    LOGGER.info("全局事务编号:{} 部分完成", globalTransaction.getId());
                 }
             }
             LOGGER.info("--- 定时事务管理器结束 ---");
