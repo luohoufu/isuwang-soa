@@ -231,7 +231,6 @@ public class JSONSerializer extends TBaseBeanSerializer {
     @Override
     public void write(InvocationInfo invocationInfo, TProtocol oprot) throws TException {
         DataInfo dataInfo = invocationInfo.getDataInfo();
-        // consumesValue like { serviceName: , version:, methodName:, params: { arg1:, arg2, }}
         String consumesValue = dataInfo.getConsumesValue();
 
         JsonObject jsonObject = new JsonParser().parse(consumesValue).getAsJsonObject();
@@ -268,37 +267,22 @@ public class JSONSerializer extends TBaseBeanSerializer {
         Set<Map.Entry<String, JsonElement>> entries = new LinkedHashSet<>(methodParamers.entrySet());
         entries.addAll(params.getAsJsonObject().entrySet());
 
-        // entries like { requestHeader: , arg1: arg2, }
-        if (dataInfo.getMethod().getName().endsWith("_rollback")) {
+        for (Map.Entry<String, JsonElement> entry : entries) {
+            String key = entry.getKey();
+            JsonElement value = entry.getValue();
 
-            String key = dataInfo.getMethod().getRequest().getFields().get(0).getName();
             Field field = findField(key, dataInfo.getMethod().getRequest());
 
-            JsonElement value = params.getAsJsonObject().get("request");
+            if (field == null)
+                throw new TException("not fund " + key + " in request's method.");
 
             oprot.writeFieldBegin(new TField(field.getName(), dataType2Byte(field.getDataType()), (short) field.getTag()));
             writeField(service, field.getDataType(), oprot, value);
             oprot.writeFieldEnd();
-
-        } else {
-            for (Map.Entry<String, JsonElement> entry : entries) {
-                String key = entry.getKey();
-                JsonElement value = entry.getValue();
-
-                Field field = findField(key, dataInfo.getMethod().getRequest());
-
-                if (field == null)
-                    throw new TException("not fund " + key + " in request's method.");
-
-                oprot.writeFieldBegin(new TField(field.getName(), dataType2Byte(field.getDataType()), (short) field.getTag()));
-                writeField(service, field.getDataType(), oprot, value);
-                oprot.writeFieldEnd();
-            }
         }
 
         oprot.writeFieldStop();
         oprot.writeStructEnd();
     }
-
 
 }

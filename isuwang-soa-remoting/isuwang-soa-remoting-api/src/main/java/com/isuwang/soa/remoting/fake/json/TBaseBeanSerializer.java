@@ -48,7 +48,7 @@ public abstract class TBaseBeanSerializer implements TBeanSerializer<InvocationI
                 oprot.writeDouble(isJsonElement ? jsonElement.getAsDouble() : Double.valueOf(value.toString()));
                 break;
             case STRING:
-                oprot.writeString(isJsonElement ? jsonElement.getAsString() : value.toString());
+                oprot.writeString(value instanceof JsonObject ? value.toString() : (isJsonElement ? jsonElement.getAsString() : value.toString()));
                 break;
             case BINARY:
                 break;

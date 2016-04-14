@@ -1,5 +1,6 @@
 package com.isuwang.soa.transaction;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.metadata.Service;
 import com.isuwang.soa.remoting.fake.json.JSONPost;
@@ -13,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -72,13 +76,25 @@ public class GlobalTransactionManager {
                         if (callerInfo != null) {
 
                             String[] infos = callerInfo.split(":");
-                            jsonPost = new JSONPost(infos[0], Integer.valueOf(infos[1]));
+                            jsonPost = new JSONPost(infos[0], Integer.valueOf(infos[1]), false);
 
                         } else if (SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local")) {
-                            jsonPost = new JSONPost(SoaSystemEnvProperties.SOA_SERVICE_IP, SoaSystemEnvProperties.SOA_SERVICE_PORT);
+                            jsonPost = new JSONPost(SoaSystemEnvProperties.SOA_SERVICE_IP, SoaSystemEnvProperties.SOA_SERVICE_PORT, false);
                         }
-                        //调用回滚方法
-                        responseJson = jsonPost.callServiceMethod(process.getServiceName(), process.getVersionName(), process.getRollbackMethodName(), process.getRequestJson(), service);
+
+                        //构造请求参数，调用回滚方法
+                        Map<String, Object> map = new HashMap<>();
+                        Map<String, Object> request = new HashMap<>();
+                        request.put("requestJson", process.getRequestJson());
+                        request.put("responseJson", process.getResponseJson());
+                        request.put("gtp", process);
+                        map.put("gtp_request", request);
+
+                        StringWriter requestWriter = new StringWriter();
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        objectMapper.writeValue(requestWriter, map);
+
+                        responseJson = jsonPost.callServiceMethod(process.getServiceName(), process.getVersionName(), process.getRollbackMethodName(), requestWriter.toString(), service);
 
                         //更新事务过程表为已回滚
                         new GlobalTransactionProcessUpdateAction(process.getId(), responseJson, TGlobalTransactionProcessStatus.HasRollback).execute();

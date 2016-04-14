@@ -27,7 +27,7 @@ class GlobalTransactionProcessFindAction(transactionId: Int) extends Action[java
   override def action: java.util.List[TGlobalTransactionProcess] = {
     val selectSql =
       sql"""
-         SELECT *, requestJson as request_json, responseJson as response_json
+         SELECT *
          FROM global_transaction_process
          WHERE transaction_id = ${transactionId} and (status = 2 OR status = 4) and next_redo_time < now()
          ORDER BY transaction_sequence DESC
