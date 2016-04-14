@@ -46,6 +46,9 @@ public class GlobalTransactionManager {
 
             for (TGlobalTransaction globalTransaction : globalTransactionList) {
 
+                // TODO 数据库行锁,避免多个soa实例,多个定时器触发 `select * from global_transactions where id = ${globalTransaction.getId()} for update`
+                // TODO 判断的globalTransaction.status == TGlobalTransactionsStatus.Fail.getValue() or TGlobalTransactionsStatus.PartiallyRollback.getValue(),不是则continue
+
                 List<TGlobalTransactionProcess> transactionProcessList = new GlobalTransactionProcessFindAction(globalTransaction.getId()).execute();
 
                 int i = 0;
@@ -62,8 +65,7 @@ public class GlobalTransactionManager {
                     //call roll back method
                     try {
                         //获取服务的metadata
-                        String metadata = "";
-                        metadata = new MetadataClient(process.getServiceName(), process.getVersionName()).getServiceMetadata();
+                        String metadata = new MetadataClient(process.getServiceName(), process.getVersionName()).getServiceMetadata();
                         if (metadata != null) {
                             try (StringReader reader = new StringReader(metadata)) {
                                 service = JAXB.unmarshal(reader, Service.class);

@@ -25,6 +25,8 @@ class GlobalTransactionProcessFindAction(transactionId: Int) extends Action[java
   }
 
   override def action: java.util.List[TGlobalTransactionProcess] = {
+    //TODO status use TGlobalTransactionProcessStatus
+
     val selectSql =
       sql"""
          SELECT *
