@@ -71,6 +71,7 @@ public class GlobalTransactionProcessTemplate<REQ> {
                 case "AA96":// 超时
                 case "9999":// 未知
                     unknown = true;
+                    break;
                 default:// 明确错误
                     unknown = false;
                     break;
