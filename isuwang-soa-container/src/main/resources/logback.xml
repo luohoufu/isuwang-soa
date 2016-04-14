@@ -59,6 +59,20 @@
         </filter>
     </appender>
 
+    <appender name="GBTRANSACTIONFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${soa.base}/logs/transaction-soa-container.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{MM-dd HH:mm:ss SSS} %t %p - %m%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
     <logger name="container.simple.log" additivity="true">
         <level value="INFO"/>
         <appender-ref ref="SIMPLEFILE"/>
@@ -67,6 +81,11 @@
     <logger name="container.slowtime.log" additivity="true">
         <level value="INFO"/>
         <appender-ref ref="SLOWTIMEFILE"/>
+    </logger>
+
+    <logger name="com.isuwang.soa.transaction" additivity="true">
+        <level value="INFO"/>
+        <appender-ref ref="GBTRANSACTIONFILE"/>
     </logger>
 
     <root level="INFO">
