@@ -5,12 +5,11 @@ import java.util.Date
 
 import com.isuwang.scala.dbc.Action
 import com.isuwang.scala.dbc.Assert._
-import com.isuwang.soa.core.TransactionContext
 import com.isuwang.soa.transaction.TransactionSQL
-import com.isuwang.soa.transaction.api.domain.{TGlobalTransaction, TGlobalTransactionProcess}
-import com.isuwang.soa.transaction.db.domain.{GlobalTransaction, GlobalTransactionProcess}
-import com.isuwang.soa.transaction.utils.{DateUtils, ErrorCode}
-import org.slf4j.{LoggerFactory, Logger}
+import com.isuwang.soa.transaction.api.domain.TGlobalTransaction
+import com.isuwang.soa.transaction.db.domain.GlobalTransaction
+import com.isuwang.soa.transaction.utils.ErrorCode
+import org.slf4j.{Logger, LoggerFactory}
 
 /**
   * Created by tangliu on 2016/4/12.
@@ -32,7 +31,7 @@ class GlobalTransactionCreateAction(dto: TGlobalTransaction) extends Action[TGlo
     */
   override def action: TGlobalTransaction = {
 
-    val now: Date = DateUtils.resetMillisecond(new Date)
+    val now: Date = new Date
 
     val transaction: GlobalTransaction = new GlobalTransaction {
 

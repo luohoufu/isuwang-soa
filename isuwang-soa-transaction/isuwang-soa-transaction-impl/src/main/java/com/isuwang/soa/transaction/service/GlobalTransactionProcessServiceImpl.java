@@ -6,12 +6,13 @@ import com.isuwang.soa.transaction.api.domain.TGlobalTransactionProcessStatus;
 import com.isuwang.soa.transaction.api.service.GlobalTransactionProcessService;
 import com.isuwang.soa.transaction.db.action.GlobalTransactionProcessCreateAction;
 import com.isuwang.soa.transaction.db.action.GlobalTransactionProcessUpdateAction;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by tangliu on 2016/4/12.
  */
-@Transactional(value = "globalTransaction", rollbackFor = Exception.class)
+@Transactional(value = "globalTransaction", rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
 public class GlobalTransactionProcessServiceImpl implements GlobalTransactionProcessService {
 
     @Override
