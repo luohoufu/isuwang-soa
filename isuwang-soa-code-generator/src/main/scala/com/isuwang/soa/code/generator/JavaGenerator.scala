@@ -157,7 +157,7 @@ class JavaGenerator extends CodeGenerator {
             * {method.doc}
             **/
             public {toDataTypeTemplate(method.getResponse.getFields().get(0).getDataType)} {method.name}({toFieldArrayBuffer(method.getRequest.getFields).map{ (field: Field) =>{
-            <div>{toDataTypeTemplate(field.getDataType())} {field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}}}) throws TException<block>
+            <div>{toDataTypeTemplate(field.getDataType())} {field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}}}) throws SoaException<block>
             initContext("{method.name}");
 
             try <block>
@@ -188,7 +188,11 @@ class JavaGenerator extends CodeGenerator {
                 }
                 }
                }
-            </block> finally <block>
+            </block>catch (SoaException e)<block>
+                throw e;
+            </block> catch (TException e)<block>
+                throw new SoaException(e);
+            </block>finally <block>
               destoryContext();
             </block>
             </block>
@@ -200,12 +204,16 @@ class JavaGenerator extends CodeGenerator {
         /**
         * getServiceMetadata
         **/
-        public String getServiceMetadata() throws TException <block>
+        public String getServiceMetadata() throws SoaException <block>
           initContext("getServiceMetadata");
           try <block>
             getServiceMetadata_args getServiceMetadata_args = new getServiceMetadata_args();
             getServiceMetadata_result response = sendBase(getServiceMetadata_args, new getServiceMetadata_result(), new GetServiceMetadata_argsSerializer(), new GetServiceMetadata_resultSerializer());
             return response.getSuccess();
+          </block>catch (SoaException e)<block>
+            throw e;
+          </block> catch (TException e)<block>
+            throw new SoaException(e);
           </block> finally <block>
             destoryContext();
           </block>

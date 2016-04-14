@@ -34,10 +34,14 @@
                         <dataType>
                             <kind>VOID</kind>
                         </dataType>
-                        <doc></doc>
+                        <doc>
+
+ 上送QPS信息
+</doc>
                     </field>
                 </fields>
             </response>
+            <isSoaTransactionProcess>false</isSoaTransactionProcess>
         </method>
         <method name="uploadPlatformProcessData">
             <doc>
@@ -64,10 +68,14 @@
                         <dataType>
                             <kind>VOID</kind>
                         </dataType>
-                        <doc></doc>
+                        <doc>
+
+ 上送平台处理数据
+</doc>
                     </field>
                 </fields>
             </response>
+            <isSoaTransactionProcess>false</isSoaTransactionProcess>
         </method>
         <method name="uploadDataSourceStat">
             <doc>
@@ -94,10 +102,14 @@
                         <dataType>
                             <kind>VOID</kind>
                         </dataType>
-                        <doc></doc>
+                        <doc>
+
+ 上送DataSource信息
+</doc>
                     </field>
                 </fields>
             </response>
+            <isSoaTransactionProcess>false</isSoaTransactionProcess>
         </method>
     </methods>
     <structs>

@@ -1,5 +1,6 @@
 package com.isuwang.soa.remoting.fake.metadata;
 
+import com.isuwang.soa.core.SoaException;
 import com.isuwang.soa.remoting.BaseServiceClient;
 import org.apache.thrift.TException;
 
@@ -15,13 +16,17 @@ public class MetadataClient extends BaseServiceClient {
     /**
      * getServiceMetadata
      **/
-    public String getServiceMetadata() throws TException {
+    public String getServiceMetadata() throws SoaException {
 
         initContext("getServiceMetadata");
         try {
             getServiceMetadata_args getServiceMetadata_args = new getServiceMetadata_args();
             getServiceMetadata_result response = sendBase(getServiceMetadata_args, new getServiceMetadata_result(), new GetServiceMetadata_argsSerializer(), new GetServiceMetadata_resultSerializer());
             return response.getSuccess();
+        } catch (SoaException e) {
+            throw e;
+        } catch (TException e) {
+            throw new SoaException(e);
         } finally {
             destoryContext();
         }
