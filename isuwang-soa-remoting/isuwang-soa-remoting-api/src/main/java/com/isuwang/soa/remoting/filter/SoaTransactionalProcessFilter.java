@@ -5,6 +5,7 @@ import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
+import com.isuwang.soa.transaction.api.GlobalTransactionCallback;
 import com.isuwang.soa.transaction.api.GlobalTransactionCallbackWithoutResult;
 import com.isuwang.soa.transaction.api.GlobalTransactionProcessTemplate;
 import org.apache.thrift.TException;
@@ -21,11 +22,9 @@ public class SoaTransactionalProcessFilter implements Filter {
         if (SoaSystemEnvProperties.SOA_TRANSACTIONAL_ENABLE && TransactionContext.hasCurrentInstance() && context.isSoaTransactionProcess()) {// in container and is a transaction process
             Object req = chain.getAttribute(StubFilterChain.ATTR_KEY_REQUEST);
 
-            new GlobalTransactionProcessTemplate<>(req).execute(new GlobalTransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult() throws TException {
-                    chain.doFilter();
-                }
+            new GlobalTransactionProcessTemplate<>(req).execute(() -> {
+                chain.doFilter();
+                return chain.getAttribute(StubFilterChain.ATTR_KEY_RESPONSE);
             });
         } else {
             chain.doFilter();
