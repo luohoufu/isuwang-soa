@@ -5,11 +5,11 @@ import java.util.Date
 
 import com.isuwang.scala.dbc.Action
 import com.isuwang.scala.dbc.Assert._
-import com.isuwang.soa.core.{SoaException, TransactionContext}
+import com.isuwang.soa.core.SoaException
 import com.isuwang.soa.transaction.TransactionDB._
 import com.isuwang.soa.transaction.TransactionSQL
 import com.isuwang.soa.transaction.api.domain.{TGlobalTransactionProcessExpectedStatus, TGlobalTransactionProcessStatus}
-import com.isuwang.soa.transaction.utils.{DateUtils, ErrorCode}
+import com.isuwang.soa.transaction.utils.ErrorCode
 import org.slf4j.{Logger, LoggerFactory}
 import wangzx.scala_commons.sql._
 
@@ -29,7 +29,7 @@ class GlobalTransactionProcessUpdateAction(processId: Int, responseJson: String,
 
     val processOpt = TransactionSQL.getTransactionProcessForUpdate(processId)
 
-    val now: Date = DateUtils.resetMillisecond(new Date)
+    val now: Date = new Date
     val updatedAt = new Timestamp(now.getTime)
 
     if (!processOpt.isDefined)
@@ -76,7 +76,7 @@ class GlobalTransactionProcessExpectedStatusUpdateAction(processId: Int, status:
 
   override def action: Unit = {
 
-    val now: Date = DateUtils.resetMillisecond(new Date)
+    val now: Date = new Date
     val updated_at = new Timestamp(now.getTime)
 
     val processOpt = TransactionSQL.getTransactionProcessForUpdate(processId)
@@ -125,7 +125,7 @@ class GlobalTransactionProcessUpdateAfterRollbackFail(processId: Int) extends Ac
 
     val processOpt = TransactionSQL.getTransactionProcessForUpdate(processId)
 
-    val now: Date = DateUtils.resetMillisecond(new Date)
+    val now: Date = new Date
     val updated_at = new Timestamp(now.getTime)
 
     if (!processOpt.isDefined)

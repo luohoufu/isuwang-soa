@@ -5,12 +5,12 @@ import java.util.Date
 
 import com.isuwang.scala.dbc.Action
 import com.isuwang.scala.dbc.Assert._
-import com.isuwang.soa.core.{SoaException, TransactionContext}
+import com.isuwang.soa.core.SoaException
 import com.isuwang.soa.transaction.TransactionDB._
 import com.isuwang.soa.transaction.TransactionSQL
 import com.isuwang.soa.transaction.api.domain.TGlobalTransactionsStatus
-import com.isuwang.soa.transaction.utils.{DateUtils, ErrorCode}
-import org.slf4j.{LoggerFactory, Logger}
+import com.isuwang.soa.transaction.utils.ErrorCode
+import org.slf4j.{Logger, LoggerFactory}
 import wangzx.scala_commons.sql._
 
 
@@ -35,7 +35,7 @@ class GlobalTransactionUpdateAction(transactionId: Int, currSequence: Int, statu
 
     val transactionOpt = TransactionSQL.getTransactionForUpdate(transactionId)
 
-    val now: Date = DateUtils.resetMillisecond(new Date)
+    val now: Date = new Date
     val updatedAt = new Timestamp(now.getTime)
 
     if (!transactionOpt.isDefined)
