@@ -137,7 +137,10 @@ public class GlobalTransactionManager {
 
                 }
 
-                if (i == transactionProcessList.size()) {
+                if (i == 0) {
+                    LOGGER.info("全局事务编号:{} 跳过", globalTransaction.getId());
+                    continue;
+                } else if (i == transactionProcessList.size()) {
                     //已回滚
                     new GlobalTransactionUpdateAction(globalTransaction.getId(), i > 0 ? transactionProcessList.get(i - 1).getTransactionSequence() : 0, TGlobalTransactionsStatus.HasRollback).execute();
 

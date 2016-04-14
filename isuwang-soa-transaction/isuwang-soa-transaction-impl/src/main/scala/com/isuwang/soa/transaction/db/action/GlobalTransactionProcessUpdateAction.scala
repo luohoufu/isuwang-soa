@@ -137,7 +137,7 @@ class GlobalTransactionProcessUpdateAfterRollbackFail(processId: Int) extends Ac
       LOGGER.info("更新事务过程({})前,重试次数({}),下次重试时间({})", process.id.toString, process.redoTimes.toString, new Date(process.nextRedoTime.getTime).toString)
 
       process.redoTimes += 1
-      process.nextRedoTime = new Timestamp(process.nextRedoTime.getTime + (30 * 1000))
+      process.nextRedoTime = new Timestamp(new Date().getTime + (30 * 1000))
 
       esql(
         sql"""
