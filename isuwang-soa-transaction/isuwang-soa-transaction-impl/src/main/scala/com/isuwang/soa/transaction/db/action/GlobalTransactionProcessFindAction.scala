@@ -4,7 +4,7 @@ import com.isuwang.scala.dbc.Action
 import com.isuwang.scala.dbc.Assert._
 import com.isuwang.scala.dbc.Implicit._
 import com.isuwang.soa.transaction.TransactionDB._
-import com.isuwang.soa.transaction.api.domain.TGlobalTransactionProcess
+import com.isuwang.soa.transaction.api.domain.{TGlobalTransactionProcess, TGlobalTransactionProcessStatus}
 import com.isuwang.soa.transaction.db.domain.GlobalTransactionProcess
 import com.isuwang.soa.transaction.utils.ErrorCode
 import wangzx.scala_commons.sql._
@@ -25,13 +25,12 @@ class GlobalTransactionProcessFindAction(transactionId: Int) extends Action[java
   }
 
   override def action: java.util.List[TGlobalTransactionProcess] = {
-    //TODO status use TGlobalTransactionProcessStatus
 
     val selectSql =
       sql"""
          SELECT *
          FROM global_transaction_process
-         WHERE transaction_id = ${transactionId} and (status = 2 OR status = 4) and next_redo_time < now()
+         WHERE transaction_id = ${transactionId} and (status = ${TGlobalTransactionProcessStatus.Success.getValue()} OR status = ${TGlobalTransactionProcessStatus.Unknown.getValue()}) and next_redo_time < now()
          ORDER BY transaction_sequence DESC
        """
     rows[GlobalTransactionProcess](selectSql).toThrifts[TGlobalTransactionProcess]

@@ -1,10 +1,13 @@
 package com.isuwang.soa.transaction.db.action
 
 import com.isuwang.scala.dbc.Action
+import com.isuwang.scala.dbc.Assert._
 import com.isuwang.scala.dbc.Implicit._
 import com.isuwang.soa.transaction.TransactionDB._
+import com.isuwang.soa.transaction.TransactionSQL
 import com.isuwang.soa.transaction.api.domain.{TGlobalTransaction, TGlobalTransactionsStatus}
 import com.isuwang.soa.transaction.db.domain.GlobalTransaction
+import com.isuwang.soa.transaction.utils.ErrorCode
 import wangzx.scala_commons.sql._
 
 import scala.collection.JavaConversions._
@@ -27,6 +30,30 @@ class GlobalTransactionsFindAction() extends Action[java.util.List[TGlobalTransa
          WHERE status = ${TGlobalTransactionsStatus.Fail.getValue()} or status = ${TGlobalTransactionsStatus.PartiallyRollback.getValue()}
        """
     rows[GlobalTransaction](selectSql).toThrifts[TGlobalTransaction]
+  }
+
+  override def postCheck: Unit = {}
+
+  override def preCheck: Unit = {}
+}
+
+/**
+  * 根据id查询全局事务记录
+  */
+class GlobalTransactionFindByIdAction(transactionId: Int) extends Action[TGlobalTransaction] {
+
+  override def inputCheck: Unit = {
+    assert(transactionId > 0, ErrorCode.INPUTERROR.getCode, "全局事务id错误")
+  }
+
+  override def action: TGlobalTransaction = {
+
+    val transactionOpt = TransactionSQL.getTransactionForUpdate(transactionId)
+
+    if (transactionOpt.isDefined)
+      transactionOpt.get.toThrift[TGlobalTransaction]
+    else
+      null
   }
 
   override def postCheck: Unit = {}
