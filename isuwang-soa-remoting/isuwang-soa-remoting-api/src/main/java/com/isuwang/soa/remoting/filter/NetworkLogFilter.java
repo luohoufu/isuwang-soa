@@ -29,8 +29,23 @@ public class NetworkLogFilter implements Filter {
             Object response = chain.getAttribute(StubFilterChain.ATTR_KEY_RESPONSE);
 
             if (response != null)
-                LOGGER.info("{} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), response.toString());
+                LOGGER.info("{} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), soaHeader.toString(), formatToString(response.toString()));
         }
+    }
+
+    private static String formatToString(String msg) {
+        if (null == msg)
+            return msg;
+
+        msg = msg.indexOf("\r\n") != -1 ? msg.replaceAll("\r\n", "") : msg;
+
+        int len = msg.length();
+        int max_len = 128;
+
+        if (max_len < len)
+            msg = msg.substring(0, 128) + "...(" + len + ")";
+
+        return msg;
     }
 
 }

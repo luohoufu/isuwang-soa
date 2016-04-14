@@ -88,6 +88,8 @@ public class SoaBaseProcessor<I> implements TProcessor {
         if (msg == null)
             return msg;
 
+        msg = msg.indexOf("\r\n") != -1 ? msg.replaceAll("\r\n", "") : msg;
+
         int len = msg.length();
         int max_len = 128;
 
