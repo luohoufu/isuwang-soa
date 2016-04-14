@@ -40,7 +40,7 @@ public class TestController {
      */
     private int port = 9090;
 
-    private JSONPost jsonPost = new JSONPost(host, port);
+    private JSONPost jsonPost = new JSONPost(host, port, true);
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
