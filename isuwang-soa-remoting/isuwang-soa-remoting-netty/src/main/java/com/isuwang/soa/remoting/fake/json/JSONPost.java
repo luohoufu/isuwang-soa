@@ -34,9 +34,12 @@ public class JSONPost {
 
     private Integer port = 9090;
 
-    public JSONPost(String host, Integer port) {
+    private boolean doNotThrowError = false;
+
+    public JSONPost(String host, Integer port, boolean doNotThrowError) {
         this.host = host;
         this.port = port;
+        this.doNotThrowError = doNotThrowError;
     }
 
     private static Map<String, SoaClient> connectionPool = new ConcurrentHashMap<>();
@@ -53,8 +56,7 @@ public class JSONPost {
      */
     public String callServiceMethod(String serviceName, String versionName, String methodName, String jsonParameter, com.isuwang.soa.core.metadata.Service service) throws Exception {
 
-        if (jsonParameter == null)
-            jsonParameter = "{}";
+        if (jsonParameter == null) jsonParameter = "{}";
 
         jsonSerializer.setService(service);
 
@@ -125,7 +127,7 @@ public class JSONPost {
      * @param invocationInfo
      * @return
      */
-    private String post(InvocationInfo invocationInfo) {
+    private String post(InvocationInfo invocationInfo) throws Exception {
 
         String jsonResponse = "{}";
 
@@ -191,23 +193,32 @@ public class JSONPost {
         } catch (SoaException e) {
 
             LOGGER.error(e.getMsg());
-            jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", e.getCode(), e.getMsg(), "{}");
+            if (doNotThrowError)
+                jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", e.getCode(), e.getMsg(), "{}");
+            else
+                throw e;
 
         } catch (TException e) {
 
             LOGGER.error(e.getMessage(), e);
-            jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", "9999", e.getMessage(), "{}");
+            if (doNotThrowError)
+                jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", "9999", e.getMessage(), "{}");
+            else
+                throw e;
 
         } catch (Exception e) {
 
             LOGGER.error(e.getMessage(), e);
-            jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", "9999", "系统繁忙，请稍后再试[9999]！", "{}");
+            if (doNotThrowError)
+                jsonResponse = String.format("{\"responseCode\":\"%s\", \"responseMsg\":\"%s\", \"success\":\"%s\"}", "9999", "系统繁忙，请稍后再试[9999]！", "{}");
+            else
+                throw e;
 
         } finally {
-            if (client != null) {
-                client.close();
-                client.shutdown();
-            }
+//            if (client != null) {
+//                client.close();
+//                client.shutdown();
+//            }
 
             if (outputSoaTransport != null)
                 outputSoaTransport.close();
@@ -215,7 +226,8 @@ public class JSONPost {
             if (inputSoaTransport != null)
                 inputSoaTransport.close();
 
-            InvocationContext.Factory.removeCurrentInstance();
+            if (doNotThrowError)
+                InvocationContext.Factory.removeCurrentInstance();
         }
 
         return jsonResponse;
