@@ -26,10 +26,14 @@ public class SoaIdleHandler extends ChannelHandlerAdapter {
 
             } else if (e.state() == IdleState.WRITER_IDLE) {
                 ctx.writeAndFlush(ctx.alloc().buffer(1).writeInt(0));
-                LOGGER.info("写超时，发送心跳包");
+
+                if(LOGGER.isDebugEnabled())
+                    LOGGER.debug("写超时，发送心跳包");
 
             } else if (e.state() == IdleState.ALL_IDLE) {
-                LOGGER.info("读写都超时，发送心跳包");
+
+                if(LOGGER.isDebugEnabled())
+                    LOGGER.debug("读写都超时，发送心跳包");
             }
         }
 
