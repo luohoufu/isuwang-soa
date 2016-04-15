@@ -56,7 +56,7 @@ public class JSONPost {
      */
     public String callServiceMethod(SoaHeader soaHeader, String jsonParameter, com.isuwang.soa.core.metadata.Service service) throws Exception {
 
-        if (jsonParameter == null) jsonParameter = "{}";
+        if (null == jsonParameter || "".equals(jsonParameter.trim())) jsonParameter = "{}";
 
         jsonSerializer.setService(service);
 

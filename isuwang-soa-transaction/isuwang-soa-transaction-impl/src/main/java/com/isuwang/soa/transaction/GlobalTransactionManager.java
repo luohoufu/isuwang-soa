@@ -102,16 +102,16 @@ public class GlobalTransactionManager {
                         }
 
                         //构造请求参数，调用回滚方法
-                        Map<String, Object> map = new HashMap<>();
-                        Map<String, Object> request = new HashMap<>();
-                        request.put("requestJson", process.getRequestJson());
-                        request.put("responseJson", process.getResponseJson());
-                        request.put("gtp", process);
-                        map.put("gtp_request", request);
+//                        Map<String, Object> map = new HashMap<>();
+//                        Map<String, Object> request = new HashMap<>();
+//                        request.put("requestJson", process.getRequestJson());
+//                        request.put("responseJson", process.getResponseJson());
+//                        request.put("gtp", process);
+//                        map.put("gtp_request", request);
 
-                        StringWriter requestWriter = new StringWriter();
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        objectMapper.writeValue(requestWriter, map);
+//                        StringWriter requestWriter = new StringWriter();
+//                        ObjectMapper objectMapper = new ObjectMapper();
+//                        objectMapper.writeValue(requestWriter, map);
 
                         SoaHeader header = new SoaHeader();
                         header.setServiceName(process.getServiceName());
@@ -121,7 +121,7 @@ public class GlobalTransactionManager {
                         header.setTransactionId(Optional.of(process.getTransactionId()));
                         header.setTransactionSequence(Optional.of(process.getTransactionSequence()));
 
-                        responseJson = jsonPost.callServiceMethod(header, requestWriter.toString(), service);
+                        responseJson = jsonPost.callServiceMethod(header, "", service);
 
                         //更新事务过程表为已回滚
                         new GlobalTransactionProcessUpdateAction(process.getId(), responseJson, TGlobalTransactionProcessStatus.HasRollback).execute();
