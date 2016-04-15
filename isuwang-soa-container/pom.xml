@@ -70,7 +70,7 @@
                                     <overWriteReleases>false</overWriteReleases>
                                     <overWriteSnapshots>false</overWriteSnapshots>
                                     <overWriteIfNewer>true</overWriteIfNewer>
-                                    <includeArtifactIds>isuwang-soa-core,slf4j-api,logback-classic,logback-core,janino,commons-compiler
+                                    <includeArtifactIds>isuwang-soa-core,slf4j-api,logback-classic,logback-core,janino,commons-compiler,isuwang-soa-transaction-api,gson
                                     </includeArtifactIds>
                                 </configuration>
                             </execution>
@@ -86,7 +86,7 @@
                                     <overWriteReleases>false</overWriteReleases>
                                     <overWriteSnapshots>false</overWriteSnapshots>
                                     <overWriteIfNewer>true</overWriteIfNewer>
-                                    <excludeArtifactIds>isuwang-soa-core,slf4j-api,logback-classic,logback-core,janino,commons-compiler
+                                    <excludeArtifactIds>isuwang-soa-core,slf4j-api,logback-classic,logback-core,janino,commons-compiler,isuwang-soa-transaction-api,gson
                                     </excludeArtifactIds>
                                 </configuration>
                             </execution>

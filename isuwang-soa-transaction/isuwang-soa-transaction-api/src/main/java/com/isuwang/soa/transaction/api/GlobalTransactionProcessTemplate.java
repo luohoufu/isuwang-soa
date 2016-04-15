@@ -11,6 +11,7 @@ import com.isuwang.soa.transaction.api.service.GlobalTransactionProcessService;
 import org.apache.thrift.TException;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Soa Transactional Process Template
@@ -40,19 +41,26 @@ public class GlobalTransactionProcessTemplate<REQ> {
 
             transactionContext.setCurrentTransactionSequence(transactionContext.getCurrentTransactionSequence() + 1);
 
+            invocationContext.getHeader().setTransactionId(Optional.of(transactionContext.getCurrentTransactionId()));
+            invocationContext.getHeader().setTransactionSequence(Optional.of(transactionContext.getCurrentTransactionSequence()));
+
             transactionProcess = new TGlobalTransactionProcess();
             transactionProcess.setCreatedAt(new Date());
             transactionProcess.setCreatedBy(0);
             transactionProcess.setExpectedStatus(TGlobalTransactionProcessExpectedStatus.Success);
+
+            transactionProcess.setServiceName(invocationContext.getHeader().getServiceName());
             transactionProcess.setMethodName(invocationContext.getHeader().getMethodName());
+            transactionProcess.setVersionName(invocationContext.getHeader().getVersionName());
+            transactionProcess.setRollbackMethodName(invocationContext.getHeader().getMethodName() + "_rollback");
+
             transactionProcess.setRequestJson(req == null ? null : new Gson().toJson(req));
             transactionProcess.setResponseJson("");
-            transactionProcess.setRollbackMethodName(invocationContext.getHeader().getMethodName() + "_rollback");
-            transactionProcess.setServiceName(invocationContext.getHeader().getServiceName());
+
             transactionProcess.setStatus(TGlobalTransactionProcessStatus.New);
             transactionProcess.setTransactionId(transactionContext.getCurrentTransactionId());
             transactionProcess.setTransactionSequence(transactionContext.getCurrentTransactionSequence());
-            transactionProcess.setVersionName(invocationContext.getHeader().getVersionName());
+
             transactionProcess.setRedoTimes(0);
             transactionProcess.setNextRedoTime(new Date(new Date().getTime() + 30 * 1000));
 

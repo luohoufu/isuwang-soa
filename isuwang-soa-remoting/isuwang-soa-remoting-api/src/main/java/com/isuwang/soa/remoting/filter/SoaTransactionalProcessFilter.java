@@ -19,7 +19,7 @@ public class SoaTransactionalProcessFilter implements Filter {
 
         final InvocationContext context = (InvocationContext) chain.getAttribute(StubFilterChain.ATTR_KEY_CONTEXT);
 
-        if (SoaSystemEnvProperties.SOA_TRANSACTIONAL_ENABLE && TransactionContext.hasCurrentInstance() && context.isSoaTransactionProcess()) {// in container and is a transaction process
+        if (SoaSystemEnvProperties.SOA_TRANSACTIONAL_ENABLE && TransactionContext.hasCurrentInstance() && TransactionContext.Factory.getCurrentInstance().getCurrentTransactionId() > 0 && context.isSoaTransactionProcess()) {// in container and is a transaction process
             Object req = chain.getAttribute(StubFilterChain.ATTR_KEY_REQUEST);
 
             new GlobalTransactionProcessTemplate<>(req).execute(() -> {
