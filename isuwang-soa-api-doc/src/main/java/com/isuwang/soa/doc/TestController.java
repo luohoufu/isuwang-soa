@@ -1,5 +1,6 @@
 package com.isuwang.soa.doc;
 
+import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.doc.cache.ServiceCache;
 import com.isuwang.soa.remoting.fake.json.JSONPost;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * 测试Controller
@@ -53,8 +55,14 @@ public class TestController {
 
         com.isuwang.soa.core.metadata.Service service = serviceCache.getService(serviceName, versionName);
 
+        SoaHeader header = new SoaHeader();
+        header.setServiceName(serviceName);
+        header.setVersionName(versionName);
+        header.setMethodName(methodName);
+        header.setCallerFrom(Optional.of("TestController"));
+
         try {
-            return jsonPost.callServiceMethod(serviceName, versionName, methodName, jsonParameter, service);
+            return jsonPost.callServiceMethod(header, jsonParameter, service);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

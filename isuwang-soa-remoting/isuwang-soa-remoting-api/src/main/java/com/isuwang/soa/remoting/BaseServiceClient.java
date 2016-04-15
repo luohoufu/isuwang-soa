@@ -35,7 +35,7 @@ public class BaseServiceClient {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(BaseServiceClient.class);
 
-    protected static final AtomicInteger seqid_ = new AtomicInteger(0);
+    public static final AtomicInteger seqid_ = new AtomicInteger(0);
 
     protected static SoaConnectionPool connectionPool;
 

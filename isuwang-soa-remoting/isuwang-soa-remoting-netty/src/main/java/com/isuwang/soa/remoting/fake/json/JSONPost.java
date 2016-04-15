@@ -1,7 +1,8 @@
-package com.isuwang.soa.remoting.fake.json;//package com.isuwang.soa.remoting.fake.json;
+package com.isuwang.soa.remoting.fake.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isuwang.soa.core.*;
+import com.isuwang.soa.remoting.BaseServiceClient;
 import com.isuwang.soa.remoting.netty.SoaClient;
 import com.isuwang.soa.remoting.netty.TSoaTransport;
 import io.netty.buffer.ByteBuf;
@@ -47,14 +48,13 @@ public class JSONPost {
     /**
      * 调用远程服务
      *
-     * @param serviceName
-     * @param versionName
-     * @param methodName
+     * @param soaHeader
      * @param jsonParameter
+     * @param service
      * @return
      * @throws Exception
      */
-    public String callServiceMethod(String serviceName, String versionName, String methodName, String jsonParameter, com.isuwang.soa.core.metadata.Service service) throws Exception {
+    public String callServiceMethod(SoaHeader soaHeader, String jsonParameter, com.isuwang.soa.core.metadata.Service service) throws Exception {
 
         if (jsonParameter == null) jsonParameter = "{}";
 
@@ -67,9 +67,9 @@ public class JSONPost {
         Map<String, Map<String, Object>> params = objectMapper.readValue(jsonParameter, Map.class);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("serviceName", serviceName);
-        map.put("version", versionName);
-        map.put("methodName", methodName);
+        map.put("serviceName", soaHeader.getServiceName());
+        map.put("version", soaHeader.getVersionName());
+        map.put("methodName", soaHeader.getMethodName());
         map.put("params", params);
 
         objectMapper.writeValue(out, map);
@@ -79,15 +79,16 @@ public class JSONPost {
         final DataInfo request = new DataInfo();
         request.setConsumesType("JSON");
         request.setConsumesValue(out.toString());
-        request.setServiceName(serviceName);
-        request.setVersion(versionName);
-        request.setMethodName(methodName);
+        request.setServiceName(soaHeader.getServiceName());
+        request.setVersion(soaHeader.getVersionName());
+        request.setMethodName(soaHeader.getMethodName());
         invocationInfo.setDataInfo(request);
 
         final long beginTime = System.currentTimeMillis();
 
         LOGGER.info("soa-request: {}", out.toString());
 
+        initContext(soaHeader);
         String jsonResponse = post(invocationInfo);
 
         LOGGER.info("soa-response: {} {}ms", jsonResponse, System.currentTimeMillis() - beginTime);
@@ -99,23 +100,18 @@ public class JSONPost {
     /**
      * 初始化上下文
      *
-     * @param data
+     * @param soaHeader
      */
-    private static void initContext(DataInfo data) {
+    private static void initContext(SoaHeader soaHeader) {
+
         InvocationContext context = InvocationContext.Factory.getCurrentInstance();
+        context.setSeqid(BaseServiceClient.seqid_.incrementAndGet());
 
-        context.setSeqid(1);
-
-        SoaHeader soaHeader = new SoaHeader();
         try {
             soaHeader.setCallerIp(Optional.of(InetAddress.getLocalHost().getHostAddress()));
         } catch (UnknownHostException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        soaHeader.setServiceName(data.getServiceName());
-        soaHeader.setMethodName(data.getMethodName());
-        soaHeader.setVersionName(data.getVersion());
-        soaHeader.setCallerFrom(Optional.of("web"));
 
         context.setHeader(soaHeader);
         context.setCalleeTimeout(45000);
@@ -145,7 +141,6 @@ public class JSONPost {
                 connectionPool.put(connectionKey, client);
             }
 
-            initContext(invocationInfo.getDataInfo());
             InvocationContext context = InvocationContext.Factory.getCurrentInstance();
             SoaHeader soaHeader = context.getHeader();
 

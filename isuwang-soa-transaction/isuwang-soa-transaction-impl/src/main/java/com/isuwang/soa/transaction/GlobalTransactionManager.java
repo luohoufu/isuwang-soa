@@ -1,6 +1,7 @@
 package com.isuwang.soa.transaction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.metadata.Service;
 import com.isuwang.soa.remoting.fake.json.JSONPost;
@@ -15,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.stream.Collectors.toList;
@@ -115,7 +113,15 @@ public class GlobalTransactionManager {
                         ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.writeValue(requestWriter, map);
 
-                        responseJson = jsonPost.callServiceMethod(process.getServiceName(), process.getVersionName(), process.getRollbackMethodName(), requestWriter.toString(), service);
+                        SoaHeader header = new SoaHeader();
+                        header.setServiceName(process.getServiceName());
+                        header.setVersionName(process.getVersionName());
+                        header.setMethodName(process.getRollbackMethodName());
+                        header.setCallerFrom(Optional.of("GlobalTransactionManager"));
+                        header.setTransactionId(Optional.of(process.getTransactionId()));
+                        header.setTransactionSequence(Optional.of(process.getTransactionSequence()));
+
+                        responseJson = jsonPost.callServiceMethod(header, requestWriter.toString(), service);
 
                         //更新事务过程表为已回滚
                         new GlobalTransactionProcessUpdateAction(process.getId(), responseJson, TGlobalTransactionProcessStatus.HasRollback).execute();
