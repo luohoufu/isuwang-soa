@@ -9,7 +9,7 @@
         http://soa-springtag.isuwang.com/schema/service/service.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!--参数配置-->
-    <context:property-placeholder location="classpath:config.properties" local-override="false"
+    <context:property-placeholder location="classpath:config_influxdb.properties" local-override="false"
                                   system-properties-mode="ENVIRONMENT"/>
 
     <bean id="monitorService" class="com.isuwang.soa.monitor.influxdb.service.MonitorServiceImpl" init-method="init">
