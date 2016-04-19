@@ -133,14 +133,14 @@ class ThriftCodeParser {
           dataType.setKind(DataType.KIND.LONG)
 
           //2016-2-18 In order to generate Date type
-          if (docString.toLowerCase.contains("@datatype(name=\"date\")"))
+          if (docString != null && docString.toLowerCase.contains("@datatype(name=\"date\")"))
             dataType.setKind(DataType.KIND.DATE)
 
         } else if (clazz == TDouble.getClass) {
           dataType.setKind(DataType.KIND.DOUBLE)
 
           //2016-4-08 In order to generate BigDecimal type
-          if (docString.toLowerCase.contains("@datatype(name=\"bigdecimal\")"))
+          if (docString != null && docString.toLowerCase.contains("@datatype(name=\"bigdecimal\")"))
             dataType.setKind(DataType.KIND.BIGDECIMAL)
 
         } else if (clazz == TByte.getClass) {
