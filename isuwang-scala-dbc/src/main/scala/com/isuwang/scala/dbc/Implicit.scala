@@ -124,6 +124,10 @@ object Implicit {
     def toBigDecimal = BigDecimal(value)
   }
 
+  implicit class JavaDoubleEx(value: java.lang.Double) {
+    def toBigDecimal = BigDecimal(value)
+  }
+
   implicit class BeanThriftEx[O <: AnyRef](value: O) {
 
     def toThrift[T <: AnyRef : ClassTag]: T = {
@@ -146,7 +150,7 @@ object Implicit {
     }
   }
 
-  implicit class BeanDbCEntityEx[O <: TBase[_, _]](value: O) {
+  implicit class BeanDbCEntityEx[O <: AnyRef](value: O) {
 
     def toDbcEntity[T <: AnyRef : ClassTag]: T = {
       val clazzT: Class[T] = implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
