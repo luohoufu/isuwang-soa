@@ -98,6 +98,11 @@ class ThriftCodeParser {
             line = line.substring("/**".length)
           }
 
+          if(line.endsWith("**/"))
+            line = line.substring(0, line.lastIndexOf("**/"))
+          if(line.endsWith("*/"))
+            line = line.substring(0, line.lastIndexOf("*/"))
+
           if (line.length > 0) {
             if (buffer.length > 0)
               buffer.append("\n")
