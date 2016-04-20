@@ -27,7 +27,7 @@ public class SoaSystemEnvProperties {
     private static final String KEY_SOA_TRANSACTIONAL_ENABLE = "soa.transactional.enable";
 
     public static final String SOA_SERVICE_IP = get(KEY_SOA_SERVICE_IP, "127.0.0.1");
-    public static final boolean SOA_SERVICE_HOST_ISCONFIG = get(KEY_SOA_ZOOKEEPER_HOST) != null;
+    public static final boolean SOA_SERVICE_IP_ISCONFIG = get(KEY_SOA_SERVICE_IP) != null;
     public static final Integer SOA_SERVICE_PORT = Integer.valueOf(get(KEY_SOA_SERVICE_PORT, "9090"));
     public static final String SOA_ZOOKEEPER_HOST = get(KEY_SOA_ZOOKEEPER_HOST, "127.0.0.1:2181");
     public static final boolean SOA_CONTAINER_USETHREADPOOL = Boolean.valueOf(get(KEY_SOA_CONTAINER_USETHREADPOOL, Boolean.TRUE.toString()));
