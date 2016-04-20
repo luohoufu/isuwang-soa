@@ -73,6 +73,9 @@ public class LoadBalanceFilter implements Filter {
         } else if (isLocal) {
             context.setCalleeIp(SoaSystemEnvProperties.SOA_SERVICE_IP);
             context.setCalleePort(SoaSystemEnvProperties.SOA_SERVICE_PORT);
+        } else if(SoaSystemEnvProperties.SOA_SERVICE_HOST_ISCONFIG){
+            context.setCalleeIp(SoaSystemEnvProperties.SOA_SERVICE_IP);
+            context.setCalleePort(SoaSystemEnvProperties.SOA_SERVICE_PORT);
         }
 
         chain.doFilter();
