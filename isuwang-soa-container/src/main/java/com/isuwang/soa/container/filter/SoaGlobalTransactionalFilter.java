@@ -11,12 +11,8 @@ import com.isuwang.soa.transaction.api.GlobalTransactionCallbackWithoutResult;
 import com.isuwang.soa.transaction.api.GlobalTransactionTemplate;
 import org.apache.thrift.TException;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Created by tangliu on 2016/4/11.
@@ -28,12 +24,24 @@ public class SoaGlobalTransactionalFilter implements Filter {
         final TransactionContext context = (TransactionContext) chain.getAttribute(ContainerFilterChain.ATTR_KEY_CONTEXT);
         final Object iface = chain.getAttribute(ContainerFilterChain.ATTR_KEY_IFACE);
 
-        List<Method> methods = new ArrayList<>(Arrays.asList(iface.getClass().getMethods()))
+        long count = new ArrayList<>(Arrays.asList(iface.getClass().getMethods()))
                 .stream()
-                .filter(m -> m.getName().equals(soaHeader.getMethodName()))
-                .collect(toList());
+                .filter(m -> m.getName().equals(soaHeader.getMethodName()) && m.isAnnotationPresent(SoaGlobalTransactional.class))
+                .count();
 
-        final boolean isSoaGlobalTransactional = !methods.isEmpty() ? methods.get(0).isAnnotationPresent(SoaGlobalTransactional.class) : false;
+        if (count <= 0) {
+            for (Class<?> aClass : iface.getClass().getInterfaces()) {
+                count = count + new ArrayList<>(Arrays.asList(aClass.getMethods()))
+                        .stream()
+                        .filter(m -> m.getName().equals(soaHeader.getMethodName()) && m.isAnnotationPresent(SoaGlobalTransactional.class))
+                        .count();
+
+                if (count > 0)
+                    break;
+            }
+        }
+
+        final boolean isSoaGlobalTransactional = count > 0 ? true : false;
         if (isSoaGlobalTransactional) {
             context.setSoaGlobalTransactional(true);
         }
