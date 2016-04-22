@@ -56,28 +56,9 @@ public class RunContainerPlugin extends SoaAbstractMojo {
                         continue;
                     }
 
-                    if (url.getFile().matches("^.*/isuwang-soa-container.*\\.jar$")) {
-                        iterator.remove();
+                    if (removeContainerAndBootstrap(iterator, url)) continue;
 
-                        continue;
-                    }
-
-                    if (url.getFile().matches("^.*/isuwang-soa-bootstrap.*\\.jar$")) {
-                        iterator.remove();
-
-                        continue;
-                    }
-
-                    String regex = project.getArtifact().getFile().getAbsolutePath();
-
-                    if (File.separator.equals("\\"))
-                        regex = regex.replace(File.separator, File.separator + File.separator);
-
-                    if (url.getFile().matches("^.*" + regex + ".*$")) {
-                        iterator.remove();
-
-                        continue;
-                    }
+                    if (removeServiceProjectArtifact(iterator, url)) continue;
                 }
 
                 List<URL> appUrls = new ArrayList<>(Arrays.asList(urls));
@@ -85,17 +66,7 @@ public class RunContainerPlugin extends SoaAbstractMojo {
                 while (iterator.hasNext()) {
                     URL url = iterator.next();
 
-                    if (url.getFile().matches("^.*/isuwang-soa-container.*\\.jar$")) {
-                        iterator.remove();
-
-                        continue;
-                    }
-
-                    if (url.getFile().matches("^.*/isuwang-soa-bootstrap.*\\.jar$")) {
-                        iterator.remove();
-
-                        continue;
-                    }
+                    if (removeContainerAndBootstrap(iterator, url)) continue;
 
                     //if (url.getFile().matches("^.*/isuwang-soa-transaction.*\\.jar$")) {
                     //    iterator.remove();
@@ -115,19 +86,10 @@ public class RunContainerPlugin extends SoaAbstractMojo {
                     //    continue;
                     //}
 
-                    String regex = project.getArtifact().getFile().getAbsolutePath();
-
-                    if (File.separator.equals("\\"))
-                        regex = regex.replace(File.separator, File.separator + File.separator);
-
-                    if (url.getFile().matches("^.*" + regex + ".*$")) {
-                        iterator.remove();
-
-                        continue;
-                    }
+                    if (removeServiceProjectArtifact(iterator, url)) continue;
                 }
 
-                ClassLoaderManager.shareClassLoader = new ShareClassLoader(platformUrls.toArray(new URL[shareUrls.size()]));
+                ClassLoaderManager.shareClassLoader = new ShareClassLoader(shareUrls.toArray(new URL[shareUrls.size()]));
                 ClassLoaderManager.platformClassLoader = new PlatformClassLoader(platformUrls.toArray(new URL[platformUrls.size()]));
                 ClassLoaderManager.appClassLoaders.add(new AppClassLoader(appUrls.toArray(new URL[appUrls.size()])));
 
@@ -140,6 +102,35 @@ public class RunContainerPlugin extends SoaAbstractMojo {
         bootstrapThread.start();
 
         joinNonDaemonThreads(threadGroup);
+    }
+
+    private boolean removeContainerAndBootstrap(Iterator<URL> iterator, URL url) {
+        if (url.getFile().matches("^.*/isuwang-soa-container.*\\.jar$")) {
+            iterator.remove();
+
+            return true;
+        }
+
+        if (url.getFile().matches("^.*/isuwang-soa-bootstrap.*\\.jar$")) {
+            iterator.remove();
+
+            return true;
+        }
+        return false;
+    }
+
+    private boolean removeServiceProjectArtifact(Iterator<URL> iterator, URL url) {
+        String regex = project.getArtifact().getFile().getAbsolutePath().replaceAll("\\\\", "/");
+
+        if (File.separator.equals("\\"))
+            regex = regex.replace(File.separator, File.separator + File.separator);
+
+        if (url.getFile().matches("^.*" + regex + ".*$")) {
+            iterator.remove();
+
+            return true;
+        }
+        return false;
     }
 
 }

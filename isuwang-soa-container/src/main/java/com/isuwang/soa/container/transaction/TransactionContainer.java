@@ -41,7 +41,9 @@ public class TransactionContainer implements Container {
 
                 while (resources.hasMoreElements()) {
                     URL nextElement = resources.nextElement();
-                    xmlPaths.add(nextElement.toString());
+
+                    if(nextElement.toString().matches(".*isuwang-soa-transaction.*"))
+                        xmlPaths.add(nextElement.toString());
                 }
 
                 context = new ClassPathXmlApplicationContext(xmlPaths.toArray(new String[0]));
