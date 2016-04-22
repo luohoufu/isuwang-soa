@@ -11,12 +11,8 @@ import com.isuwang.soa.transaction.api.GlobalTransactionCallbackWithoutResult;
 import com.isuwang.soa.transaction.api.GlobalTransactionTemplate;
 import org.apache.thrift.TException;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Created by tangliu on 2016/4/11.
