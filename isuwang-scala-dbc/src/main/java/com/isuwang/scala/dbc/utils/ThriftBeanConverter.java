@@ -103,6 +103,8 @@ public class ThriftBeanConverter {
 
             return t;
         } catch (Exception e) {
+            e.printStackTrace();
+
             throw new ThriftBeanConverterException(e);
         }
     }
@@ -175,6 +177,8 @@ public class ThriftBeanConverter {
 
             return dest;
         } catch (Exception e) {
+            e.printStackTrace();
+
             throw new ThriftBeanConverterException(e);
         }
     }
@@ -253,86 +257,110 @@ public class ThriftBeanConverter {
         }
     }
 
+    private static Object isOptionalGetValue(Object value) {
+        if (value instanceof Optional) {
+            return ((Optional) value).isPresent() ? ((Optional) value).get() : null;
+        } else return value;
+    }
+
     private static Object toValue(Class<?> srcPropertyType, Object value, Class<?> propertyType) {
-        if (value instanceof TEnum) {
+        final Object realValue = isOptionalGetValue(value);
+
+        if (realValue instanceof TEnum) {
             if (propertyType == String.class) {
-                value = ((Enum<?>) value).name();
+                value = ((Enum<?>) realValue).name();
+            } else if (propertyType.isEnum()) {
+                value = ((Enum<?>) realValue).name();
             } else {
-                value = ((TEnum) value).getValue();
+                value = ((TEnum) realValue).getValue();
             }
         }
 
         if (propertyType == BigDecimal.class) {
-            value = (value == null) ? new BigDecimal("0") : new BigDecimal(value.toString());
+            value = (realValue == null) ? new BigDecimal("0") : new BigDecimal(realValue.toString());
         } else if (propertyType == byte.class || propertyType == Byte.class) {
-            value = (value == null) ? Byte.valueOf("0") : Byte.valueOf(value.toString());
+            value = (realValue == null) ? Byte.valueOf("0") : Byte.valueOf(realValue.toString());
         } else if (propertyType == short.class || propertyType == Short.class) {
-            value = (value == null) ? Short.valueOf("0") : Short.valueOf(value.toString());
+            value = (realValue == null) ? Short.valueOf("0") : Short.valueOf(realValue.toString());
         } else if (propertyType == int.class || propertyType == Integer.class) {
             if (srcPropertyType == Date.class) {
-                value = (value == null) ? null : (int) ((Date) value).getTime();
+                value = (realValue == null) ? null : (int) ((Date) realValue).getTime();
             } else if (srcPropertyType == java.sql.Date.class) {
-                value = (value == null) ? null : ((java.sql.Date) value).getTime();
+                value = (realValue == null) ? null : ((java.sql.Date) realValue).getTime();
             } else if (srcPropertyType == java.sql.Timestamp.class) {
-                value = (value == null) ? null : ((java.sql.Timestamp) value).getTime();
+                value = (realValue == null) ? null : ((java.sql.Timestamp) realValue).getTime();
             } else if (srcPropertyType == boolean.class || srcPropertyType == Boolean.class) {
-                value = Boolean.parseBoolean(value.toString()) ? 1 : 0;
-            } else if (srcPropertyType == Optional.class) {
-                value = ((Optional) value).isPresent() ? ((Optional) value).get() : 0;
+                value = Boolean.parseBoolean(realValue == null ? "false" : realValue.toString()) ? 1 : 0;
             } else {
-                value = (value == null) ? Integer.valueOf("0") : Integer.valueOf(value.toString());
+                value = (realValue == null) ? Integer.valueOf("0") : Integer.valueOf(realValue.toString());
             }
         } else if (propertyType == long.class || propertyType == Long.class) {
             if (srcPropertyType == Date.class) {
-                value = (value == null) ? null : ((Date) value).getTime();
+                value = (realValue == null) ? null : ((Date) realValue).getTime();
             } else if (srcPropertyType == java.sql.Date.class) {
-                value = (value == null) ? null : ((java.sql.Date) value).getTime();
+                value = (realValue == null) ? null : ((java.sql.Date) realValue).getTime();
             } else if (srcPropertyType == java.sql.Timestamp.class) {
-                value = (value == null) ? null : ((java.sql.Timestamp) value).getTime();
+                value = (realValue == null) ? null : ((java.sql.Timestamp) realValue).getTime();
             } else {
-                value = (value == null) ? Long.valueOf("0") : Long.valueOf(value.toString());
+                value = (realValue == null) ? Long.valueOf("0") : Long.valueOf(realValue.toString());
             }
         } else if (propertyType == double.class || propertyType == Double.class) {
-            value = (value == null) ? Double.valueOf("0") : Double.valueOf(value.toString());
+            value = (realValue == null) ? Double.valueOf("0") : Double.valueOf(realValue.toString());
         } else if (propertyType == Date.class) {
-            if (value != null && (srcPropertyType == Long.class || srcPropertyType == Integer.class || srcPropertyType == long.class || srcPropertyType == int.class)) {
-                Long val = Long.valueOf(value.toString());
+            if (realValue != null) {
+                if (srcPropertyType == Long.class
+                        || srcPropertyType == Integer.class
+                        || srcPropertyType == long.class
+                        || srcPropertyType == int.class
+                        || realValue.getClass() == Long.class
+                        || realValue.getClass() == Integer.class
+                        || realValue.getClass() == long.class
+                        || realValue.getClass() == int.class) {
+                    Long val = Long.valueOf(realValue.toString());
 
-                if (val.longValue() != 0)
-                    value = new Date(val);
-                else
-                    value = null;
-            } else if (srcPropertyType == Optional.class) {
-                value = ((Optional) value).isPresent() ? ((Optional) value).get() : null;
+                    if (val.longValue() != 0)
+                        value = new Date(val);
+                    else
+                        value = null;
+                } else if (realValue instanceof Date) {
+                    value = realValue;
+                }
             }
         } else if (propertyType == String.class && srcPropertyType != String.class) {
-            if (srcPropertyType == Optional.class) {
-                value = ((Optional) value).isPresent() ? ((Optional) value).get() : null;
-            } else if (value != null) {
-                value = value.toString();
-            }
+            value = realValue == null ? null : realValue.toString();
         } else if (propertyType == boolean.class || propertyType == Boolean.class) {
-            if (value.toString().matches("[0|1]")) {
-                value = "1".equals(value.toString());
+            if (realValue != null && realValue.toString().matches("[0|1]")) {
+                value = "1".equals(realValue.toString());
             }
-        } else if (propertyType.isEnum() && value != null) {
+        } else if (propertyType.isEnum() && realValue != null) {
             Object[] enumConstants = propertyType.getEnumConstants();
             for (Object enumConstant : enumConstants) {
-                if (value instanceof String) {
-                    if (((Enum<?>) enumConstant).name().equals(value.toString())) {
+                if (realValue instanceof String) {
+                    if (((Enum<?>) enumConstant).name().equals(realValue.toString())) {
                         value = enumConstant;
 
                         break;
                     }
-                } else if (NumberUtils.isNumber(value.toString())) {
+                } else if(realValue instanceof TEnum || realValue.getClass().isEnum()) {
+                    Class<?> valueClass = realValue.getClass();
+                    if(valueClass == propertyType) {
+                        value = realValue;
+
+                        break;
+                    } else if (((Enum<?>) enumConstant).name().equals(realValue.toString())) {
+                        value = enumConstant;
+
+                        break;
+                    }
+                } else if (NumberUtils.isNumber(realValue.toString())) {
                     if (enumConstant instanceof TEnum) {
-                        if (((TEnum) enumConstant).getValue() == NumberUtils.toInt(value.toString())) {
+                        if (((TEnum) enumConstant).getValue() == NumberUtils.toInt(realValue.toString())) {
                             value = enumConstant;
 
                             break;
                         }
                     } else {
-                        if (((Enum<?>) enumConstant).ordinal() == NumberUtils.toInt(value.toString())) {
+                        if (((Enum<?>) enumConstant).ordinal() == NumberUtils.toInt(realValue.toString())) {
                             value = enumConstant;
 
                             break;
@@ -340,10 +368,15 @@ public class ThriftBeanConverter {
                     }
                 }
             }
-        } else if (propertyType == List.class) {
-            if (srcPropertyType == Optional.class)
-                value = ((Optional) value).isPresent() ? ((Optional) value).get() : null;
+        } else if (propertyType == Optional.class) {
+            value = (value == null) ? Optional.empty() : (value instanceof Optional ? value : Optional.of(value));
+        } else {
+            value = realValue;
         }
+
+        if (value instanceof Optional && propertyType != Optional.class)
+            value = realValue;
+
         return value;
     }
 
