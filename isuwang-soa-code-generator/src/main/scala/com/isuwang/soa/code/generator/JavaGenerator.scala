@@ -136,18 +136,14 @@ class JavaGenerator extends CodeGenerator {
         @Override
         protected boolean isSoaTransactionalProcess()<block>{
 
-          var isSoaTransactionProcess: Boolean  = false;
-
           toMethodArrayBuffer(service.methods).map{(method:Method)=>{
-            if(method.isSoaTransactionProcess)
-              isSoaTransactionProcess = true
-          }}
 
-          if(isSoaTransactionProcess)
-            <div>return true;</div>
-          else
-            <div>return false;</div>
+            if(method.doc.contains("@IsSoaTransactionProcess"))
+            <div>if(InvocationContext.Factory.getCurrentInstance().getHeader().getMethodName().equals("{method.name}"))
+                    return true;</div>
+          }}
           }
+          return false;
         </block>
 
         {
@@ -323,6 +319,7 @@ class JavaGenerator extends CodeGenerator {
 
         import com.isuwang.soa.core.Processor;
         import com.isuwang.soa.core.Service;
+        import com.isuwang.soa.core.SoaGlobalTransactional;
 
         /**
         * {service.doc}
@@ -337,6 +334,7 @@ class JavaGenerator extends CodeGenerator {
             /**
             * {method.doc}
             **/
+            {if(method.doc.contains("@SoaGlobalTransactional")) <div>@SoaGlobalTransactional</div>}
             {toDataTypeTemplate(method.getResponse.getFields().get(0).getDataType)} {method.name}({toFieldArrayBuffer(method.getRequest.getFields).map{ (field: Field) =>{
             <div> {toDataTypeTemplate(field.getDataType())} {field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}
           }}) throws com.isuwang.soa.core.SoaException;
