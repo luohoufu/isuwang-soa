@@ -57,8 +57,11 @@ public class GlobalTransactionManager {
 
                 LOGGER.info("全局事务编号:{} 事务过程数量:{} 事务过程编号集合:{}", globalTransaction.getId(), transactionProcessList.size(), transactionProcessList.stream().map(gt -> gt.getId()).collect(toList()));
 
-                if (transactionProcessList.isEmpty())
+                if (transactionProcessList.isEmpty()) {
+                    //如果事务过程为空，则说明该全局事务不需要再做处理，直接修改状态
+                    new GlobalTransactionUpdateAction(globalTransaction.getId(), 0, TGlobalTransactionsStatus.HasRollback).execute();
                     continue;
+                }
 
                 int i = 0;
                 for (; i < transactionProcessList.size(); i++) {
