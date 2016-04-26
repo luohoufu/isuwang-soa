@@ -248,6 +248,9 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     private void writeErrorMessage(ChannelHandlerContext ctx, ByteBuf outputBuf, TransactionContext context, SoaHeader soaHeader, TSoaTransport outputSoaTransport, TSoaServiceProtocol outputProtocol, SoaException e) {
         if (outputProtocol != null) {
             try {
+                if(outputBuf.writerIndex() > 0)
+                    outputBuf.writerIndex(4);
+
                 soaHeader.setRespCode(Optional.of(e.getCode()));
                 soaHeader.setRespMessage(Optional.of(e.getMsg()));
                 outputProtocol.writeMessageBegin(new TMessage(soaHeader.getServiceName() + ":" + soaHeader.getMethodName(), TMessageType.REPLY, context.getSeqid()));
