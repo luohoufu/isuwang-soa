@@ -249,7 +249,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         if (outputProtocol != null) {
             try {
                 if(outputBuf.writerIndex() > 0)
-                    outputBuf.writerIndex(4);
+                    outputBuf.writerIndex(Integer.BYTES);
 
                 soaHeader.setRespCode(Optional.of(e.getCode()));
                 soaHeader.setRespMessage(Optional.of(e.getMsg()));
