@@ -138,7 +138,7 @@ class JavaGenerator extends CodeGenerator {
 
           toMethodArrayBuffer(service.methods).map{(method:Method)=>{
 
-            if(method.doc.contains("@IsSoaTransactionProcess"))
+            if(method.doc != null && method.doc.contains("@IsSoaTransactionProcess"))
             <div>if(InvocationContext.Factory.getCurrentInstance().getHeader().getMethodName().equals("{method.name}"))
                     return true;</div>
           }}
@@ -334,7 +334,7 @@ class JavaGenerator extends CodeGenerator {
             /**
             * {method.doc}
             **/
-            {if(method.doc.contains("@SoaGlobalTransactional")) <div>@SoaGlobalTransactional</div>}
+            {if(method.doc != null && method.doc.contains("@SoaGlobalTransactional")) <div>@SoaGlobalTransactional</div>}
             {toDataTypeTemplate(method.getResponse.getFields().get(0).getDataType)} {method.name}({toFieldArrayBuffer(method.getRequest.getFields).map{ (field: Field) =>{
             <div> {toDataTypeTemplate(field.getDataType())} {field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}
           }}) throws com.isuwang.soa.core.SoaException;
