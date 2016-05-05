@@ -110,7 +110,7 @@ class GlobalTransactionProcessExpectedStatusUpdateAction(processId: Int, status:
 
 
 /**
-  * 回滚失败，更新重试次数和下次重试时间
+  * 更新重试次数和下次重试时间
   * @param processId
   */
 class GlobalTransactionProcessUpdateAfterRollbackFail(processId: Int) extends Action[Unit] {

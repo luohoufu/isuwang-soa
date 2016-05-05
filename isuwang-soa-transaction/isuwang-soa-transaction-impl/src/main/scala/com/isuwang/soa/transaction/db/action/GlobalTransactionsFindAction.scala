@@ -5,7 +5,7 @@ import com.isuwang.scala.dbc.Assert._
 import com.isuwang.scala.dbc.Implicit._
 import com.isuwang.soa.transaction.TransactionDB._
 import com.isuwang.soa.transaction.TransactionSQL
-import com.isuwang.soa.transaction.api.domain.{TGlobalTransaction, TGlobalTransactionsStatus}
+import com.isuwang.soa.transaction.api.domain.{TGlobalTransactionProcessStatus, TGlobalTransaction, TGlobalTransactionsStatus}
 import com.isuwang.soa.transaction.db.domain.GlobalTransaction
 import com.isuwang.soa.transaction.utils.ErrorCode
 import wangzx.scala_commons.sql._
@@ -36,6 +36,31 @@ class GlobalTransactionsFindAction() extends Action[java.util.List[TGlobalTransa
 
   override def preCheck: Unit = {}
 }
+
+
+/**
+  * 查找所有状态为成功，但子过程中有失败的全局事务记录
+  */
+class GlobalSucTransactionWithFailProcessFindAction() extends Action[java.util.List[TGlobalTransaction]] {
+
+  override def inputCheck: Unit = {}
+
+  override def action: java.util.List[TGlobalTransaction] = {
+    val selectSql =
+      sql"""
+         SELECT g.id, g.status, g.curr_sequence
+         FROM global_transactions g INNER JOIN global_transaction_process p ON g.id = p.transaction_id
+         WHERE g.status = ${TGlobalTransactionsStatus.Success.getValue()} AND (p.status = ${TGlobalTransactionProcessStatus.Fail.getValue()} OR p.status = ${TGlobalTransactionProcessStatus.Unknown.getValue()})
+         GROUP BY g.id
+       """
+    rows[GlobalTransaction](selectSql).toThrifts[TGlobalTransaction]
+  }
+
+  override def postCheck: Unit = {}
+
+  override def preCheck: Unit = {}
+}
+
 
 /**
   * 根据id查询全局事务记录

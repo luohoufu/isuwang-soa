@@ -174,7 +174,12 @@ public abstract class TBaseBeanSerializer implements TBeanSerializer<InvocationI
 
                         oprot.writeFieldBegin(new TField(field1.getName(), dataType2Byte(field1.getDataType()), (short) field1.getTag()));
 
-                        writeField(service, field1.getDataType(), oprot, entry.getValue());
+                        if (field1.isOptional()) {
+                            if (!entry.getValue().toString().equals("{}")) {
+                                writeField(service, field1.getDataType(), oprot, entry.getValue().getAsJsonObject().get("value"));
+                            }
+                        } else
+                            writeField(service, field1.getDataType(), oprot, entry.getValue());
 
                         oprot.writeFieldEnd();
                     }

@@ -1,6 +1,5 @@
 package com.isuwang.soa.transaction;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.metadata.Service;
@@ -15,8 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.stream.Collectors.toList;
@@ -43,9 +43,12 @@ public class GlobalTransactionManager {
         try {
             LOGGER.info("--- 定时事务管理器开始 ---");
 
+            /**
+             * 处理全局事务状态为失败或者部分回滚的记录，这些全局事务下的成功的子事务过程应该回滚
+             */
             List<TGlobalTransaction> globalTransactionList = new GlobalTransactionsFindAction().execute();
 
-            LOGGER.info("全局事务数量:{} 编号集合:{}", globalTransactionList.size(), globalTransactionList.stream().map(gt -> gt.getId()).collect(toList()));
+            LOGGER.info("需回滚全局事务数量:{} 编号集合:{}", globalTransactionList.size(), globalTransactionList.stream().map(gt -> gt.getId()).collect(toList()));
 
             for (TGlobalTransaction globalTransaction : globalTransactionList) {
 
@@ -55,7 +58,7 @@ public class GlobalTransactionManager {
 
                 List<TGlobalTransactionProcess> transactionProcessList = new GlobalTransactionProcessFindAction(globalTransaction.getId()).execute();
 
-                LOGGER.info("全局事务编号:{} 事务过程数量:{} 事务过程编号集合:{}", globalTransaction.getId(), transactionProcessList.size(), transactionProcessList.stream().map(gt -> gt.getId()).collect(toList()));
+                LOGGER.info("需回滚全局事务编号:{} 事务过程数量:{} 事务过程编号集合:{}", globalTransaction.getId(), transactionProcessList.size(), transactionProcessList.stream().map(gt -> gt.getId()).collect(toList()));
 
                 if (transactionProcessList.isEmpty()) {
                     //如果事务过程为空，则说明该全局事务不需要再做处理，直接修改状态
@@ -67,12 +70,12 @@ public class GlobalTransactionManager {
                 for (; i < transactionProcessList.size(); i++) {
                     TGlobalTransactionProcess process = transactionProcessList.get(i);
 
-                    LOGGER.info("全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:开始处理",
+                    LOGGER.info("需回滚全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:开始处理",
                             globalTransaction.getId(), process.getId(), process.getTransactionSequence(),
                             process.getStatus().name(), TGlobalTransactionProcessExpectedStatus.HasRollback.name());
 
                     if (process.getNextRedoTime().after(new Date())) {
-                        LOGGER.info("全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 未到下次处理时间，跳出", globalTransaction.getId(), process.getId(), process.getTransactionSequence());
+                        LOGGER.info("需回滚全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 未到下次处理时间，跳出", globalTransaction.getId(), process.getId(), process.getTransactionSequence());
                         break;
                     }
 
@@ -84,56 +87,16 @@ public class GlobalTransactionManager {
                     Service service = null;
                     //call roll back method
                     try {
-                        //获取服务的metadata
-                        String metadata = new MetadataClient(process.getServiceName(), process.getVersionName()).getServiceMetadata();
-                        if (metadata != null) {
-                            try (StringReader reader = new StringReader(metadata)) {
-                                service = JAXB.unmarshal(reader, Service.class);
-                            }
-                        }
-
-                        //获取服务的ip和端口
-                        JSONPost jsonPost = null;
-                        String callerInfo = LoadBalanceFilter.getCallerInfo(process.getServiceName(), process.getVersionName(), process.getRollbackMethodName());
-                        if (callerInfo != null) {
-
-                            String[] infos = callerInfo.split(":");
-                            jsonPost = new JSONPost(infos[0], Integer.valueOf(infos[1]), false);
-
-                        } else if (SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local")) {
-                            jsonPost = new JSONPost(SoaSystemEnvProperties.SOA_SERVICE_IP, SoaSystemEnvProperties.SOA_SERVICE_PORT, false);
-                        }
-
-                        //构造请求参数，调用回滚方法
-//                        Map<String, Object> map = new HashMap<>();
-//                        Map<String, Object> request = new HashMap<>();
-//                        request.put("requestJson", process.getRequestJson());
-//                        request.put("responseJson", process.getResponseJson());
-//                        request.put("gtp", process);
-//                        map.put("gtp_request", request);
-
-//                        StringWriter requestWriter = new StringWriter();
-//                        ObjectMapper objectMapper = new ObjectMapper();
-//                        objectMapper.writeValue(requestWriter, map);
-
-                        SoaHeader header = new SoaHeader();
-                        header.setServiceName(process.getServiceName());
-                        header.setVersionName(process.getVersionName());
-                        header.setMethodName(process.getRollbackMethodName());
-                        header.setCallerFrom(Optional.of("GlobalTransactionManager"));
-                        header.setTransactionId(Optional.of(process.getTransactionId()));
-                        header.setTransactionSequence(Optional.of(process.getTransactionSequence()));
-
-                        responseJson = jsonPost.callServiceMethod(header, "", service);
+                        responseJson = callServiceMethod(process, true);
 
                         //更新事务过程表为已回滚
                         new GlobalTransactionProcessUpdateAction(process.getId(), responseJson, TGlobalTransactionProcessStatus.HasRollback).execute();
 
-                        LOGGER.info("全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:已完成",
+                        LOGGER.info("需回滚全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:已完成",
                                 globalTransaction.getId(), process.getId(), process.getTransactionSequence(),
                                 process.getStatus().name(), TGlobalTransactionProcessExpectedStatus.HasRollback.name());
                     } catch (Exception e) {
-                        LOGGER.info("全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:异常({})",
+                        LOGGER.info("需回滚全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:异常({})",
                                 globalTransaction.getId(), process.getId(), process.getTransactionSequence(),
                                 process.getStatus().name(), TGlobalTransactionProcessExpectedStatus.HasRollback.name(), e.getMessage());
 
@@ -147,23 +110,144 @@ public class GlobalTransactionManager {
                 }
 
                 if (i == 0) {
-                    LOGGER.info("全局事务编号:{} 跳过", globalTransaction.getId());
+                    LOGGER.info("需回滚全局事务编号:{} 跳过", globalTransaction.getId());
                     continue;
                 } else if (i == transactionProcessList.size()) {
                     //已回滚
                     new GlobalTransactionUpdateAction(globalTransaction.getId(), i > 0 ? transactionProcessList.get(i - 1).getTransactionSequence() : 0, TGlobalTransactionsStatus.HasRollback).execute();
 
-                    LOGGER.info("全局事务编号:{} 已完成", globalTransaction.getId());
+                    LOGGER.info("需回滚全局事务编号:{} 已完成", globalTransaction.getId());
                 } else {
                     //部分回滚
                     new GlobalTransactionUpdateAction(globalTransaction.getId(), i >= 0 ? transactionProcessList.get(i).getTransactionSequence() : 0, TGlobalTransactionsStatus.PartiallyRollback).execute();
 
-                    LOGGER.info("全局事务编号:{} 部分完成", globalTransaction.getId());
+                    LOGGER.info("需回滚全局事务编号:{} 部分完成", globalTransaction.getId());
                 }
             }
+
+
+            /**
+             * 处理所有全局事务状态为成功，但对应子过程中存在失败状态的记录，这种情况下，应该对子过程顺序做向前处理
+             */
+            globalTransactionList = new GlobalSucTransactionWithFailProcessFindAction().execute();
+
+            LOGGER.info("需向前全局事务数量:{} 编号集合:{}", globalTransactionList.size(), globalTransactionList.stream().map(gt -> gt.getId()).collect(toList()));
+
+            for (TGlobalTransaction globalTransaction : globalTransactionList) {
+
+                globalTransaction = new GlobalTransactionFindByIdAction(globalTransaction.getId()).execute();
+                if (globalTransaction.getStatus() != TGlobalTransactionsStatus.Success)
+                    continue;
+
+                List<TGlobalTransactionProcess> transactionProcessList = new FailedTransactionProcessFindAction(globalTransaction.getId()).execute();
+
+                LOGGER.info("需向前全局事务编号:{} 事务过程数量:{} 事务过程编号集合:{}", globalTransaction.getId(), transactionProcessList.size(), transactionProcessList.stream().map(gt -> gt.getId()).collect(toList()));
+
+                if (transactionProcessList.isEmpty())
+                    continue;
+
+                int i = 0;
+                for (; i < transactionProcessList.size(); i++) {
+                    TGlobalTransactionProcess process = transactionProcessList.get(i);
+
+                    LOGGER.info("需向前全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:开始处理",
+                            globalTransaction.getId(), process.getId(), process.getTransactionSequence(),
+                            process.getStatus().name(), TGlobalTransactionProcessExpectedStatus.Success.name());
+
+                    if (process.getNextRedoTime().after(new Date())) {
+                        LOGGER.info("需向前全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 未到下次处理时间，跳出", globalTransaction.getId(), process.getId(), process.getTransactionSequence());
+                        break;
+                    }
+
+                    //更新process的期望状态为“成功”
+                    if (process.getExpectedStatus() != TGlobalTransactionProcessExpectedStatus.Success)
+                        new GlobalTransactionProcessExpectedStatusUpdateAction(process.getId(), TGlobalTransactionProcessExpectedStatus.Success).execute();
+
+                    String responseJson;
+                    Service service = null;
+                    //call method
+                    try {
+                        responseJson = callServiceMethod(process, false);
+
+                        //更新事务过程表为成功
+                        new GlobalTransactionProcessUpdateAction(process.getId(), responseJson, TGlobalTransactionProcessStatus.Success).execute();
+
+                        LOGGER.info("需向前全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:已完成",
+                                globalTransaction.getId(), process.getId(), process.getTransactionSequence(),
+                                process.getStatus().name(), TGlobalTransactionProcessExpectedStatus.Success.name());
+                    } catch (Exception e) {
+                        LOGGER.info("需向前全局事务编号:{} 事务过程编号:{} 事务过程序号:{} 事务过程原状态:{} 事务过程期望状态:{} 动作:异常({})",
+                                globalTransaction.getId(), process.getId(), process.getTransactionSequence(),
+                                process.getStatus().name(), TGlobalTransactionProcessExpectedStatus.Success.name(), e.getMessage());
+
+                        //更新事务过程表的重试次数和下次重试时间
+                        new GlobalTransactionProcessUpdateAfterRollbackFail(process.getId()).execute();
+
+                        LOGGER.error(e.getMessage(), e);
+                        break;
+                    }
+
+                }
+
+                if (i == 0) {
+                    LOGGER.info("需向前全局事务编号:{} 跳过", globalTransaction.getId());
+                    continue;
+                } else if (i == transactionProcessList.size()) {
+                    //已经全部向前
+//                    new GlobalTransactionUpdateAction(globalTransaction.getId(), i > 0 ? transactionProcessList.get(i - 1).getTransactionSequence() : 0, TGlobalTransactionsStatus.Success).execute();
+                    LOGGER.info("需向前全局事务编号:{} 已完成", globalTransaction.getId());
+                } else {
+                    //部分向前，不更新状态
+//                    new GlobalTransactionUpdateAction(globalTransaction.getId(), i >= 0 ? transactionProcessList.get(i).getTransactionSequence() : 0, TGlobalTransactionsStatus.Success).execute();
+                    LOGGER.info("需向前全局事务编号:{} 部分完成", globalTransaction.getId());
+                }
+            }
+
             LOGGER.info("--- 定时事务管理器结束 ---");
         } finally {
             working.set(false);
         }
+    }
+
+
+    private static String callServiceMethod(TGlobalTransactionProcess process, boolean rollbackOrForward) throws Exception {
+
+        String responseJson;
+        Service service = null;
+
+        //获取服务的metadata
+        String metadata = new MetadataClient(process.getServiceName(), process.getVersionName()).getServiceMetadata();
+        if (metadata != null) {
+            try (StringReader reader = new StringReader(metadata)) {
+                service = JAXB.unmarshal(reader, Service.class);
+            }
+        }
+
+        //获取服务的ip和端口
+        JSONPost jsonPost = null;
+        String callerInfo = LoadBalanceFilter.getCallerInfo(process.getServiceName(), process.getVersionName(), process.getRollbackMethodName());
+        if (callerInfo != null) {
+
+            String[] infos = callerInfo.split(":");
+            jsonPost = new JSONPost(infos[0], Integer.valueOf(infos[1]), false);
+
+        } else if (SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local")) {
+            jsonPost = new JSONPost(SoaSystemEnvProperties.SOA_SERVICE_IP, SoaSystemEnvProperties.SOA_SERVICE_PORT, false);
+        }
+
+        SoaHeader header = new SoaHeader();
+        header.setServiceName(process.getServiceName());
+        header.setVersionName(process.getVersionName());
+        header.setMethodName(process.getMethodName());
+        header.setCallerFrom(Optional.of("GlobalTransactionManager"));
+        header.setTransactionId(Optional.of(process.getTransactionId()));
+        header.setTransactionSequence(Optional.of(process.getTransactionSequence()));
+
+        if (rollbackOrForward)
+            responseJson = jsonPost.callServiceMethod(header, "", service);
+        else
+            responseJson = jsonPost.callServiceMethod(header, process.getRequestJson(), service);
+
+        return responseJson;
     }
 }
