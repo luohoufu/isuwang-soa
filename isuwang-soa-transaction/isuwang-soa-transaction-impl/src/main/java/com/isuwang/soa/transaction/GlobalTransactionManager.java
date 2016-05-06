@@ -84,7 +84,6 @@ public class GlobalTransactionManager {
                         new GlobalTransactionProcessExpectedStatusUpdateAction(process.getId(), TGlobalTransactionProcessExpectedStatus.HasRollback).execute();
 
                     String responseJson;
-                    Service service = null;
                     //call roll back method
                     try {
                         responseJson = callServiceMethod(process, true);
@@ -164,7 +163,6 @@ public class GlobalTransactionManager {
                         new GlobalTransactionProcessExpectedStatusUpdateAction(process.getId(), TGlobalTransactionProcessExpectedStatus.Success).execute();
 
                     String responseJson;
-                    Service service = null;
                     //call method
                     try {
                         responseJson = callServiceMethod(process, false);
