@@ -236,7 +236,7 @@ public class GlobalTransactionManager {
         SoaHeader header = new SoaHeader();
         header.setServiceName(process.getServiceName());
         header.setVersionName(process.getVersionName());
-        header.setMethodName(process.getMethodName());
+        header.setMethodName(rollbackOrForward ? process.getRollbackMethodName() : process.getMethodName());
         header.setCallerFrom(Optional.of("GlobalTransactionManager"));
         header.setTransactionId(Optional.of(process.getTransactionId()));
         header.setTransactionSequence(Optional.of(process.getTransactionSequence()));
