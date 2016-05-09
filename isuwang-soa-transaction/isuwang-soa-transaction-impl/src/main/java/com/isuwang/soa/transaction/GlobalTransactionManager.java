@@ -223,7 +223,13 @@ public class GlobalTransactionManager {
 
         //获取服务的ip和端口
         JSONPost jsonPost = null;
-        String callerInfo = LoadBalanceFilter.getCallerInfo(process.getServiceName(), process.getVersionName(), process.getRollbackMethodName());
+
+        String callerInfo;
+        if (rollbackOrForward)
+            callerInfo = LoadBalanceFilter.getCallerInfo(process.getServiceName(), process.getVersionName(), process.getRollbackMethodName());
+        else
+            callerInfo = LoadBalanceFilter.getCallerInfo(process.getServiceName(), process.getVersionName(), process.getMethodName());
+
         if (callerInfo != null) {
 
             String[] infos = callerInfo.split(":");
