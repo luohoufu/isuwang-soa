@@ -1,8 +1,10 @@
 package com.isuwang.soa.doc;
 
 import com.isuwang.soa.core.SoaHeader;
+import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.doc.cache.ServiceCache;
 import com.isuwang.soa.remoting.fake.json.JSONPost;
+import com.isuwang.soa.remoting.filter.LoadBalanceFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +38,7 @@ public class TestController {
     @Autowired
     private ServiceCache serviceCache;
 
-    private String host = "127.0.0.1";
-    /**
-     * 远程端口
-     */
-    private int port = 9090;
-
-    private JSONPost jsonPost = new JSONPost(host, port, true);
+    private JSONPost jsonPost;
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
@@ -61,6 +57,16 @@ public class TestController {
         header.setMethodName(methodName);
         header.setCallerFrom(Optional.of("TestController"));
 
+        String callerInfo = LoadBalanceFilter.getCallerInfo(serviceName, versionName, methodName);
+
+        if (callerInfo == null && SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local")) {
+            jsonPost = new JSONPost(SoaSystemEnvProperties.SOA_SERVICE_IP, SoaSystemEnvProperties.SOA_SERVICE_PORT, true);
+        } else if (callerInfo != null) {
+            String[] infos = callerInfo.split(":");
+            jsonPost = new JSONPost(infos[0], Integer.valueOf(infos[1]), true);
+        } else {
+            return "{\"message\":\"没找到可用服务\"}";
+        }
         try {
             return jsonPost.callServiceMethod(header, jsonParameter, service);
         } catch (Exception e) {
