@@ -4,7 +4,7 @@ package com.isuwang.soa.core;
  * @author craneding
  * @date 15/9/10
  */
-public enum SoaBaseCode {
+public enum SoaBaseCode implements SoaBaseCodeInterface {
 
     UnKnown("Err-Core-000", "系统出错了!"),
     NotNull("Err-Core-001", "字段不允许为空"),
@@ -20,10 +20,12 @@ public enum SoaBaseCode {
         this.msg = msg;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
 
+    @Override
     public String getMsg() {
         return msg;
     }

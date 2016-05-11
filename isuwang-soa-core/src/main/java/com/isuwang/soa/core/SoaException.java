@@ -22,11 +22,11 @@ public class SoaException extends TException {
         this.msg = err.getMessage();
     }
 
-    public SoaException(SoaBaseCode soaBaseCode) {
+    public SoaException(SoaBaseCodeInterface soaBaseCode) {
         this(soaBaseCode.getCode(), soaBaseCode.getMsg());
     }
 
-    public SoaException(SoaBaseCode soaBaseCode, String label) {
+    public SoaException(SoaBaseCodeInterface soaBaseCode, String label) {
         this(soaBaseCode.getCode(), label);
     }
 
