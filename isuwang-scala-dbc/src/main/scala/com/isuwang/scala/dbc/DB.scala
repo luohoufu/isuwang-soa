@@ -15,8 +15,8 @@ import wangzx.scala_commons.sql.{SQLWithArgs, _}
 import scala.reflect.ClassTag
 
 /**
- * Created by caiwb on 15-10-29.
- */
+  * Created by caiwb on 15-10-29.
+  */
 trait DB {
 
   def withDataSource(): DataSource
@@ -83,7 +83,7 @@ trait DB {
     val sql =
       if (list != null && list.size > 0) {
         "('" + (list.map(_.toString).toSeq.mkString("','")) + "')"
-      }else {
+      } else {
         "()"
       }
     SQLWithArgs(sql, Nil)
@@ -96,11 +96,11 @@ trait DB {
     //if (conHolder != null && (conHolder.hasConnection || conHolder.isSynchronizedWithTransaction)) {
 
     if (conHolder != null) {
-      val hasConnectionMethod:Method = conHolder.getClass.getDeclaredMethod("hasConnection")
+      val hasConnectionMethod: Method = conHolder.getClass.getDeclaredMethod("hasConnection")
       hasConnectionMethod.setAccessible(true)
-      val hasConnection:Boolean = hasConnectionMethod.invoke(conHolder).asInstanceOf[Boolean]
+      val hasConnection: Boolean = hasConnectionMethod.invoke(conHolder).asInstanceOf[Boolean]
 
-      if(hasConnection == true || conHolder.isSynchronizedWithTransaction)
+      if (hasConnection == true || conHolder.isSynchronizedWithTransaction)
         return DataSourceUtils.getConnection(withDataSource)
     }
 
@@ -140,7 +140,7 @@ trait DB {
 
   def update(bean: AnyRef, ignoreNullField: Boolean = true, ignoreEmptyField: Boolean = true, includeColumns: List[String] = Nil) = {
     val op = new BeanOperation(bean)(DbcJdbcValueMapperFactory).ignoreNullField(ignoreNullField).ignoreEmptyField(ignoreEmptyField)
-    if(includeColumns != Nil) op.excludeAllColumns().includeColumn(includeColumns: _*)
+    if (includeColumns != Nil) op.excludeAllColumns().includeColumn(includeColumns: _*)
     withConnection(op.update(_))
   }
 
@@ -157,6 +157,8 @@ trait DB {
 
     withConnection(_.executeUpdateWithGenerateKey(stmt)(processGenerateKeys))
   }
+
+  def queryInt(stmt: SQLWithArgs): Int = withConnection(_.queryInt(stmt))
 
   def checkSql(stmt: SQLWithArgs): Unit = {
 
