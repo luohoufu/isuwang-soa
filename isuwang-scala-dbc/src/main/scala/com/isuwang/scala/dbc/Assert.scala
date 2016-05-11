@@ -1,6 +1,6 @@
 package com.isuwang.scala.dbc
 
-import com.isuwang.soa.core.{SoaBaseCode, SoaException}
+import com.isuwang.soa.core.{SoaBaseCodeInterface, SoaBaseCode, SoaException}
 
 object Assert {
 
@@ -13,7 +13,7 @@ object Assert {
   def assert(assertion: scala.Boolean): scala.Unit =
     if (!assertion) throw new SoaException("assert", "assertException")
 
-  def assert(assertion: scala.Boolean, errorCodeEnums: SoaBaseCode): Unit = if (!assertion) throw new SoaException(errorCodeEnums.getCode, errorCodeEnums.getMsg)
+  def assert(assertion: scala.Boolean, errorCodeEnums: SoaBaseCodeInterface): Unit = if (!assertion) throw new SoaException(errorCodeEnums.getCode, errorCodeEnums.getMsg)
 
-  def assert(assertion: scala.Boolean, errorCodeEnums: SoaBaseCode, message: String): Unit = if (!assertion) throw new SoaException(errorCodeEnums.getCode, message)
+  def assert(assertion: scala.Boolean, errorCodeEnums: SoaBaseCodeInterface, message: String): Unit = if (!assertion) throw new SoaException(errorCodeEnums.getCode, message)
 }
