@@ -37,6 +37,7 @@ object Implicit {
         case n: Long => n == 0
         case s: String => s.isEmpty
         case map: java.util.Map[_, _] => map.isEmpty
+        case opt: java.util.Optional[_] => !opt.isPresent
         case _ => false
       }
 
