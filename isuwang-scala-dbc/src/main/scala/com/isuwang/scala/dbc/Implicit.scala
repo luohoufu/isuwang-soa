@@ -7,7 +7,7 @@ import java.{lang, math, util}
 
 import com.isuwang.scala.dbc.helper.BeanConverterHelper
 import com.isuwang.scala.dbc.utils.ThriftBeanConverter
-import ThriftBeanConverter.IBean
+import com.isuwang.scala.dbc.utils.ThriftBeanConverter.IBean
 import org.apache.thrift.TBase
 import wangzx.scala_commons.sql.Row.Cell
 
@@ -180,6 +180,35 @@ object Implicit {
     }
 
   }
+
+  /**
+    * 可用于计算列表中带条件的运算.
+    * 例如查找 从 1 * 2 * .. * N 中不大于100的 N
+    * @param seq
+    * @tparam A
+    */
+  implicit class SeqX[A](seq: List[A]) {
+    def foldLeftWhile[B](z: B)(op: (B, A) => (B, Boolean)): B = {
+      var aggr = z
+      var continue = true
+      var remains = seq
+
+      while (continue) {
+        remains match {
+          case h :: tail =>
+            val (a, c) = op(aggr, h)
+            aggr = a
+            continue = c
+            remains = tail
+          case Nil =>
+            continue = false
+        }
+      }
+
+      aggr
+    }
+  }
+
 
   class RowBean(cell: Cell[_]) extends IBean {
 
