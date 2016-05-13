@@ -251,7 +251,7 @@ class ThriftCodeParser {
             this.setOptional(optional0)
             this.setDoc(docSrting0)
             this.setDataType(dataType0)
-            this.setPrivacy(true)
+            this.setPrivacy(false)
           }
         }
 
