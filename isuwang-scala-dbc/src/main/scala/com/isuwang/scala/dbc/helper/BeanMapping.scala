@@ -1,6 +1,6 @@
 package com.isuwang.scala.dbc.helper
 
-import java.lang.reflect.Method
+import java.lang.reflect.{ParameterizedType, Method}
 
 import com.isuwang.scala.dbc.Implicit
 import Implicit.StringImplicit
@@ -91,6 +91,8 @@ trait BeanMapping[E] {
   trait FieldMapping[F] {
     val fieldName: String
     val fieldType: Class[F]
+    val optionalInnerType: Class[_]
+
     def get(bean: E): F
     def set(bean: E, value: F): Unit
   }
@@ -111,6 +113,17 @@ class UnionBeanMapping[E](val reflectClass: Class[E]) extends BeanMapping[E] {
   def newFieldMapping[T](name: String, getter: Method, setter: Method): FieldMapping[T] = new FieldMapping[T] {
     val fieldType = getter.getReturnType.asInstanceOf[Class[T]]
     val fieldName = name
+
+    val _javaField: java.lang.reflect.Field = { // TODO inherits
+      reflectClass.getDeclaredField(fieldName)
+    }
+
+    val optionalInnerType = fieldType match {
+      case BeanMapping.ClassOfJavaOption =>
+        _javaField.getGenericType.asInstanceOf[ParameterizedType].getActualTypeArguments().apply(0).asInstanceOf[Class[_]]
+      case _ =>
+        null
+    }
 
     def get(bean: E) = getter.invoke(bean).asInstanceOf[T]
     def set(bean: E, value: T) {

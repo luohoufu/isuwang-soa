@@ -23,6 +23,8 @@ object BeanConverterHelper {
   /**
     * 值复制
     *
+    * TODO
+    *
     * @param src
     * @param destClass
     * @param setDefaultValForNull 是否为null值属性设置默认值（null=>0,null=>""）
@@ -205,11 +207,20 @@ object BeanConverterHelper {
                 case ClassOfOption => {
                   Some(srcValue)
                 }
-                case ClassOfJavaOption => {
+                case ClassOfJavaOption => { // TODO
                   if (srcValue == null)
                     java.util.Optional.empty()
-                  else
-                    java.util.Optional.of(srcValue)
+                  else {
+                    // srcValue -> destField
+                    val destValue = (srcValue.getClass, destFieldMapping.optionalInnerType) match {
+                      case (x, y) if x == y => srcValue
+                      case (x, y) if x == classOf[scala.math.BigDecimal] && y == classOf[java.lang.Double] =>
+                        new java.lang.Double(srcValue.asInstanceOf[scala.math.BigDecimal].doubleValue())
+                      case _ =>
+                        throw new IllegalArgumentException("not supported")
+                    }
+                    java.util.Optional.of(destValue)
+                  }
                 }
                 case _ =>
                   f(srcValue, srcFieldMapping.fieldType, destFieldMapping.fieldType)

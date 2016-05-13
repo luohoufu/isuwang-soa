@@ -27,8 +27,8 @@ public class ZookeeperWatcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperWatcher.class);
 
     private final boolean isClient;
-    private final Map<String, List<ServiceInfo>> caches = new ConcurrentHashMap<>();
-    private final Map<String, Map<ConfigKey, Object>> config = new ConcurrentHashMap<>();
+    private final static Map<String, List<ServiceInfo>> caches = new ConcurrentHashMap<>();
+    private final static Map<String, Map<ConfigKey, Object>> config = new ConcurrentHashMap<>();
 
     private ZooKeeper zk;
     private CountDownLatch connectDownLatch;
@@ -395,8 +395,7 @@ public class ZookeeperWatcher {
                     init();
                 } else if (e.getState() == Watcher.Event.KeeperState.SyncConnected) {
                     LOGGER.info("{} Zookeeper Watcher 已连接 zookeeper Server", isClient ? "Client's" : "Server's");
-
-                    connectDownLatch.countDown();
+//                    connectDownLatch.countDown();
                 }
             });
         } catch (Exception e) {
