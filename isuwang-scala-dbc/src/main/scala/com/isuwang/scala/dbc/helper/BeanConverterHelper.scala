@@ -1,6 +1,6 @@
 package com.isuwang.scala.dbc.helper
 
-import BeanMapping._
+import com.isuwang.scala.dbc.helper.BeanMapping._
 import org.apache.commons.lang.math.NumberUtils
 import org.apache.thrift.TEnum
 import org.slf4j.{Logger, LoggerFactory}
@@ -207,7 +207,8 @@ object BeanConverterHelper {
                 case ClassOfOption => {
                   Some(srcValue)
                 }
-                case ClassOfJavaOption => { // TODO
+                case ClassOfJavaOption => {
+                  // TODO
                   if (srcValue == null)
                     java.util.Optional.empty()
                   else {
@@ -216,8 +217,10 @@ object BeanConverterHelper {
                       case (x, y) if x == y => srcValue
                       case (x, y) if x == classOf[scala.math.BigDecimal] && y == classOf[java.lang.Double] =>
                         new java.lang.Double(srcValue.asInstanceOf[scala.math.BigDecimal].doubleValue())
+                      case (x, y) if x == classOf[java.sql.Timestamp] && y == classOf[java.lang.Long] =>
+                        new java.lang.Long(srcValue.asInstanceOf[java.sql.Timestamp].getTime)
                       case _ =>
-                        throw new IllegalArgumentException("not supported")
+                        srcValue
                     }
                     java.util.Optional.of(destValue)
                   }
