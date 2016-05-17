@@ -7,8 +7,8 @@ import Implicit.StringImplicit
 import wangzx.scala_commons.sql.SoftMap
 
 /**
- * Created by caiwb on 15-8-8.
- */
+  * Created by caiwb on 15-8-8.
+  */
 object BeanMapping {
 
   val ClassOfByte = classOf[java.lang.Byte]
@@ -38,9 +38,11 @@ object BeanMapping {
   val G_BeanMappings = new SoftMap[Class[_], BeanMapping[_]]()
 
   /**
-   * for a scala anonymous class, automate choose the parent
-   */
-  val annomous_regexp = """anon\$\d+""".r
+    * for a scala anonymous class, automate choose the parent
+    */
+  val annomous_regexp =
+    """anon\$\d+""".r
+
   def real_class(clazz: Class[_]): Class[_] = clazz.getSimpleName match {
     case annomous_regexp() => real_class(clazz.getSuperclass)
     case _ => clazz
@@ -94,6 +96,7 @@ trait BeanMapping[E] {
     val optionalInnerType: Class[_]
 
     def get(bean: E): F
+
     def set(bean: E, value: F): Unit
   }
 
@@ -106,7 +109,7 @@ trait BeanMapping[E] {
 class UnionBeanMapping[E](val reflectClass: Class[E]) extends BeanMapping[E] {
 
   val fields = getMappingFields
-  val fieldsByName: Map[String, FieldMapping[_]] = fields.map { field=>
+  val fieldsByName: Map[String, FieldMapping[_]] = fields.map { field =>
     (field.fieldName, field)
   }.toMap
 
@@ -114,18 +117,23 @@ class UnionBeanMapping[E](val reflectClass: Class[E]) extends BeanMapping[E] {
     val fieldType = getter.getReturnType.asInstanceOf[Class[T]]
     val fieldName = name
 
-    val _javaField: java.lang.reflect.Field = { // TODO inherits
+    val _javaField: java.lang.reflect.Field = {
+      // TODO inherits
       reflectClass.getDeclaredField(fieldName)
     }
 
     val optionalInnerType = fieldType match {
       case BeanMapping.ClassOfJavaOption =>
-        _javaField.getGenericType.asInstanceOf[ParameterizedType].getActualTypeArguments().apply(0).asInstanceOf[Class[_]]
+        if (_javaField.getGenericType.asInstanceOf[ParameterizedType].getActualTypeArguments().apply(0).isInstanceOf[ParameterizedType])
+          _javaField.getGenericType.asInstanceOf[ParameterizedType].getActualTypeArguments().apply(0).asInstanceOf[ParameterizedType].getActualTypeArguments.apply(0).asInstanceOf[Class[_]]
+        else
+          _javaField.getGenericType.asInstanceOf[ParameterizedType].getActualTypeArguments().apply(0).asInstanceOf[Class[_]]
       case _ =>
         null
     }
 
     def get(bean: E) = getter.invoke(bean).asInstanceOf[T]
+
     def set(bean: E, value: T) {
       setter.invoke(bean, value.asInstanceOf[AnyRef])
     }
@@ -134,39 +142,39 @@ class UnionBeanMapping[E](val reflectClass: Class[E]) extends BeanMapping[E] {
   def getFieldByName(name: String) = fieldsByName.get(name)
 
   /**
-   * support 2 styles mapping:
-   * 1. scala style. eg: name() for getter and name_=(arg) for setter
-   * 2. JavaBean Style. eg: getName()/isName() setName()
-   */
+    * support 2 styles mapping:
+    * 1. scala style. eg: name() for getter and name_=(arg) for setter
+    * 2. JavaBean Style. eg: getName()/isName() setName()
+    */
   def getMappingFields: List[FieldMapping[_]] = {
 
     val getters: Map[String, Method] = reflectClass.getMethods.filter { method =>
       method.getParameterTypes.length == 0 && (BeanMapping.isSupportedDataType(method.getReturnType) || BeanMapping.ClassOfEnum.isAssignableFrom(method.getReturnType))
-    }.map { method=> (method.getName, method)}.toMap
+    }.map { method => (method.getName, method) }.toMap
 
     val setters: Map[String, Method] = reflectClass.getMethods.filter { method =>
       method.getParameterTypes.length == 1 && (BeanMapping.isSupportedDataType(method.getParameterTypes.apply(0)) || BeanMapping.ClassOfEnum.isAssignableFrom(method.getParameterTypes.apply(0))) &&
         method.getReturnType == Void.TYPE || method.getReturnType == reflectClass
-    }.map{ method=> (method.getName, method)}.toMap
+    }.map { method => (method.getName, method) }.toMap
 
     val mappings: Iterable[FieldMapping[_]] = getters.keys.flatMap { name =>
 
       // style: name(), name_=(arg)
-      val scala = for( getter <- getters.get(name);
+      val scala = for (getter <- getters.get(name);
                        setter <- setters.get(name + "_$eq");
-                       if(getter.getReturnType == setter.getParameterTypes.apply(0))
+                       if (getter.getReturnType == setter.getParameterTypes.apply(0))
       ) yield newFieldMapping(name, getter, setter)
 
       // style: isName() setName(arg)
-      val is = for( getter <- getters.get(name) if name.startsWith("is") && getter.getReturnType == classOf[Boolean];
+      val is = for (getter <- getters.get(name) if name.startsWith("is") && getter.getReturnType == classOf[Boolean];
                     setter <- setters.get("set" + name.substring(2));
-                    if(getter.getReturnType == setter.getParameterTypes.apply(0))
+                    if (getter.getReturnType == setter.getParameterTypes.apply(0))
       ) yield newFieldMapping(name.substring(2).toLowerCase(0), getter, setter)
 
       // style: getName() setName(arg)
-      val get = for( getter <- getters.get(name) if name.startsWith("get") ;
+      val get = for (getter <- getters.get(name) if name.startsWith("get");
                      setter <- setters.get("set" + name.substring(3));
-                     if(getter.getReturnType == setter.getParameterTypes.apply(0))
+                     if (getter.getReturnType == setter.getParameterTypes.apply(0))
       ) yield newFieldMapping(name.substring(3).toLowerCase(0), getter, setter)
 
       scala.orElse(is).orElse(get)
