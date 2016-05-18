@@ -189,7 +189,8 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
 
-            writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, new SoaException(SoaBaseCode.UnKnown));
+            String errMsg = e.getCause() != null ? e.getCause().toString() : (e.getMessage() != null ? e.getMessage().toString() : SoaBaseCode.UnKnown.getMsg());
+            writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, new SoaException(SoaBaseCode.UnKnown, errMsg));
 
             responseCode = SoaBaseCode.UnKnown.getCode();
             responseMsg = SoaBaseCode.UnKnown.getMsg();
@@ -248,7 +249,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     private void writeErrorMessage(ChannelHandlerContext ctx, ByteBuf outputBuf, TransactionContext context, SoaHeader soaHeader, TSoaTransport outputSoaTransport, TSoaServiceProtocol outputProtocol, SoaException e) {
         if (outputProtocol != null) {
             try {
-                if(outputBuf.writerIndex() > 0)
+                if (outputBuf.writerIndex() > 0)
                     outputBuf.writerIndex(Integer.BYTES);
 
                 soaHeader.setRespCode(Optional.of(e.getCode()));
