@@ -3,6 +3,7 @@ package com.isuwang.soa.remoting.fake.json;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.isuwang.soa.core.metadata.*;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.*;
@@ -176,7 +177,11 @@ public abstract class TBaseBeanSerializer implements TBeanSerializer<InvocationI
 
                         if (field1.isOptional()) {
                             if (!entry.getValue().toString().equals("{}")) {
-                                writeField(service, field1.getDataType(), oprot, entry.getValue().getAsJsonObject().get("value"));
+                                if (entry.getValue() instanceof JsonPrimitive)
+                                    writeField(service, field1.getDataType(), oprot, entry.getValue());
+                                else if (entry.getValue() instanceof JsonObject) {
+                                    writeField(service, field1.getDataType(), oprot, entry.getValue().getAsJsonObject().get("value"));
+                                }
                             }
                         } else
                             writeField(service, field1.getDataType(), oprot, entry.getValue());
