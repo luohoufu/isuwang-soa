@@ -39,7 +39,7 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <build>
-                <finalName>${artifactId}</finalName>
+                <finalName>${project.artifactId}</finalName>
             </build>
         </profile>
     </profiles>
