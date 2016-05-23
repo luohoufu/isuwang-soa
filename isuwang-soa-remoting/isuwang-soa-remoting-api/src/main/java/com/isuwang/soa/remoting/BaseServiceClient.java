@@ -105,7 +105,7 @@ public class BaseServiceClient {
 
         context.setSeqid(seqid_.incrementAndGet());
 
-        SoaHeader soaHeader = new SoaHeader();
+        SoaHeader soaHeader = context.getHeader() == null ? new SoaHeader() : context.getHeader();
 
         InvocationContext.Factory.ISoaHeaderProxy headerProxy = InvocationContext.Factory.getSoaHeaderProxy();
         if (headerProxy != null) {
