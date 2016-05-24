@@ -5,7 +5,7 @@
     <parent>
         <artifactId>isuwang-soa-transaction</artifactId>
         <groupId>com.isuwang</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -22,13 +22,13 @@
         <dependency>
             <groupId>com.isuwang</groupId>
             <artifactId>isuwang-soa-remoting-netty</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.isuwang</groupId>
             <artifactId>isuwang-soa-transaction-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>com.isuwang</groupId>
             <artifactId>isuwang-scala-dbc</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- spring -->

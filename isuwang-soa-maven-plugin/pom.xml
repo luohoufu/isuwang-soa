@@ -7,7 +7,7 @@
     <parent>
         <artifactId>isuwang-soa</artifactId>
         <groupId>com.isuwang</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <groupId>com.isuwang</groupId>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.isuwang</groupId>
             <artifactId>isuwang-soa-bootstrap</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
