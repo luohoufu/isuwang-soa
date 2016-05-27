@@ -71,12 +71,14 @@ public class SoaBaseProcessor<I> implements TProcessor {
                 chain.setAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME, System.currentTimeMillis() - startTime);
             }
 
-            // write
-            context.getHeader().setRespCode(Optional.of("0000"));
-            context.getHeader().setRespMessage(Optional.of("成功"));
-            out.writeMessageBegin(new TMessage(context.getHeader().getMethodName(), TMessageType.CALL, context.getSeqid()));
-            soaProcessFunction.getResSerializer().write(result, out);
-            out.writeMessageEnd();
+            if (!soaHeader.isAsyncCall()) {
+                // write
+                context.getHeader().setRespCode(Optional.of("0000"));
+                context.getHeader().setRespMessage(Optional.of("成功"));
+                out.writeMessageBegin(new TMessage(context.getHeader().getMethodName(), TMessageType.CALL, context.getSeqid()));
+                soaProcessFunction.getResSerializer().write(result, out);
+                out.writeMessageEnd();
+            }
         });
 
         filterChain.doFilter();

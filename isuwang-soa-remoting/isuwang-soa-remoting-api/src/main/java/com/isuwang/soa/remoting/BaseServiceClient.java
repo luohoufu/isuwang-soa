@@ -100,6 +100,20 @@ public class BaseServiceClient {
         this.versionName = versionName;
     }
 
+    /**
+     * 添加构造函数，设置是否异步请求
+     *
+     * @param methodName
+     * @param isAsyncCall
+     */
+    protected void initContext(String methodName, boolean isAsyncCall) {
+
+        initContext(methodName);
+
+        InvocationContext context = InvocationContext.Factory.getCurrentInstance();
+        context.getHeader().setAsyncCall(isAsyncCall);
+    }
+
     protected void initContext(String methodName) {
         InvocationContext context = InvocationContext.Factory.getCurrentInstance();
 

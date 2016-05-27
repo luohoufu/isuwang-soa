@@ -117,6 +117,13 @@ public class SoaHeaderSerializer implements TBeanSerializer<SoaHeader> {
                         TProtocolUtil.skip(iprot, schemeField.type);
                     }
                     break;
+                case 21:
+                    if (schemeField.type == TType.BOOL) {
+                        bean.setAsyncCall(iprot.readBool());
+                    } else {
+                        TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    break;
 
                 default:
                     TProtocolUtil.skip(iprot, schemeField.type);
@@ -201,6 +208,10 @@ public class SoaHeaderSerializer implements TBeanSerializer<SoaHeader> {
             oprot.writeI32(bean.getTransactionSequence().get());
             oprot.writeFieldEnd();
         }
+
+        oprot.writeFieldBegin(new TField("isAsyncCall", TType.BOOL, (short) 21));
+        oprot.writeBool(bean.isAsyncCall());
+        oprot.writeFieldEnd();
 
         oprot.writeFieldStop();
         oprot.writeStructEnd();

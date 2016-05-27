@@ -73,6 +73,12 @@ public class SoaHeader {
      */
     private Optional<Integer> transactionSequence = Optional.empty();
 
+
+    /**
+     * 是否是异步请求
+     */
+    private boolean isAsyncCall = false;
+
     public String toString() {
 
         StringBuilder sb = new StringBuilder("{");
@@ -198,5 +204,13 @@ public class SoaHeader {
 
     public void setTransactionSequence(Optional<Integer> transactionSequence) {
         this.transactionSequence = transactionSequence;
+    }
+
+    public boolean isAsyncCall() {
+        return isAsyncCall;
+    }
+
+    public void setAsyncCall(boolean asyncCall) {
+        isAsyncCall = asyncCall;
     }
 }
