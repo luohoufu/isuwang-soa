@@ -19,11 +19,11 @@
 
 package org.apache.thrift.protocol;
 
-import org.apache.thrift.TException;
-import org.apache.thrift.transport.TTransport;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+
+import org.apache.thrift.TException;
+import org.apache.thrift.transport.TTransport;
 
 /**
  * Binary protocol implementation for thrift.

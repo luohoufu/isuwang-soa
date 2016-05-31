@@ -19,9 +19,9 @@
 
 package org.apache.thrift;
 
-import org.apache.thrift.protocol.TProtocol;
-
 import java.io.Serializable;
+
+import org.apache.thrift.protocol.TProtocol;
 
 /**
  * Generic base interface for generated Thrift objects.

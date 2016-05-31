@@ -19,13 +19,13 @@
 
 package org.apache.thrift.protocol;
 
-import org.apache.thrift.TByteArrayOutputStream;
-import org.apache.thrift.TException;
-import org.apache.thrift.transport.TTransport;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.Stack;
+
+import org.apache.thrift.TByteArrayOutputStream;
+import org.apache.thrift.TException;
+import org.apache.thrift.transport.TTransport;
 
 /**
  * JSON protocol implementation for thrift.
