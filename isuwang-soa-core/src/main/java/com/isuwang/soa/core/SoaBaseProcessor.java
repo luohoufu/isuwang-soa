@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Soa基础处理器
@@ -62,28 +63,77 @@ public class SoaBaseProcessor<I> implements TProcessor {
             LOGGER.info("{} {} {} {} request header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), context.getSeqid(), soaHeader.toString(), formatToString(soaProcessFunction.getReqSerializer().toString(args)));
             long startTime = System.currentTimeMillis();
 
+
             Object result = null;
             try {
                 result = soaProcessFunction.getResult(iface, args);
-
                 LOGGER.info("{} {} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), context.getSeqid(), soaHeader.toString(), formatToString(soaProcessFunction.getResSerializer().toString(result)));
             } finally {
                 chain.setAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME, System.currentTimeMillis() - startTime);
             }
+            // write
+            context.getHeader().setRespCode(Optional.of("0000"));
+            context.getHeader().setRespMessage(Optional.of("成功"));
+            out.writeMessageBegin(new TMessage(context.getHeader().getMethodName(), TMessageType.CALL, context.getSeqid()));
+            soaProcessFunction.getResSerializer().write(result, out);
+            out.writeMessageEnd();
 
-            if (!soaHeader.isAsyncCall()) {
-                // write
-                context.getHeader().setRespCode(Optional.of("0000"));
-                context.getHeader().setRespMessage(Optional.of("成功"));
-                out.writeMessageBegin(new TMessage(context.getHeader().getMethodName(), TMessageType.CALL, context.getSeqid()));
-                soaProcessFunction.getResSerializer().write(result, out);
-                out.writeMessageEnd();
-            }
         });
 
         filterChain.doFilter();
 
         return true;
+    }
+
+
+    /**
+     * 异步调用过程
+     *
+     * @param in
+     * @param out
+     * @return
+     * @throws TException
+     */
+    public CompletableFuture<Object> processAsync(TProtocol in, TProtocol out) throws TException {
+
+        final CompletableFuture<Object> result = new CompletableFuture<>();
+        // threadlocal
+        TransactionContext context = TransactionContext.Factory.getCurrentInstance();
+        String methodName = context.getHeader().getMethodName();
+
+        final String logId = context.getHeader().getServiceName() + "/" + context.getHeader().getMethodName();
+
+        ContainerFilterChain filterChain = new ContainerFilterChain();
+        filterChain.setLastFilter(new DispatchFilter());
+
+        filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_LOGID, logId);
+        filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_CONTEXT, context);
+        filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_HEADER, context.getHeader());
+        filterChain.setAttribute(ContainerFilterChain.ATTR_KEY_IFACE, iface);
+        filterChain.setAttribute(DispatchFilter.ATTR_KEY_CONTAINER_DISPATCH_ACTION, (DispatchFilter.DispatchAction) chain -> {
+
+            @SuppressWarnings("unchecked")
+            SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>> soaProcessFunction = (SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>>) getProcessMapView().get(methodName);
+            Object args = soaProcessFunction.getEmptyArgsInstance();
+            soaProcessFunction.getReqSerializer().read(args, in);
+            in.readMessageEnd();
+
+            SoaHeader soaHeader = (SoaHeader) chain.getAttribute(ContainerFilterChain.ATTR_KEY_HEADER);
+            LOGGER.info("{} {} {} {} request header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), context.getSeqid(), soaHeader.toString(), formatToString(soaProcessFunction.getReqSerializer().toString(args)));
+            long startTime = System.currentTimeMillis();
+
+            try {
+                CompletableFuture<Object> future = (CompletableFuture) soaProcessFunction.getResultAsync(iface, args);
+                future.thenAccept(realResult -> AsyncAccept(context, soaProcessFunction, realResult, out, result));
+            } finally {
+                chain.setAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME, System.currentTimeMillis() - startTime);
+            }
+
+        });
+
+        filterChain.doFilter();
+
+        return result;
     }
 
     private static String formatToString(String msg) {
@@ -111,5 +161,37 @@ public class SoaBaseProcessor<I> implements TProcessor {
 
     public void setInterfaceClass(Class<I> interfaceClass) {
         this.interfaceClass = interfaceClass;
+    }
+
+
+    /**
+     * 异步处理，当返回结果被complete时调用
+     *
+     * @param context
+     * @param soaProcessFunction
+     * @param result
+     * @param out
+     * @param future
+     */
+    private void AsyncAccept(Context context, SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>> soaProcessFunction, Object result, TProtocol out, CompletableFuture future) {
+
+        try {
+            SoaHeader soaHeader = context.getHeader();
+            LOGGER.info("{} {} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), context.getSeqid(), soaHeader.toString(), formatToString(soaProcessFunction.getResSerializer().toString(result)));
+
+            context.getHeader().setRespCode(Optional.of("0000"));
+            context.getHeader().setRespMessage(Optional.of("成功"));
+            out.writeMessageBegin(new TMessage(context.getHeader().getMethodName(), TMessageType.CALL, context.getSeqid()));
+            soaProcessFunction.getResSerializer().write(result, out);
+            out.writeMessageEnd();
+
+            /**
+             * 通知外层handler处理结果
+             */
+            future.complete(result);
+        } catch (TException e) {
+            e.printStackTrace();
+        }
+
     }
 }

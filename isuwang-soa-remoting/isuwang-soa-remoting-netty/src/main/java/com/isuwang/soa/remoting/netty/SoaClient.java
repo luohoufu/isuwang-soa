@@ -17,7 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 
 /**
  * Created by tangliu on 2016/1/13.
@@ -40,6 +42,8 @@ public class SoaClient {
      * 根据请求的序列号（seqid），存储请求的结果，多个线程请求的时候才能返回正确的结果
      */
     private final Map<String, ByteBuf[]> caches = new ConcurrentHashMap<>();
+
+    private final Map<String, Future> futureCaches = new ConcurrentHashMap<>();
 
     public SoaClient(String host, int port) throws SoaException {
         this.host = host;
@@ -108,9 +112,18 @@ public class SoaClient {
         ByteBuf[] byteBufs = caches.get(String.valueOf(seqid));
 
         if (byteBufs == null) {
-            LOGGER.error("返回结果超时，siqid为：" + String.valueOf(seqid));
 
-            msg.release();
+            if (futureCaches.containsKey(String.valueOf(seqid))) {
+
+                CompletableFuture<ByteBuf> future = (CompletableFuture<ByteBuf>) futureCaches.get(String.valueOf(seqid));
+                future.complete(msg);
+
+                futureCaches.remove(String.valueOf(seqid));
+
+            } else {
+                LOGGER.error("返回结果超时，siqid为：" + String.valueOf(seqid));
+                msg.release();
+            }
         } else {
             synchronized (byteBufs) {
                 byteBufs[0] = msg;
@@ -157,6 +170,24 @@ public class SoaClient {
         } finally {
             caches.remove(String.valueOf(seqid));
         }
+    }
+
+    /**
+     * 发送异步请求
+     *
+     * @param seqid
+     * @param request
+     * @return
+     */
+    public void send(int seqid, ByteBuf request, Future<ByteBuf> future) throws Exception {
+
+        if (channel == null || !channel.isActive())
+            connect(host, port);
+
+        //means that this channel is not idle and would not managered by IdleConnectionManager
+        IdleConnectionManager.remove(channel);
+        futureCaches.put(String.valueOf(seqid), future);
+        channel.writeAndFlush(request);
     }
 
     /**

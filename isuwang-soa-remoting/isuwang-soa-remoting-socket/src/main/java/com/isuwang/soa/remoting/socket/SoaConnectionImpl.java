@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.net.Socket;
+import java.util.concurrent.Future;
 
 /**
  * SOA连接
@@ -69,6 +70,11 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
 
             throw new TException(e);
         }
+    }
+
+    @Override
+    public <REQ, RESP> Future<RESP> sendAsync(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer) throws TException {
+        return null;
     }
 
 }

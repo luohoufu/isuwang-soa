@@ -142,6 +142,21 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         return requestLength;
     }
 
+
+//    {
+//        CompletableFuture<Object> future = soaProcessor.processAsync(inputProtocol, outputProtocol);
+//        future.thenRun(() -> {
+//
+//            try {
+//                outputSoaTransport.flush();
+//                ctx.writeAndFlush(outputBuf);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+//    }
+
+
     protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, TransactionContext context, Long startTime, PlatformProcessData processData) {
 
         final long waitingTime = System.currentTimeMillis() - startTime;

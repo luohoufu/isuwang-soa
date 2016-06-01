@@ -28,6 +28,7 @@ public class ContainerFilterChain implements FilterChain {
     public static final String ATTR_KEY_I_PROCESSTIME = "iTime";
     public static final String ATTR_KEY_P_PROCESSTIME = "pTime";
     public static final String ATTR_KEY_IFACE = "iface";
+    public static final String ATTR_KEY_FUTURE = "future";
 
     @Override
     public void doFilter() throws TException {

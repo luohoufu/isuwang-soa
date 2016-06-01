@@ -2,6 +2,9 @@ package com.isuwang.soa.core;
 
 import org.apache.thrift.TException;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+
 /**
  * soa方法处理器
  *
@@ -23,6 +26,10 @@ public abstract class SoaProcessFunction<I, REQ, RES, REQSerializer, RESSerializ
     public abstract REQ getEmptyArgsInstance();
 
     public abstract RES getResult(I iface, REQ args) throws TException;
+
+    public Future<RES> getResultAsync(I iface, REQ args) throws TException {
+        return new CompletableFuture<>();
+    }
 
     protected abstract boolean isOneway();
 

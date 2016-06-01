@@ -23,6 +23,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -98,20 +99,6 @@ public class BaseServiceClient {
     protected BaseServiceClient(String serviceName, String versionName) {
         this.serviceName = serviceName;
         this.versionName = versionName;
-    }
-
-    /**
-     * 添加构造函数，设置是否异步请求
-     *
-     * @param methodName
-     * @param isAsyncCall
-     */
-    protected void initContext(String methodName, boolean isAsyncCall) {
-
-        initContext(methodName);
-
-        InvocationContext context = InvocationContext.Factory.getCurrentInstance();
-        context.getHeader().setAsyncCall(isAsyncCall);
     }
 
     protected void initContext(String methodName) {
@@ -203,6 +190,33 @@ public class BaseServiceClient {
         }
 
         return (RESP) stubFilterChain.getAttribute(StubFilterChain.ATTR_KEY_RESPONSE);
+    }
+
+
+    protected <REQ, RESP> Future<RESP> sendBaseAsync(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer) throws TException {
+
+        InvocationContext context = InvocationContext.Factory.getCurrentInstance();
+        SoaHeader soaHeader = context.getHeader();
+        soaHeader.setAsyncCall(true);
+
+        final StubFilterChain stubFilterChain = new StubFilterChain();
+        stubFilterChain.setLastFilter(new SendMessageFilter());
+
+        stubFilterChain.setAttribute(StubFilterChain.ATTR_KEY_CONTEXT, context);
+        stubFilterChain.setAttribute(StubFilterChain.ATTR_KEY_HEADER, soaHeader);
+        stubFilterChain.setAttribute(StubFilterChain.ATTR_KEY_REQUEST, request);
+        stubFilterChain.setAttribute(SendMessageFilter.ATTR_KEY_SENDMESSAGE, (SendMessageFilter.SendMessageAction) (chain) -> {
+            SoaConnection conn = connectionPool.getConnection();
+            Future<RESP> resp = conn.sendAsync(request, response, requestSerializer, responseSerializer);
+            chain.setAttribute(StubFilterChain.ATTR_KEY_RESPONSE, resp);
+        });
+
+        try {
+            stubFilterChain.doFilter();
+        } catch (SoaException e) {
+        }
+
+        return (Future<RESP>) stubFilterChain.getAttribute(StubFilterChain.ATTR_KEY_RESPONSE);
     }
 
 }
