@@ -26,8 +26,8 @@ class JavaClientGenerator extends CodeGenerator {
       <div>package {service.namespace.substring(0, service.namespace.lastIndexOf("."))};
 
         import com.isuwang.soa.core.*;
-        import org.apache.thrift.*;
-        import org.apache.thrift.protocol.*;
+        import com.isuwang.org.apache.thrift.*;
+        import com.isuwang.org.apache.thrift.protocol.*;
 
         import java.io.BufferedReader;
         import java.io.InputStreamReader;
@@ -138,19 +138,19 @@ class JavaClientGenerator extends CodeGenerator {
               @Override
               public void read({method.response.name} bean, TProtocol iprot) throws TException<block>
 
-                org.apache.thrift.protocol.TField schemeField;
+                com.isuwang.org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
 
                 while(true)<block>
                   schemeField = iprot.readFieldBegin();
-                  if(schemeField.type == org.apache.thrift.protocol.TType.STOP)<block> break;</block>
+                  if(schemeField.type == com.isuwang.org.apache.thrift.protocol.TType.STOP)<block> break;</block>
 
                   switch(schemeField.id)<block>
                     case 0:  //SUCCESS
                        if(schemeField.type == {toTDateType(method.response.fields.get(0).dataType)})<block>
                        {toReadTypeTemp(method.response.fields.get(0))}
                        </block>else<block>
-                          org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                          com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                         </block>
                         break;
                     /*
@@ -160,7 +160,7 @@ class JavaClientGenerator extends CodeGenerator {
                         break A;
                     */
                     default:
-                      org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                      com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                   </block>
                   iprot.readFieldEnd();
                 </block>
@@ -249,17 +249,17 @@ class JavaClientGenerator extends CodeGenerator {
           @Override
           public void read(getServiceMetadata_args bean, TProtocol iprot) throws TException <block>
 
-            org.apache.thrift.protocol.TField schemeField;
+            com.isuwang.org.apache.thrift.protocol.TField schemeField;
             iprot.readStructBegin();
 
             while (true) <block>
               schemeField = iprot.readFieldBegin();
-              if (schemeField.type == org.apache.thrift.protocol.TType.STOP) <block>
+              if (schemeField.type == com.isuwang.org.apache.thrift.protocol.TType.STOP) <block>
                 break;
               </block>
               switch (schemeField.id) <block>
                 default:
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
 
               </block>
               iprot.readFieldEnd();
@@ -274,7 +274,7 @@ class JavaClientGenerator extends CodeGenerator {
           public void write(getServiceMetadata_args bean, TProtocol oprot) throws TException <block>
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("getServiceMetadata_args"));
+            oprot.writeStructBegin(new com.isuwang.org.apache.thrift.protocol.TStruct("getServiceMetadata_args"));
             oprot.writeFieldStop();
             oprot.writeStructEnd();
           </block>
@@ -292,25 +292,25 @@ class JavaClientGenerator extends CodeGenerator {
           @Override
           public void read(getServiceMetadata_result bean, TProtocol iprot) throws TException <block>
 
-            org.apache.thrift.protocol.TField schemeField;
+            com.isuwang.org.apache.thrift.protocol.TField schemeField;
             iprot.readStructBegin();
 
             while (true) <block>
               schemeField = iprot.readFieldBegin();
-              if (schemeField.type == org.apache.thrift.protocol.TType.STOP) <block>
+              if (schemeField.type == com.isuwang.org.apache.thrift.protocol.TType.STOP) <block>
                 break;
               </block>
 
               switch (schemeField.id) <block>
                 case 0:  //SUCCESS
-                if (schemeField.type == org.apache.thrift.protocol.TType.STRING) <block>
+                if (schemeField.type == com.isuwang.org.apache.thrift.protocol.TType.STRING) <block>
                   bean.setSuccess(iprot.readString());
                 </block> else <block>
-                  org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                  com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                 </block>
                 break;
                 default:
-                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               </block>
               iprot.readFieldEnd();
             </block>
@@ -323,9 +323,9 @@ class JavaClientGenerator extends CodeGenerator {
           public void write(getServiceMetadata_result bean, TProtocol oprot) throws TException <block>
 
             validate(bean);
-            oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("getServiceMetadata_result"));
+            oprot.writeStructBegin(new com.isuwang.org.apache.thrift.protocol.TStruct("getServiceMetadata_result"));
 
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRING, (short) 0));
+            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("success", com.isuwang.org.apache.thrift.protocol.TType.STRING, (short) 0));
             oprot.writeString(bean.getSuccess());
             oprot.writeFieldEnd();
 
@@ -455,22 +455,22 @@ class JavaClientGenerator extends CodeGenerator {
 
   def toTDateType(dataType:DataType): Elem = {
     dataType.kind match {
-      case KIND.VOID => <div>org.apache.thrift.protocol.TType.VOID</div>
-      case KIND.BOOLEAN => <div>org.apache.thrift.protocol.TType.BOOL</div>
-      case KIND.BYTE => <div>org.apache.thrift.protocol.TType.BYTE</div>
-      case KIND.SHORT => <div>org.apache.thrift.protocol.TType.I16</div>
-      case KIND.INTEGER => <div>org.apache.thrift.protocol.TType.I32</div>
-      case KIND.LONG => <div>org.apache.thrift.protocol.TType.I64</div>
-      case KIND.DOUBLE => <div>org.apache.thrift.protocol.TType.DOUBLE</div>
-      case KIND.STRING => <div>org.apache.thrift.protocol.TType.STRING</div>
-      case KIND.MAP => <div>org.apache.thrift.protocol.TType.MAP</div>
-      case KIND.LIST => <div>org.apache.thrift.protocol.TType.LIST</div>
-      case KIND.SET => <div>org.apache.thrift.protocol.TType.SET</div>
-      case KIND.ENUM => <div>org.apache.thrift.protocol.TType.I32</div>
-      case KIND.STRUCT => <div>org.apache.thrift.protocol.TType.STRUCT</div>
-      case KIND.DATE => <div>org.apache.thrift.protocol.TType.I64</div>
-      case KIND.BIGDECIMAL => <div>org.apache.thrift.protocol.TType.STRING</div>
-      case KIND.BINARY => <div>org.apache.thrift.protocol.TType.BINARY</div>
+      case KIND.VOID => <div>com.isuwang.org.apache.thrift.protocol.TType.VOID</div>
+      case KIND.BOOLEAN => <div>com.isuwang.org.apache.thrift.protocol.TType.BOOL</div>
+      case KIND.BYTE => <div>com.isuwang.org.apache.thrift.protocol.TType.BYTE</div>
+      case KIND.SHORT => <div>com.isuwang.org.apache.thrift.protocol.TType.I16</div>
+      case KIND.INTEGER => <div>com.isuwang.org.apache.thrift.protocol.TType.I32</div>
+      case KIND.LONG => <div>com.isuwang.org.apache.thrift.protocol.TType.I64</div>
+      case KIND.DOUBLE => <div>com.isuwang.org.apache.thrift.protocol.TType.DOUBLE</div>
+      case KIND.STRING => <div>com.isuwang.org.apache.thrift.protocol.TType.STRING</div>
+      case KIND.MAP => <div>com.isuwang.org.apache.thrift.protocol.TType.MAP</div>
+      case KIND.LIST => <div>com.isuwang.org.apache.thrift.protocol.TType.LIST</div>
+      case KIND.SET => <div>com.isuwang.org.apache.thrift.protocol.TType.SET</div>
+      case KIND.ENUM => <div>com.isuwang.org.apache.thrift.protocol.TType.I32</div>
+      case KIND.STRUCT => <div>com.isuwang.org.apache.thrift.protocol.TType.STRUCT</div>
+      case KIND.DATE => <div>com.isuwang.org.apache.thrift.protocol.TType.I64</div>
+      case KIND.BIGDECIMAL => <div>com.isuwang.org.apache.thrift.protocol.TType.STRING</div>
+      case KIND.BINARY => <div>com.isuwang.org.apache.thrift.protocol.TType.BINARY</div>
       case _ => <div></div>
     }
   }
@@ -499,7 +499,7 @@ class JavaClientGenerator extends CodeGenerator {
             oprot.writeString({field.name}.toString());
           </div>
       case KIND.LIST => return{
-        <div>oprot.writeListBegin(new org.apache.thrift.protocol.TList({toTDateType(field.dataType.valueType)}, bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>}.size()));
+        <div>oprot.writeListBegin(new com.isuwang.org.apache.thrift.protocol.TList({toTDateType(field.dataType.valueType)}, bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>}.size()));
               for({toDataTypeTemplate(field.dataType.valueType)} item : bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>})<block>
           {
             field.dataType.valueType.kind match{
@@ -522,7 +522,7 @@ class JavaClientGenerator extends CodeGenerator {
               oprot.writeListEnd();
         </div>}
       case KIND.MAP => return {
-        <div>oprot.writeMapBegin(new org.apache.thrift.protocol.TMap({toTDateType(field.dataType.keyType)}, {toTDateType((field.dataType.valueType))}, bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>}.size()));
+        <div>oprot.writeMapBegin(new com.isuwang.org.apache.thrift.protocol.TMap({toTDateType(field.dataType.keyType)}, {toTDateType((field.dataType.valueType))}, bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>}.size()));
              for(java.util.Map.Entry{lt}{toDataTypeTemplate(field.dataType.keyType)}, {toDataTypeTemplate(field.dataType.valueType)}{gt} item : bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}(){if(field.isOptional) <div>.get()</div>}.entrySet())<block>
           {
              field.dataType.keyType.kind match{
@@ -603,7 +603,7 @@ class JavaClientGenerator extends CodeGenerator {
       case KIND.LIST =>
         return {
           <div><block>
-            org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
+            com.isuwang.org.apache.thrift.protocol.TList _list0 = iprot.readListBegin();
             bean.set{field.name.charAt(0).toUpper + field.name.substring(1)}({if(field.optional) <div>Optional.of(</div>}new java.util.ArrayList{lt}{gt}(_list0.size){if(field.optional) <div>)</div>});
             for(int _i2 = 0; _i2 {lt} _list0.size; ++ _i2)<block>
               {
@@ -633,7 +633,7 @@ class JavaClientGenerator extends CodeGenerator {
       case KIND.MAP =>
         return {
           <div>
-            org.apache.thrift.protocol.TMap _map3 = iprot.readMapBegin();
+            com.isuwang.org.apache.thrift.protocol.TMap _map3 = iprot.readMapBegin();
             bean.set{field.name.charAt(0).toUpper + field.name.substring(1)}({if(field.optional) <div>Optional.of(</div>}new java.util.HashMap{lt}{gt}(2 * _map3.size){if(field.optional) <div>)</div>});
             for(int _i6 = 0; _i6 {lt} _map3.size; ++ _i6)<block>
             {
@@ -685,7 +685,7 @@ class JavaClientGenerator extends CodeGenerator {
           </div>
         }
       case KIND.VOID =>
-        return {<div>org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);</div>}
+        return {<div>com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);</div>}
       case _ => <div></div>
     }
   }
@@ -696,12 +696,12 @@ class JavaClientGenerator extends CodeGenerator {
       @Override
       public void read({toStructName(struct)} bean, TProtocol iprot) throws TException<block>
 
-        org.apache.thrift.protocol.TField schemeField;
+        com.isuwang.org.apache.thrift.protocol.TField schemeField;
         iprot.readStructBegin();
 
         while(true)<block>
           schemeField = iprot.readFieldBegin();
-          if(schemeField.type == org.apache.thrift.protocol.TType.STOP)<block> break;</block>
+          if(schemeField.type == com.isuwang.org.apache.thrift.protocol.TType.STOP)<block> break;</block>
 
           switch(schemeField.id)<block>
           {
@@ -711,7 +711,7 @@ class JavaClientGenerator extends CodeGenerator {
                 if(schemeField.type == {toTDateType(structField.dataType)})<block>
                     {toReadTypeTemp(structField)}
                 </block>else<block>
-                     org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                     com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                 </block>
                 break;
               </div>
@@ -719,7 +719,7 @@ class JavaClientGenerator extends CodeGenerator {
           }
             <div>
                 default:
-                  org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                  com.isuwang.org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
             </div>
           </block>
           iprot.readFieldEnd();
@@ -738,20 +738,20 @@ class JavaClientGenerator extends CodeGenerator {
       public void write({toStructName(struct)} bean, TProtocol oprot) throws TException<block>
 
       validate(bean);
-      oprot.writeStructBegin(new org.apache.thrift.protocol.TStruct("{struct.name}"));
+      oprot.writeStructBegin(new com.isuwang.org.apache.thrift.protocol.TStruct("{struct.name}"));
 
       {toFieldArrayBuffer(struct.fields).map{(field : Field) =>{
         if(field.dataType.getKind() == DataType.KIND.VOID) {
         } else {
           if(field.isOptional){
             <div>if(bean.get{field.name.charAt(0).toUpper + field.name.substring(1)}().isPresent())<block>
-              oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("{field.name}", {toTDateType(field.dataType)}, (short) {field.tag}));
+              oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("{field.name}", {toTDateType(field.dataType)}, (short) {field.tag}));
               {toWriteTypeTemp(field)}
               oprot.writeFieldEnd();
             </block>
             </div>
           }else{<div>
-            oprot.writeFieldBegin(new org.apache.thrift.protocol.TField("{field.name}", {toTDateType(field.dataType)}, (short) {field.tag}));
+            oprot.writeFieldBegin(new com.isuwang.org.apache.thrift.protocol.TField("{field.name}", {toTDateType(field.dataType)}, (short) {field.tag}));
             {toWriteTypeTemp(field)}
             oprot.writeFieldEnd();
           </div>

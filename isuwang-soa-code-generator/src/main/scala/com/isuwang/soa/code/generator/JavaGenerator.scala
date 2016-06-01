@@ -123,7 +123,7 @@ class JavaGenerator extends CodeGenerator {
       <div>package {service.namespace.substring(0, service.namespace.lastIndexOf("."))};
 
         import com.isuwang.soa.core.*;
-        import org.apache.thrift.*;
+        import com.isuwang.org.apache.thrift.*;
         import com.isuwang.soa.remoting.BaseServiceClient;
         import {service.namespace.substring(0, service.namespace.lastIndexOf(".")) + "." + service.name + "Codec.*"};
 
@@ -225,7 +225,7 @@ class JavaGenerator extends CodeGenerator {
     return {
       <div>package {enum.namespace};
 
-        public enum {enum.name} implements org.apache.thrift.TEnum<block>
+        public enum {enum.name} implements com.isuwang.org.apache.thrift.TEnum<block>
         {
           toEnumItemArrayBuffer(enum.enumItems).map{(enumItem: EnumItem)=>{
           <div>
