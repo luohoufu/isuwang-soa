@@ -19,12 +19,12 @@
 
 package org.apache.thrift.protocol;
 
+import java.nio.ByteBuffer;
+
 import org.apache.thrift.TException;
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.StandardScheme;
 import org.apache.thrift.transport.TTransport;
-
-import java.nio.ByteBuffer;
 
 /**
  * Protocol interface definition.

@@ -16,16 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.thrift.async;
 
-package org.apache.thrift.protocol;
+import org.apache.thrift.transport.TNonblockingTransport;
 
-import java.io.Serializable;
-
-import org.apache.thrift.transport.TTransport;
-
-/**
- * Factory interface for constructing protocol instances.
- */
-public interface TProtocolFactory extends Serializable {
-  public TProtocol getProtocol(TTransport trans);
+public interface TAsyncClientFactory<T extends TAsyncClient> {
+  public T getAsyncClient(TNonblockingTransport transport);
 }

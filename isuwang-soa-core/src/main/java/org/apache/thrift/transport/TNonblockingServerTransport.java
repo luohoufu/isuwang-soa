@@ -17,15 +17,15 @@
  * under the License.
  */
 
-package org.apache.thrift.protocol;
 
-import java.io.Serializable;
+package org.apache.thrift.transport;
 
-import org.apache.thrift.transport.TTransport;
+import java.nio.channels.Selector;
 
 /**
- * Factory interface for constructing protocol instances.
+ * Server transport that can be operated in a nonblocking fashion.
  */
-public interface TProtocolFactory extends Serializable {
-  public TProtocol getProtocol(TTransport trans);
+public abstract class TNonblockingServerTransport extends TServerTransport {
+
+  public abstract void registerSelector(Selector selector);
 }

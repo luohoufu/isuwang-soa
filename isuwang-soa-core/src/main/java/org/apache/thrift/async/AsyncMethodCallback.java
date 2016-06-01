@@ -16,16 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.thrift.async;
 
-package org.apache.thrift.protocol;
 
-import java.io.Serializable;
+public interface AsyncMethodCallback<T> {
+  /**
+   * This method will be called when the remote side has completed invoking
+   * your method call and the result is fully read. For oneway method calls,
+   * this method will be called as soon as we have completed writing out the
+   * request.
+   * @param response
+   */
+  public void onComplete(T response);
 
-import org.apache.thrift.transport.TTransport;
-
-/**
- * Factory interface for constructing protocol instances.
- */
-public interface TProtocolFactory extends Serializable {
-  public TProtocol getProtocol(TTransport trans);
+  /**
+   * This method will be called when there is an unexpected clientside
+   * exception. This does not include application-defined exceptions that
+   * appear in the IDL, but rather things like IOExceptions.
+   * @param exception
+   */
+  public void onError(Exception exception);
 }

@@ -17,15 +17,15 @@
  * under the License.
  */
 
-package org.apache.thrift.protocol;
+package org.apache.thrift.meta_data;
 
-import java.io.Serializable;
+import org.apache.thrift.TBase;
 
-import org.apache.thrift.transport.TTransport;
-
-/**
- * Factory interface for constructing protocol instances.
- */
-public interface TProtocolFactory extends Serializable {
-  public TProtocol getProtocol(TTransport trans);
+public class StructMetaData extends FieldValueMetaData {
+  public final Class<? extends TBase> structClass;
+  
+  public StructMetaData(byte type, Class<? extends TBase> sClass){
+    super(type);
+    this.structClass = sClass;
+  }    
 }

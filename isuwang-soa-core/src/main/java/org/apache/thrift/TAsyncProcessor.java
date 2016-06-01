@@ -16,16 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.thrift;
 
-package org.apache.thrift.protocol;
+import org.apache.thrift.protocol.*;
 
-import java.io.Serializable;
+import org.apache.thrift.server.AbstractNonblockingServer.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.thrift.transport.TTransport;
+import java.util.Collections;
+import java.util.Map;
 
-/**
- * Factory interface for constructing protocol instances.
- */
-public interface TProtocolFactory extends Serializable {
-  public TProtocol getProtocol(TTransport trans);
+public interface TAsyncProcessor {
+    /**
+     * Implementations must call fb.responseReady() once processing is complete
+     */
+    public boolean process(final AsyncFrameBuffer fb) throws TException;
 }

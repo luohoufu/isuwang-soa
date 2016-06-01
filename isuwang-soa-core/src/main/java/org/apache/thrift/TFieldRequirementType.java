@@ -17,15 +17,14 @@
  * under the License.
  */
 
-package org.apache.thrift.protocol;
-
-import java.io.Serializable;
-
-import org.apache.thrift.transport.TTransport;
+package org.apache.thrift;
 
 /**
- * Factory interface for constructing protocol instances.
+ * Requirement type constants.
+ *
  */
-public interface TProtocolFactory extends Serializable {
-  public TProtocol getProtocol(TTransport trans);
+public final class TFieldRequirementType {
+  public static final byte REQUIRED  = 1;
+  public static final byte OPTIONAL = 2;
+  public static final byte DEFAULT = 3;
 }

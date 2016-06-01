@@ -17,15 +17,27 @@
  * under the License.
  */
 
-package org.apache.thrift.protocol;
-
-import java.io.Serializable;
+package org.apache.thrift;
 
 import org.apache.thrift.transport.TTransport;
 
 /**
- * Factory interface for constructing protocol instances.
+ * The default processor factory just returns a singleton
+ * instance.
  */
-public interface TProtocolFactory extends Serializable {
-  public TProtocol getProtocol(TTransport trans);
+public class TProcessorFactory {
+
+  private final TProcessor processor_;
+
+  public TProcessorFactory(TProcessor processor) {
+    processor_ = processor;
+  }
+
+  public TProcessor getProcessor(TTransport trans) {
+    return processor_;
+  }
+
+  public boolean isAsyncProcessor() {
+      return processor_ instanceof TAsyncProcessor;
+  }
 }

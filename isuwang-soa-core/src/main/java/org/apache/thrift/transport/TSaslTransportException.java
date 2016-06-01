@@ -17,15 +17,27 @@
  * under the License.
  */
 
-package org.apache.thrift.protocol;
+package org.apache.thrift.transport;
 
-import java.io.Serializable;
-
-import org.apache.thrift.transport.TTransport;
-
-/**
- * Factory interface for constructing protocol instances.
+/*
+ * This exception is used to track exceptions in TSaslTransport
+ * that does not have Sasl signature in their stream.
  */
-public interface TProtocolFactory extends Serializable {
-  public TProtocol getProtocol(TTransport trans);
+public class TSaslTransportException extends TTransportException {
+
+  public TSaslTransportException() {
+    super();
+  }
+
+  public TSaslTransportException(String message) {
+    super(message);
+  }
+
+  public TSaslTransportException(Throwable cause) {
+    super(cause);
+  }
+
+  public TSaslTransportException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

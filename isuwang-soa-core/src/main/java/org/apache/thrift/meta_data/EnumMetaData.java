@@ -17,15 +17,15 @@
  * under the License.
  */
 
-package org.apache.thrift.protocol;
+package org.apache.thrift.meta_data;
 
-import java.io.Serializable;
+import org.apache.thrift.TEnum;
 
-import org.apache.thrift.transport.TTransport;
-
-/**
- * Factory interface for constructing protocol instances.
- */
-public interface TProtocolFactory extends Serializable {
-  public TProtocol getProtocol(TTransport trans);
+public class EnumMetaData extends FieldValueMetaData {
+  public final Class<? extends TEnum> enumClass;
+  
+  public EnumMetaData(byte type, Class<? extends TEnum> sClass){
+    super(type);
+    this.enumClass = sClass;
+  }    
 }

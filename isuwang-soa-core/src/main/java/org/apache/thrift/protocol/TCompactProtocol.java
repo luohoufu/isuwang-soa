@@ -20,12 +20,12 @@
 
 package org.apache.thrift.protocol;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+
 import org.apache.thrift.ShortStack;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransport;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 
 /**
  * TCompactProtocol2 is the Java implementation of the compact protocol specified
