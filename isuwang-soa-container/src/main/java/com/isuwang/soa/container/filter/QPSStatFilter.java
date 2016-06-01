@@ -7,7 +7,7 @@ import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.FilterChain;
 import com.isuwang.soa.monitor.api.MonitorServiceClient;
 import com.isuwang.soa.monitor.api.domain.QPSStat;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

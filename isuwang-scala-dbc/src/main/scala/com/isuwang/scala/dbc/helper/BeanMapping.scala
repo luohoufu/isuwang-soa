@@ -2,6 +2,7 @@ package com.isuwang.scala.dbc.helper
 
 import java.lang.reflect.{ParameterizedType, Method}
 
+import com.isuwang.org.apache.thrift.TEnum
 import com.isuwang.scala.dbc.Implicit
 import Implicit.StringImplicit
 import wangzx.scala_commons.sql.SoftMap
@@ -31,7 +32,7 @@ object BeanMapping {
   val ClassOfByteArray = classOf[Array[Byte]]
 
   val ClassOfEnum = classOf[java.lang.Enum[_]]
-  val ClassOfTEnum = classOf[org.apache.thrift.TEnum]
+  val ClassOfTEnum = classOf[TEnum]
 
   val ClassOfByteBuffer = classOf[java.nio.ByteBuffer]
 

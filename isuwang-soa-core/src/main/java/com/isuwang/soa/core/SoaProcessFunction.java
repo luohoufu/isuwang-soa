@@ -1,6 +1,6 @@
 package com.isuwang.soa.core;
 
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;

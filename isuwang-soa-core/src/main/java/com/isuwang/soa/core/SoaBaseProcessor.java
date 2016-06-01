@@ -2,11 +2,11 @@ package com.isuwang.soa.core;
 
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import com.isuwang.soa.core.filter.container.DispatchFilter;
-import org.apache.thrift.TException;
-import org.apache.thrift.TProcessor;
-import org.apache.thrift.protocol.TMessage;
-import org.apache.thrift.protocol.TMessageType;
-import org.apache.thrift.protocol.TProtocol;
+import com.isuwang.org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TProcessor;
+import com.isuwang.org.apache.thrift.protocol.TMessage;
+import com.isuwang.org.apache.thrift.protocol.TMessageType;
+import com.isuwang.org.apache.thrift.protocol.TProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

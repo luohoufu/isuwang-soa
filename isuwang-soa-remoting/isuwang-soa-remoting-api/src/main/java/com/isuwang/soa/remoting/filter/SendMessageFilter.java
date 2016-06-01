@@ -3,7 +3,7 @@ package com.isuwang.soa.remoting.filter;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
 import com.isuwang.soa.registry.ServiceInfo;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 /**
  * Send Message Filter

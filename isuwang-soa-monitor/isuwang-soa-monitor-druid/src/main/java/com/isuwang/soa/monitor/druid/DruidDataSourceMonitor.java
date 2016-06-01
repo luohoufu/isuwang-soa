@@ -5,7 +5,7 @@ import com.isuwang.soa.core.IPUtils;
 import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.monitor.api.MonitorServiceClient;
 import com.isuwang.soa.monitor.api.domain.DataSourceStat;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

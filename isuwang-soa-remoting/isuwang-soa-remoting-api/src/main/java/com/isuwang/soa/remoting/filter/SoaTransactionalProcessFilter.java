@@ -5,10 +5,8 @@ import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
-import com.isuwang.soa.transaction.api.GlobalTransactionCallback;
-import com.isuwang.soa.transaction.api.GlobalTransactionCallbackWithoutResult;
 import com.isuwang.soa.transaction.api.GlobalTransactionProcessTemplate;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 /**
  * Created by tangliu on 2016/4/11.

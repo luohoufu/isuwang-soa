@@ -1,7 +1,7 @@
 package com.isuwang.soa.remoting;
 
 import com.isuwang.soa.core.TBeanSerializer;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 import java.util.concurrent.Future;
 

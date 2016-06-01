@@ -3,7 +3,7 @@ package com.isuwang.soa.monitor.api;
 import com.isuwang.soa.core.SoaException;
 import com.isuwang.soa.monitor.api.MonitorServiceCodec.*;
 import com.isuwang.soa.remoting.BaseServiceClient;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 public class MonitorServiceClient extends BaseServiceClient {
 

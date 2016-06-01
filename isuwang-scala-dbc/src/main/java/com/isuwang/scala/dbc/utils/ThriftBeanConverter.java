@@ -2,7 +2,7 @@ package com.isuwang.scala.dbc.utils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.thrift.TEnum;
+import com.isuwang.org.apache.thrift.TEnum;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;

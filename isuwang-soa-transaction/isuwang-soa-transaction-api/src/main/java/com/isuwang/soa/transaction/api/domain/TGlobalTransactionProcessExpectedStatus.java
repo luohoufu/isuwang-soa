@@ -1,6 +1,8 @@
 package com.isuwang.soa.transaction.api.domain;
 
-public enum TGlobalTransactionProcessExpectedStatus implements org.apache.thrift.TEnum {
+import com.isuwang.org.apache.thrift.TEnum;
+
+public enum TGlobalTransactionProcessExpectedStatus implements TEnum {
 
     /**
      *

@@ -1,8 +1,8 @@
 package com.isuwang.scala.dbc.helper
 
+import com.isuwang.org.apache.thrift.TEnum
 import com.isuwang.scala.dbc.helper.BeanMapping._
 import org.apache.commons.lang.math.NumberUtils
-import org.apache.thrift.TEnum
 import org.slf4j.{Logger, LoggerFactory}
 
 /**
@@ -102,10 +102,10 @@ object BeanConverterHelper {
               case ClassOfSQLDate => srcValue.asInstanceOf[java.sql.Date].getTime.toInt
               case ClassOfSQLTime => srcValue.asInstanceOf[java.sql.Time].getTime.toInt
               case ClassOfSQLTimestamp => srcValue.asInstanceOf[java.sql.Timestamp].getTime.toInt
-              case ClassOfTEnum => srcValue.asInstanceOf[org.apache.thrift.TEnum].getValue
+              case ClassOfTEnum => srcValue.asInstanceOf[TEnum].getValue
               case ClassOfOption => srcValue.asInstanceOf[scala.Option[Int]].get
               case ClassOfJavaOption => srcValue.asInstanceOf[java.util.Optional[Int]].get
-              case _ => if (ClassOfTEnum.isAssignableFrom(srcFieldType)) srcValue.asInstanceOf[org.apache.thrift.TEnum].getValue
+              case _ => if (ClassOfTEnum.isAssignableFrom(srcFieldType)) srcValue.asInstanceOf[TEnum].getValue
             }
           else if (setDefaultValForNull) java.lang.Integer.valueOf("0")
           else null

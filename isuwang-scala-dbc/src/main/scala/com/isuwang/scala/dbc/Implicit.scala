@@ -5,10 +5,10 @@ import java.sql.Timestamp
 import java.util.Date
 import java.{lang, math, util}
 
+import com.isuwang.org.apache.thrift.TBase
 import com.isuwang.scala.dbc.helper.BeanConverterHelper
 import com.isuwang.scala.dbc.utils.ThriftBeanConverter
 import com.isuwang.scala.dbc.utils.ThriftBeanConverter.IBean
-import org.apache.thrift.TBase
 import wangzx.scala_commons.sql.Row.Cell
 
 import scala.collection.mutable.ListBuffer

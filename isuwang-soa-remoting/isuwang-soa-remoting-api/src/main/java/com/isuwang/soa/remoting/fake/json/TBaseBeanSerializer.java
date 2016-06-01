@@ -4,9 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.isuwang.org.apache.thrift.protocol.*;
 import com.isuwang.soa.core.metadata.*;
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.*;
+import com.isuwang.org.apache.thrift.TException;
 
 import java.math.BigDecimal;
 import java.text.ParseException;

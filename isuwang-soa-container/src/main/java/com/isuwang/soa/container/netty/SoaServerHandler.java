@@ -9,9 +9,9 @@ import com.isuwang.soa.registry.RegistryAgentProxy;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TMessage;
-import org.apache.thrift.protocol.TMessageType;
+import com.isuwang.org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.protocol.TMessage;
+import com.isuwang.org.apache.thrift.protocol.TMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

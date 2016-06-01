@@ -1,8 +1,8 @@
 package com.isuwang.soa.remoting.fake.metadata;
 
+import com.isuwang.org.apache.thrift.protocol.*;
 import com.isuwang.soa.core.TBeanSerializer;
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.*;
+import com.isuwang.org.apache.thrift.TException;
 
 /**
  * Created by tangliu on 2016/3/3.

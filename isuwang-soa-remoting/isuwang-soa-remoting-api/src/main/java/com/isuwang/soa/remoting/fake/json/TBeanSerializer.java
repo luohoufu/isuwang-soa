@@ -1,7 +1,7 @@
 package com.isuwang.soa.remoting.fake.json;
 
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TProtocol;
+import com.isuwang.org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.protocol.TProtocol;
 
 /**
  * 序列化接口

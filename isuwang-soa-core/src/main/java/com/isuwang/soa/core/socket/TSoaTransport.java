@@ -1,9 +1,9 @@
 package com.isuwang.soa.core.socket;
 
-import org.apache.thrift.transport.TFramedTransport;
-import org.apache.thrift.transport.TIOStreamTransport;
-import org.apache.thrift.transport.TTransport;
-import org.apache.thrift.transport.TTransportException;
+import com.isuwang.org.apache.thrift.transport.TFramedTransport;
+import com.isuwang.org.apache.thrift.transport.TIOStreamTransport;
+import com.isuwang.org.apache.thrift.transport.TTransport;
+import com.isuwang.org.apache.thrift.transport.TTransportException;
 
 import java.io.InputStream;
 import java.io.OutputStream;
