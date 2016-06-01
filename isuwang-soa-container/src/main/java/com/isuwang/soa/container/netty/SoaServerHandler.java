@@ -1,5 +1,8 @@
 package com.isuwang.soa.container.netty;
 
+import com.isuwang.org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.protocol.TMessage;
+import com.isuwang.org.apache.thrift.protocol.TMessageType;
 import com.isuwang.soa.container.util.LoggerUtil;
 import com.isuwang.soa.container.util.PlatformProcessDataFactory;
 import com.isuwang.soa.core.*;
@@ -9,15 +12,15 @@ import com.isuwang.soa.registry.RegistryAgentProxy;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
-import com.isuwang.org.apache.thrift.TException;
-import com.isuwang.org.apache.thrift.protocol.TMessage;
-import com.isuwang.org.apache.thrift.protocol.TMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -78,7 +81,7 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
     protected void readRequestHeader(ChannelHandlerContext ctx, ByteBuf inputBuf) throws TException {
         TSoaTransport inputSoaTransport = null;
 
-        boolean intoPool = false, intoProcessRequest = false;
+        boolean intoPool = false, intoProcessRequest = false, isAsync = false;
         try {
             final Long startTime = System.currentTimeMillis();
 
@@ -117,12 +120,26 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
 
             if (useThreadPool && b) {
                 final TSoaTransport finalInputSoaTransport = inputSoaTransport;
-                executorService.execute(() -> processRequest(ctx, inputBuf, finalInputSoaTransport, inputProtocol, context, startTime, processData));
+
+                if (soaHeader.isAsyncCall()) {
+                    isAsync = true;
+                    executorService.execute(() -> processRequestAsync(ctx, inputBuf, finalInputSoaTransport, inputProtocol, context, startTime, processData));
+                } else
+                    executorService.execute(() -> processRequest(ctx, inputBuf, finalInputSoaTransport, inputProtocol, context, startTime, processData));
+
                 intoPool = true;
-            } else
-                processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, processData);
+
+            } else {
+
+                if (soaHeader.isAsyncCall()) {
+                    isAsync = true;
+                    processRequestAsync(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, processData);
+                } else
+                    processRequest(ctx, inputBuf, inputSoaTransport, inputProtocol, context, startTime, processData);
+            }
+
         } finally {
-            if (!intoPool) {
+            if (!intoPool && !isAsync) {
                 if (inputSoaTransport.isOpen())
                     inputSoaTransport.close();
             }
@@ -142,19 +159,107 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         return requestLength;
     }
 
+    protected void processRequestAsync(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, TransactionContext context, Long startTime, PlatformProcessData processData) {
 
-//    {
-//        CompletableFuture<Object> future = soaProcessor.processAsync(inputProtocol, outputProtocol);
-//        future.thenRun(() -> {
-//
-//            try {
-//                outputSoaTransport.flush();
-//                ctx.writeAndFlush(outputBuf);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        });
-//    }
+        final long waitingTime = System.currentTimeMillis() - startTime;
+
+        final ByteBuf outputBuf = ctx.alloc().buffer(8192);
+
+        TransactionContext.Factory.setCurrentInstance(context);
+        PlatformProcessDataFactory.setCurrentInstance(processData);
+
+        SoaHeader soaHeader = context.getHeader();
+
+        final TSoaTransport outputSoaTransport = new TSoaTransport(outputBuf);
+        TSoaServiceProtocol outputProtocol = null;
+
+        try {
+            outputProtocol = new TSoaServiceProtocol(outputSoaTransport, false);
+            SoaBaseProcessor<?> soaProcessor = soaProcessors.get(new ProcessorKey(soaHeader.getServiceName(), soaHeader.getVersionName()));
+
+            if (soaProcessor == null) {
+                throw new SoaException(SoaBaseCode.NotFoundServer);
+            }
+
+            CompletableFuture<Context> future = soaProcessor.processAsync(inputProtocol, outputProtocol);
+            future.thenAccept(resultContext -> {
+
+                String responseCode = "-", responseMsg = "-";
+                try {
+                    outputSoaTransport.flush();
+                    ctx.writeAndFlush(outputBuf);
+
+                    if (resultContext.getHeader().getRespCode().isPresent())
+                        responseCode = resultContext.getHeader().getRespCode().get();
+                    if (resultContext.getHeader().getRespMessage().isPresent())
+                        responseMsg = resultContext.getHeader().getRespMessage().get();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (inputSoaTransport != null)
+                        inputSoaTransport.close();
+
+                    if (outputSoaTransport != null)
+                        outputSoaTransport.close();
+
+                    final String fRspCode = responseCode;
+                    final String fRspMsg = responseMsg;
+
+                    PlatformProcessDataFactory.update(soaHeader, cacheProcessData -> {
+                        long totalTime = System.currentTimeMillis() - startTime;
+
+                        if (cacheProcessData.getPMinTime() == 0 || totalTime < cacheProcessData.getPMinTime())
+                            cacheProcessData.setPMinTime(totalTime);
+                        if (cacheProcessData.getPMaxTime() == 0 || totalTime > cacheProcessData.getPMaxTime())
+                            cacheProcessData.setPMaxTime(totalTime);
+                        cacheProcessData.setPTotalTime(cacheProcessData.getPTotalTime() + totalTime);
+
+                        if (fRspCode.equals("0000"))
+                            cacheProcessData.setSucceedCalls(cacheProcessData.getSucceedCalls() + 1);
+                        else
+                            cacheProcessData.setFailCalls(cacheProcessData.getFailCalls() + 1);
+
+                        cacheProcessData.setTotalCalls(cacheProcessData.getTotalCalls() + 1);
+                        cacheProcessData.setRequestFlow(cacheProcessData.getRequestFlow() + processData.getRequestFlow());
+                        cacheProcessData.setResponseFlow(cacheProcessData.getResponseFlow() + outputBuf.writerIndex());
+
+                        StringBuilder builder = new StringBuilder("DONE")
+                                .append(" ").append(ctx.channel().remoteAddress())
+                                .append(" ").append(ctx.channel().localAddress())
+                                .append(" ").append(context.getSeqid())
+                                .append(" ").append(soaHeader.getServiceName()).append(".").append(soaHeader.getMethodName()).append(":").append(soaHeader.getVersionName())
+                                .append(" ").append(fRspCode)
+                                .append(" ").append(fRspMsg)
+                                .append(" ").append(processData.getRequestFlow())
+                                .append(" ").append(outputBuf.writerIndex())
+                                .append(" ").append(waitingTime).append("ms")
+                                .append(" ").append(totalTime).append("ms");
+                        SIMPLE_LOGGER.info(builder.toString());
+                    });
+                }
+            });
+
+        } catch (SoaException e) {
+            LOGGER.error(e.getMessage(), e);
+
+            writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, e);
+
+        } catch (Throwable e) {
+            LOGGER.error(e.getMessage(), e);
+
+            String errMsg = e.getCause() != null ? e.getCause().toString() : (e.getMessage() != null ? e.getMessage().toString() : SoaBaseCode.UnKnown.getMsg());
+            writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, new SoaException(SoaBaseCode.UnKnown, errMsg));
+
+        } finally {
+
+            inputBuf.release();
+
+            TransactionContext.Factory.removeCurrentInstance();
+            PlatformProcessDataFactory.removeCurrentInstance();
+        }
+
+    }
 
 
     protected void processRequest(ChannelHandlerContext ctx, ByteBuf inputBuf, TSoaTransport inputSoaTransport, TSoaServiceProtocol inputProtocol, TransactionContext context, Long startTime, PlatformProcessData processData) {

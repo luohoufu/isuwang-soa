@@ -1,12 +1,12 @@
 package com.isuwang.soa.core;
 
-import com.isuwang.soa.core.filter.container.ContainerFilterChain;
-import com.isuwang.soa.core.filter.container.DispatchFilter;
 import com.isuwang.org.apache.thrift.TException;
 import com.isuwang.org.apache.thrift.TProcessor;
 import com.isuwang.org.apache.thrift.protocol.TMessage;
 import com.isuwang.org.apache.thrift.protocol.TMessageType;
 import com.isuwang.org.apache.thrift.protocol.TProtocol;
+import com.isuwang.soa.core.filter.container.ContainerFilterChain;
+import com.isuwang.soa.core.filter.container.DispatchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,9 +94,9 @@ public class SoaBaseProcessor<I> implements TProcessor {
      * @return
      * @throws TException
      */
-    public CompletableFuture<Object> processAsync(TProtocol in, TProtocol out) throws TException {
+    public CompletableFuture<Context> processAsync(TProtocol in, TProtocol out) throws TException {
 
-        final CompletableFuture<Object> result = new CompletableFuture<>();
+        final CompletableFuture<Context> futureResult = new CompletableFuture<>();
         // threadlocal
         TransactionContext context = TransactionContext.Factory.getCurrentInstance();
         String methodName = context.getHeader().getMethodName();
@@ -124,7 +124,7 @@ public class SoaBaseProcessor<I> implements TProcessor {
 
             try {
                 CompletableFuture<Object> future = (CompletableFuture) soaProcessFunction.getResultAsync(iface, args);
-                future.thenAccept(realResult -> AsyncAccept(context, soaProcessFunction, realResult, out, result));
+                future.thenAccept(realResult -> AsyncAccept(context, soaProcessFunction, realResult, out, futureResult));
             } finally {
                 chain.setAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME, System.currentTimeMillis() - startTime);
             }
@@ -133,7 +133,38 @@ public class SoaBaseProcessor<I> implements TProcessor {
 
         filterChain.doFilter();
 
-        return result;
+        return futureResult;
+    }
+
+    /**
+     * 异步处理，当返回结果被complete时调用
+     *
+     * @param context
+     * @param soaProcessFunction
+     * @param result
+     * @param out
+     * @param future
+     */
+    private void AsyncAccept(Context context, SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>> soaProcessFunction, Object result, TProtocol out, CompletableFuture future) {
+
+        try {
+            TransactionContext.Factory.setCurrentInstance((TransactionContext) context);
+            SoaHeader soaHeader = context.getHeader();
+            LOGGER.info("{} {} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), context.getSeqid(), soaHeader.toString(), formatToString(soaProcessFunction.getResSerializer().toString(result)));
+
+            soaHeader.setRespCode(Optional.of("0000"));
+            soaHeader.setRespMessage(Optional.of("成功"));
+            out.writeMessageBegin(new TMessage(soaHeader.getMethodName(), TMessageType.CALL, context.getSeqid()));
+            soaProcessFunction.getResSerializer().write(result, out);
+            out.writeMessageEnd();
+            /**
+             * 通知外层handler处理结果
+             */
+            future.complete(context);
+        } catch (TException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private static String formatToString(String msg) {
@@ -163,35 +194,4 @@ public class SoaBaseProcessor<I> implements TProcessor {
         this.interfaceClass = interfaceClass;
     }
 
-
-    /**
-     * 异步处理，当返回结果被complete时调用
-     *
-     * @param context
-     * @param soaProcessFunction
-     * @param result
-     * @param out
-     * @param future
-     */
-    private void AsyncAccept(Context context, SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>> soaProcessFunction, Object result, TProtocol out, CompletableFuture future) {
-
-        try {
-            SoaHeader soaHeader = context.getHeader();
-            LOGGER.info("{} {} {} {} response header:{} body:{}", soaHeader.getServiceName(), soaHeader.getVersionName(), soaHeader.getMethodName(), context.getSeqid(), soaHeader.toString(), formatToString(soaProcessFunction.getResSerializer().toString(result)));
-
-            context.getHeader().setRespCode(Optional.of("0000"));
-            context.getHeader().setRespMessage(Optional.of("成功"));
-            out.writeMessageBegin(new TMessage(context.getHeader().getMethodName(), TMessageType.CALL, context.getSeqid()));
-            soaProcessFunction.getResSerializer().write(result, out);
-            out.writeMessageEnd();
-
-            /**
-             * 通知外层handler处理结果
-             */
-            future.complete(result);
-        } catch (TException e) {
-            e.printStackTrace();
-        }
-
-    }
 }
