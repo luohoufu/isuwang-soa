@@ -1,8 +1,8 @@
 package com.isuwang.soa.core;
 
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.*;
-import org.apache.thrift.transport.TTransport;
+import com.isuwang.org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.protocol.*;
+import com.isuwang.org.apache.thrift.transport.TTransport;
 
 import java.nio.ByteBuffer;
 

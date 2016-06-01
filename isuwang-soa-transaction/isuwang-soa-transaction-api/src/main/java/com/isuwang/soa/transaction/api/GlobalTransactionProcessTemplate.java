@@ -8,7 +8,7 @@ import com.isuwang.soa.transaction.api.domain.TGlobalTransactionProcess;
 import com.isuwang.soa.transaction.api.domain.TGlobalTransactionProcessExpectedStatus;
 import com.isuwang.soa.transaction.api.domain.TGlobalTransactionProcessStatus;
 import com.isuwang.soa.transaction.api.service.GlobalTransactionProcessService;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 import java.util.Date;
 import java.util.Optional;

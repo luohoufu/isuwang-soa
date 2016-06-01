@@ -4,7 +4,7 @@ import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.transaction.api.domain.TGlobalTransaction;
 import com.isuwang.soa.transaction.api.domain.TGlobalTransactionsStatus;
 import com.isuwang.soa.transaction.api.service.GlobalTransactionService;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 import java.util.Date;
 

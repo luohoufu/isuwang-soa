@@ -4,8 +4,8 @@ import java.lang.reflect.Method
 import java.sql.{Connection, ResultSet}
 import javax.sql.DataSource
 
+import com.isuwang.org.apache.thrift.TEnum
 import org.apache.commons.lang.math.NumberUtils
-import org.apache.thrift.TEnum
 import org.springframework.jdbc.datasource.{ConnectionHolder, DataSourceUtils}
 import org.springframework.transaction.NoTransactionException
 import org.springframework.transaction.support.TransactionSynchronizationManager
@@ -33,7 +33,7 @@ trait DB {
     override def getBeanValue(field: AnyRef, `type`: Class[java.lang.Enum[_]]): java.lang.Enum[_] = getBeanValueImpl(field, `type`)
 
     private def getJdbcValueImpl(fieldValue: java.lang.Enum[_]): AnyRef = {
-      if (classOf[org.apache.thrift.TEnum].isAssignableFrom(fieldValue.getClass)) new Integer(fieldValue.asInstanceOf[org.apache.thrift.TEnum].getValue)
+      if (classOf[TEnum].isAssignableFrom(fieldValue.getClass)) new Integer(fieldValue.asInstanceOf[TEnum].getValue)
       else fieldValue.name
     }
 

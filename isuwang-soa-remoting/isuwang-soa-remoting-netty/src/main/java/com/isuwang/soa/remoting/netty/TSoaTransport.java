@@ -1,8 +1,8 @@
 package com.isuwang.soa.remoting.netty;
 
 import io.netty.buffer.ByteBuf;
-import org.apache.thrift.transport.TTransport;
-import org.apache.thrift.transport.TTransportException;
+import com.isuwang.org.apache.thrift.transport.TTransport;
+import com.isuwang.org.apache.thrift.transport.TTransportException;
 
 import java.nio.ByteOrder;
 

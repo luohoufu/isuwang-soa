@@ -3,7 +3,7 @@ package com.isuwang.soa.remoting.filter;
 import com.isuwang.soa.core.SoaHeader;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

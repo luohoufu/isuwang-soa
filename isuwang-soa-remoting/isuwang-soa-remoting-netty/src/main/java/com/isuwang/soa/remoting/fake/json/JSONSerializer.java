@@ -1,10 +1,10 @@
 package com.isuwang.soa.remoting.fake.json;//package com.isuwang.soa.remoting.fake.json;
 
 import com.google.gson.*;
+import com.isuwang.org.apache.thrift.protocol.*;
 import com.isuwang.soa.core.SoaException;
 import com.isuwang.soa.core.metadata.*;
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.*;
+import com.isuwang.org.apache.thrift.TException;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;

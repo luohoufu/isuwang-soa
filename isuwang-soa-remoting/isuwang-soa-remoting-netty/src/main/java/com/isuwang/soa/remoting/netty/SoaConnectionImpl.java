@@ -3,10 +3,10 @@ package com.isuwang.soa.remoting.netty;
 import com.isuwang.soa.core.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import org.apache.thrift.TApplicationException;
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TMessage;
-import org.apache.thrift.protocol.TMessageType;
+import com.isuwang.org.apache.thrift.TApplicationException;
+import com.isuwang.org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.protocol.TMessage;
+import com.isuwang.org.apache.thrift.protocol.TMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

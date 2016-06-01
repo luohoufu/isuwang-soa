@@ -2,7 +2,7 @@ package com.isuwang.soa.remoting.fake.metadata;
 
 import com.isuwang.soa.core.SoaException;
 import com.isuwang.soa.remoting.BaseServiceClient;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 /**
  * Created by tangliu on 2016/3/3.

@@ -4,7 +4,7 @@ import com.isuwang.soa.container.filter.slowtime.Task;
 import com.isuwang.soa.container.filter.slowtime.TaskManager;
 import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.FilterChain;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 /**
  * Created by tangliu on 2016/2/1.

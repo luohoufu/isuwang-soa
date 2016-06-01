@@ -1,6 +1,6 @@
 package com.isuwang.soa.core;
 
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 /**
  * soa方法处理器

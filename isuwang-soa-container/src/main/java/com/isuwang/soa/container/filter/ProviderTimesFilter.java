@@ -5,8 +5,7 @@ import com.isuwang.soa.core.TransactionContext;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
-import com.isuwang.soa.remoting.filter.StubFilterChain;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

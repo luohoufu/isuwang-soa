@@ -17,7 +17,7 @@ public class AppClassLoader extends URLClassLoader {
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        if(name.startsWith("com.isuwang.soa.core") || name.startsWith("org.apache.thrift") || name.startsWith("com.isuwang.soa.transaction.api")
+        if(name.startsWith("com.isuwang.soa.core") || name.startsWith("com.isuwang.org.apache.thrift") || name.startsWith("com.isuwang.soa.transaction.api")
                 || name.startsWith("com.google.gson"))
             return ClassLoaderManager.shareClassLoader.loadClass(name);
 

@@ -12,7 +12,7 @@ import com.isuwang.soa.remoting.conf.SoaRemotingFilter;
 import com.isuwang.soa.remoting.conf.SoaRemotingFilters;
 import com.isuwang.soa.remoting.filter.SendMessageFilter;
 import com.isuwang.soa.remoting.filter.StubFilterChain;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

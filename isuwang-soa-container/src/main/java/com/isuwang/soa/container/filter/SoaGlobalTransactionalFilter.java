@@ -9,7 +9,7 @@ import com.isuwang.soa.core.filter.FilterChain;
 import com.isuwang.soa.core.filter.container.ContainerFilterChain;
 import com.isuwang.soa.transaction.api.GlobalTransactionCallbackWithoutResult;
 import com.isuwang.soa.transaction.api.GlobalTransactionTemplate;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

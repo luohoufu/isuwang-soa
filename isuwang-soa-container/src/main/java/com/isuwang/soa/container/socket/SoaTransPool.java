@@ -2,8 +2,8 @@ package com.isuwang.soa.container.socket;
 
 import com.isuwang.soa.core.*;
 import com.isuwang.soa.core.socket.TSoaTransport;
-import org.apache.thrift.protocol.TMessage;
-import org.apache.thrift.protocol.TMessageType;
+import com.isuwang.org.apache.thrift.protocol.TMessage;
+import com.isuwang.org.apache.thrift.protocol.TMessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,8 +1,8 @@
 package com.isuwang.soa.monitor.api;
 
+import com.isuwang.org.apache.thrift.protocol.*;
 import com.isuwang.soa.core.*;
-import org.apache.thrift.TException;
-import org.apache.thrift.protocol.*;
+import com.isuwang.org.apache.thrift.TException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

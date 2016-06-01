@@ -9,7 +9,7 @@ import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.RegistryAgent;
 import com.isuwang.soa.registry.RegistryAgentProxy;
 import com.isuwang.soa.registry.ServiceInfo;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

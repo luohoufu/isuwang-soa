@@ -2,7 +2,7 @@ package com.isuwang.soa.core.filter.container;
 
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.core.filter.FilterChain;
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 import java.util.HashMap;
 import java.util.LinkedList;

@@ -1,6 +1,6 @@
 package com.isuwang.soa.core.filter;
 
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 /**
  * Filter

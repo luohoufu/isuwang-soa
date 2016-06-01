@@ -1,6 +1,6 @@
 package com.isuwang.soa.transaction.api;
 
-import org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.TException;
 
 /**
  * Soa Transactional ProcessCallback WithoutResult
