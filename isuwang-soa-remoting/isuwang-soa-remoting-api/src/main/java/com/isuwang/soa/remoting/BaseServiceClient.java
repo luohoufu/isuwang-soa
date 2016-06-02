@@ -1,5 +1,6 @@
 package com.isuwang.soa.remoting;
 
+import com.isuwang.org.apache.thrift.TException;
 import com.isuwang.soa.core.*;
 import com.isuwang.soa.core.filter.Filter;
 import com.isuwang.soa.registry.ConfigKey;
@@ -12,7 +13,6 @@ import com.isuwang.soa.remoting.conf.SoaRemotingFilter;
 import com.isuwang.soa.remoting.conf.SoaRemotingFilters;
 import com.isuwang.soa.remoting.filter.SendMessageFilter;
 import com.isuwang.soa.remoting.filter.StubFilterChain;
-import com.isuwang.org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -211,10 +211,7 @@ public class BaseServiceClient {
             chain.setAttribute(StubFilterChain.ATTR_KEY_RESPONSE, resp);
         });
 
-        try {
-            stubFilterChain.doFilter();
-        } catch (SoaException e) {
-        }
+        stubFilterChain.doFilter();
 
         return (Future<RESP>) stubFilterChain.getAttribute(StubFilterChain.ATTR_KEY_RESPONSE);
     }
