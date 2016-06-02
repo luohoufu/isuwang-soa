@@ -171,72 +171,79 @@ public class SoaServerHandler extends ChannelHandlerAdapter {
         SoaHeader soaHeader = context.getHeader();
 
         final TSoaTransport outputSoaTransport = new TSoaTransport(outputBuf);
-        TSoaServiceProtocol outputProtocol = null;
+        final TSoaServiceProtocol outputProtocol = new TSoaServiceProtocol(outputSoaTransport, false);
 
         try {
-            outputProtocol = new TSoaServiceProtocol(outputSoaTransport, false);
             SoaBaseProcessor<?> soaProcessor = soaProcessors.get(new ProcessorKey(soaHeader.getServiceName(), soaHeader.getVersionName()));
-
             if (soaProcessor == null) {
                 throw new SoaException(SoaBaseCode.NotFoundServer);
             }
-
             CompletableFuture<Context> future = soaProcessor.processAsync(inputProtocol, outputProtocol);
-            future.thenAccept(resultContext -> {
+            future.whenComplete((resultContext, ex) -> {
 
-                String responseCode = "-", responseMsg = "-";
-                try {
-                    outputSoaTransport.flush();
-                    ctx.writeAndFlush(outputBuf);
+                if (resultContext != null) {
+                    String responseCode = "-", responseMsg = "-";
+                    try {
+                        outputSoaTransport.flush();
+                        ctx.writeAndFlush(outputBuf);
 
-                    if (resultContext.getHeader().getRespCode().isPresent())
-                        responseCode = resultContext.getHeader().getRespCode().get();
-                    if (resultContext.getHeader().getRespMessage().isPresent())
-                        responseMsg = resultContext.getHeader().getRespMessage().get();
+                        if (resultContext.getHeader().getRespCode().isPresent())
+                            responseCode = resultContext.getHeader().getRespCode().get();
+                        if (resultContext.getHeader().getRespMessage().isPresent())
+                            responseMsg = resultContext.getHeader().getRespMessage().get();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (inputSoaTransport != null)
-                        inputSoaTransport.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (inputSoaTransport != null)
+                            inputSoaTransport.close();
 
-                    if (outputSoaTransport != null)
-                        outputSoaTransport.close();
+                        if (outputSoaTransport != null)
+                            outputSoaTransport.close();
 
-                    final String fRspCode = responseCode;
-                    final String fRspMsg = responseMsg;
+                        final String fRspCode = responseCode;
+                        final String fRspMsg = responseMsg;
 
-                    PlatformProcessDataFactory.update(soaHeader, cacheProcessData -> {
-                        long totalTime = System.currentTimeMillis() - startTime;
+                        PlatformProcessDataFactory.update(soaHeader, cacheProcessData -> {
+                            long totalTime = System.currentTimeMillis() - startTime;
 
-                        if (cacheProcessData.getPMinTime() == 0 || totalTime < cacheProcessData.getPMinTime())
-                            cacheProcessData.setPMinTime(totalTime);
-                        if (cacheProcessData.getPMaxTime() == 0 || totalTime > cacheProcessData.getPMaxTime())
-                            cacheProcessData.setPMaxTime(totalTime);
-                        cacheProcessData.setPTotalTime(cacheProcessData.getPTotalTime() + totalTime);
+                            if (cacheProcessData.getPMinTime() == 0 || totalTime < cacheProcessData.getPMinTime())
+                                cacheProcessData.setPMinTime(totalTime);
+                            if (cacheProcessData.getPMaxTime() == 0 || totalTime > cacheProcessData.getPMaxTime())
+                                cacheProcessData.setPMaxTime(totalTime);
+                            cacheProcessData.setPTotalTime(cacheProcessData.getPTotalTime() + totalTime);
 
-                        if (fRspCode.equals("0000"))
-                            cacheProcessData.setSucceedCalls(cacheProcessData.getSucceedCalls() + 1);
-                        else
-                            cacheProcessData.setFailCalls(cacheProcessData.getFailCalls() + 1);
+                            if (fRspCode.equals("0000"))
+                                cacheProcessData.setSucceedCalls(cacheProcessData.getSucceedCalls() + 1);
+                            else
+                                cacheProcessData.setFailCalls(cacheProcessData.getFailCalls() + 1);
 
-                        cacheProcessData.setTotalCalls(cacheProcessData.getTotalCalls() + 1);
-                        cacheProcessData.setRequestFlow(cacheProcessData.getRequestFlow() + processData.getRequestFlow());
-                        cacheProcessData.setResponseFlow(cacheProcessData.getResponseFlow() + outputBuf.writerIndex());
+                            cacheProcessData.setTotalCalls(cacheProcessData.getTotalCalls() + 1);
+                            cacheProcessData.setRequestFlow(cacheProcessData.getRequestFlow() + processData.getRequestFlow());
+                            cacheProcessData.setResponseFlow(cacheProcessData.getResponseFlow() + outputBuf.writerIndex());
 
-                        StringBuilder builder = new StringBuilder("DONE")
-                                .append(" ").append(ctx.channel().remoteAddress())
-                                .append(" ").append(ctx.channel().localAddress())
-                                .append(" ").append(context.getSeqid())
-                                .append(" ").append(soaHeader.getServiceName()).append(".").append(soaHeader.getMethodName()).append(":").append(soaHeader.getVersionName())
-                                .append(" ").append(fRspCode)
-                                .append(" ").append(fRspMsg)
-                                .append(" ").append(processData.getRequestFlow())
-                                .append(" ").append(outputBuf.writerIndex())
-                                .append(" ").append(waitingTime).append("ms")
-                                .append(" ").append(totalTime).append("ms");
-                        SIMPLE_LOGGER.info(builder.toString());
-                    });
+                            StringBuilder builder = new StringBuilder("DONE")
+                                    .append(" ").append(ctx.channel().remoteAddress())
+                                    .append(" ").append(ctx.channel().localAddress())
+                                    .append(" ").append(context.getSeqid())
+                                    .append(" ").append(soaHeader.getServiceName()).append(".").append(soaHeader.getMethodName()).append(":").append(soaHeader.getVersionName())
+                                    .append(" ").append(fRspCode)
+                                    .append(" ").append(fRspMsg)
+                                    .append(" ").append(processData.getRequestFlow())
+                                    .append(" ").append(outputBuf.writerIndex())
+                                    .append(" ").append(waitingTime).append("ms")
+                                    .append(" ").append(totalTime).append("ms");
+                            SIMPLE_LOGGER.info(builder.toString());
+                        });
+                    }
+                } else {
+                    LOGGER.error(ex.getMessage(), ex);
+                    if (ex instanceof SoaException) {
+                        writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, (SoaException) ex);
+                    } else {
+                        String errMsg = ex.getCause() != null ? ex.getCause().toString() : (ex.getMessage() != null ? ex.getMessage().toString() : SoaBaseCode.UnKnown.getMsg());
+                        writeErrorMessage(ctx, outputBuf, context, soaHeader, outputSoaTransport, outputProtocol, new SoaException(SoaBaseCode.UnKnown, errMsg));
+                    }
                 }
             });
 

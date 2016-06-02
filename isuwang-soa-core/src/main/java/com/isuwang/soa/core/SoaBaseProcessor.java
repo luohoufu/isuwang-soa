@@ -124,7 +124,14 @@ public class SoaBaseProcessor<I> implements TProcessor {
 
             try {
                 CompletableFuture<Object> future = (CompletableFuture) soaProcessFunction.getResultAsync(iface, args);
-                future.thenAccept(realResult -> AsyncAccept(context, soaProcessFunction, realResult, out, futureResult));
+                future.whenComplete((realResult, ex) -> {
+                    if (realResult != null) {
+                        AsyncAccept(context, soaProcessFunction, realResult, out, futureResult);
+                    } else {
+                        TransactionContext.Factory.setCurrentInstance(context);
+                        futureResult.completeExceptionally(ex);
+                    }
+                });
             } finally {
                 chain.setAttribute(ContainerFilterChain.ATTR_KEY_I_PROCESSTIME, System.currentTimeMillis() - startTime);
             }
