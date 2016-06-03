@@ -346,6 +346,11 @@ class JavaGenerator extends CodeGenerator {
         }
         }
         }
+
+        public static {struct.name}NoOptional copy(Object obj)<block>
+           return com.isuwang.scala.dbc.utils.ThriftBeanConverter.copy(obj, {struct.name}NoOptional.class);
+        </block>
+
       </block>
       </div>
     }
