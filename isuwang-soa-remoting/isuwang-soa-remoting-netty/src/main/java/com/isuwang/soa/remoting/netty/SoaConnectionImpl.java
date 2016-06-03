@@ -107,7 +107,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
      * @return
      * @throws TException
      */
-    public <REQ, RESP> Future<RESP> sendAsync(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer) throws TException {
+    public <REQ, RESP> Future<RESP> sendAsync(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer, long timeout) throws TException {
 
         InvocationContext context = InvocationContext.Factory.getCurrentInstance();
         SoaHeader soaHeader = context.getHeader();
@@ -129,47 +129,53 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
             }
 
             CompletableFuture<ByteBuf> responseBufFuture = new CompletableFuture<>();
-            soaClient.send(context.getSeqid(), requestBuf, responseBufFuture);
+            soaClient.send(context.getSeqid(), requestBuf, responseBufFuture, timeout);
 
             final CompletableFuture<RESP> finalResponseFuture = new CompletableFuture<>();
-            responseBufFuture.thenAccept(responseBuf -> {
 
-                final TSoaTransport inputSoaTransport = new TSoaTransport(responseBuf);
-                TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport, true);
-                InvocationContext.Factory.setCurrentInstance(context);
+            responseBufFuture.whenComplete((responseBuf, ex) -> {
 
-                try {
-                    TMessage msg = inputProtocol.readMessageBegin();
-                    if (TMessageType.EXCEPTION == msg.type) {
-                        TApplicationException x = TApplicationException.read(inputProtocol);
-                        inputProtocol.readMessageEnd();
-                        throw x;
-                    } else if (context.getSeqid() != msg.seqid) {
-                        throw new TApplicationException(4, soaHeader.getMethodName() + " failed: out of sequence response");
-                    } else {
-                        if ("0000".equals(soaHeader.getRespCode().get())) {
-                            responseSerializer.read(response, inputProtocol);
+                if (responseBuf != null) {
+
+                    final TSoaTransport inputSoaTransport = new TSoaTransport(responseBuf);
+                    TSoaServiceProtocol inputProtocol = new TSoaServiceProtocol(inputSoaTransport, true);
+                    InvocationContext.Factory.setCurrentInstance(context);
+
+                    try {
+                        TMessage msg = inputProtocol.readMessageBegin();
+                        if (TMessageType.EXCEPTION == msg.type) {
+                            TApplicationException x = TApplicationException.read(inputProtocol);
                             inputProtocol.readMessageEnd();
-
-                            finalResponseFuture.complete(response);
+                            throw x;
+                        } else if (context.getSeqid() != msg.seqid) {
+                            throw new TApplicationException(4, soaHeader.getMethodName() + " failed: out of sequence response");
                         } else {
-                            throw new SoaException(soaHeader.getRespCode().get(), soaHeader.getRespMessage().get());
+                            if ("0000".equals(soaHeader.getRespCode().get())) {
+                                responseSerializer.read(response, inputProtocol);
+                                inputProtocol.readMessageEnd();
+
+                                finalResponseFuture.complete(response);
+                            } else {
+                                throw new SoaException(soaHeader.getRespCode().get(), soaHeader.getRespMessage().get());
+                            }
                         }
+                    } catch (SoaException e) {
+                        LOGGER.error(e.getMessage(), e);
+                        finalResponseFuture.completeExceptionally(e);
+
+                    } catch (Throwable e) {
+                        LOGGER.error(e.getMessage(), e);
+                        finalResponseFuture.completeExceptionally(new SoaException(SoaBaseCode.UnKnown));
+
+                    } finally {
+                        if (responseBuf != null)
+                            responseBuf.release();
+
+                        if (requestBuf.refCnt() > 0)
+                            requestBuf.release();
                     }
-                } catch (SoaException e) {
-                    LOGGER.error(e.getMessage(), e);
-                    finalResponseFuture.completeExceptionally(e);
-
-                } catch (Throwable e) {
-                    LOGGER.error(e.getMessage(), e);
-                    finalResponseFuture.completeExceptionally(new SoaException(SoaBaseCode.UnKnown));
-
-                } finally {
-                    if (responseBuf != null)
-                        responseBuf.release();
-
-                    if (requestBuf.refCnt() > 0)
-                        requestBuf.release();
+                } else {
+                    finalResponseFuture.completeExceptionally(ex);
                 }
             });
 

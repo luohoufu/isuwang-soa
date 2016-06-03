@@ -1,11 +1,11 @@
 package com.isuwang.soa.remoting.socket;
 
-import com.isuwang.soa.core.*;
-import com.isuwang.soa.core.socket.TSoaTransport;
 import com.isuwang.org.apache.thrift.TApplicationException;
 import com.isuwang.org.apache.thrift.TException;
 import com.isuwang.org.apache.thrift.protocol.TMessage;
 import com.isuwang.org.apache.thrift.protocol.TMessageType;
+import com.isuwang.soa.core.*;
+import com.isuwang.soa.core.socket.TSoaTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public class SoaConnectionImpl implements com.isuwang.soa.remoting.SoaConnection
     }
 
     @Override
-    public <REQ, RESP> Future<RESP> sendAsync(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer) throws TException {
+    public <REQ, RESP> Future<RESP> sendAsync(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer, long timeout) throws TException {
         return null;
     }
 

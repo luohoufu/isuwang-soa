@@ -2,6 +2,7 @@ package com.isuwang.soa.remoting.netty;
 
 import com.isuwang.soa.core.SoaBaseCode;
 import com.isuwang.soa.core.SoaException;
+import com.isuwang.soa.remoting.AsyncRequestWithTimeout;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -17,9 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 
 /**
  * Created by tangliu on 2016/1/13.
@@ -43,7 +45,12 @@ public class SoaClient {
      */
     private final Map<String, ByteBuf[]> caches = new ConcurrentHashMap<>();
 
-    private final Map<String, Future> futureCaches = new ConcurrentHashMap<>();
+    private static final Map<String, CompletableFuture> futureCaches = new ConcurrentHashMap<>();
+
+    /**
+     * 优先队列,根据超时时间排序，最先超时的排在前面（超时时间为请求时间+用户设置的超时时间）
+     */
+    private static final Queue<AsyncRequestWithTimeout> futuresCachesWithTimeout = new PriorityQueue<>((o1, o2) -> (int) (o1.getTimeout() - o2.getTimeout()));
 
     public SoaClient(String host, int port) throws SoaException {
         this.host = host;
@@ -119,7 +126,6 @@ public class SoaClient {
                 future.complete(msg);
 
                 futureCaches.remove(String.valueOf(seqid));
-
             } else {
                 LOGGER.error("返回结果超时，siqid为：" + String.valueOf(seqid));
                 msg.release();
@@ -179,15 +185,57 @@ public class SoaClient {
      * @param request
      * @return
      */
-    public void send(int seqid, ByteBuf request, Future<ByteBuf> future) throws Exception {
+    public void send(int seqid, ByteBuf request, CompletableFuture<ByteBuf> future, long timeout) throws Exception {
 
         if (channel == null || !channel.isActive())
             connect(host, port);
 
-        //means that this channel is not idle and would not managered by IdleConnectionManager
         IdleConnectionManager.remove(channel);
         futureCaches.put(String.valueOf(seqid), future);
+
+        AsyncRequestWithTimeout fwt = new AsyncRequestWithTimeout(String.valueOf(seqid), timeout, future);
+        futuresCachesWithTimeout.add(fwt);
+
         channel.writeAndFlush(request);
+    }
+
+    /**
+     * 定时任务，使得超时的异步任务返回异常给调用者
+     */
+    private static long DEFAULT_SLEEP_TIME = 2000L;
+
+    static {
+
+        final Thread asyncCheckTimeThread = new Thread("Check Async Timeout Thread") {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        checkAsyncTimeout();
+                    } catch (Exception e) {
+                        LOGGER.error("Check Async Timeout Thread Error", e);
+                    }
+                }
+            }
+        };
+        asyncCheckTimeThread.start();
+    }
+
+    private static void checkAsyncTimeout() throws InterruptedException {
+
+        AsyncRequestWithTimeout fwt = futuresCachesWithTimeout.peek();
+
+        while (fwt != null && fwt.getTimeout() < System.currentTimeMillis()) {
+            LOGGER.info("异步任务({})超时...", fwt.getSeqid());
+            futuresCachesWithTimeout.remove();
+
+            CompletableFuture future = futureCaches.get(fwt.getSeqid());
+            future.completeExceptionally(new SoaException(SoaBaseCode.TimeOut));
+            futureCaches.remove(fwt.getSeqid());
+
+            fwt = futuresCachesWithTimeout.peek();
+        }
+        Thread.sleep(DEFAULT_SLEEP_TIME);
     }
 
     /**

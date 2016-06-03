@@ -192,8 +192,20 @@ public class BaseServiceClient {
         return (RESP) stubFilterChain.getAttribute(StubFilterChain.ATTR_KEY_RESPONSE);
     }
 
-
-    protected <REQ, RESP> Future<RESP> sendBaseAsync(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer) throws TException {
+    /**
+     * 发送异步请求
+     *
+     * @param request            请求实体
+     * @param response           返回实体
+     * @param requestSerializer
+     * @param responseSerializer
+     * @param timeout            超时时间
+     * @param <REQ>
+     * @param <RESP>
+     * @return
+     * @throws TException
+     */
+    protected <REQ, RESP> Future<RESP> sendBaseAsync(REQ request, RESP response, TBeanSerializer<REQ> requestSerializer, TBeanSerializer<RESP> responseSerializer, long timeout) throws TException {
 
         InvocationContext context = InvocationContext.Factory.getCurrentInstance();
         SoaHeader soaHeader = context.getHeader();
@@ -207,7 +219,7 @@ public class BaseServiceClient {
         stubFilterChain.setAttribute(StubFilterChain.ATTR_KEY_REQUEST, request);
         stubFilterChain.setAttribute(SendMessageFilter.ATTR_KEY_SENDMESSAGE, (SendMessageFilter.SendMessageAction) (chain) -> {
             SoaConnection conn = connectionPool.getConnection();
-            Future<RESP> resp = conn.sendAsync(request, response, requestSerializer, responseSerializer);
+            Future<RESP> resp = conn.sendAsync(request, response, requestSerializer, responseSerializer, timeout);
             chain.setAttribute(StubFilterChain.ATTR_KEY_RESPONSE, resp);
         });
 
