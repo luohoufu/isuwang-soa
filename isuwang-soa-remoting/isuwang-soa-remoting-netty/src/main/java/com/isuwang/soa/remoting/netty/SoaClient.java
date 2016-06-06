@@ -202,7 +202,7 @@ public class SoaClient {
     /**
      * 定时任务，使得超时的异步任务返回异常给调用者
      */
-    private static long DEFAULT_SLEEP_TIME = 2000L;
+    private static long DEFAULT_SLEEP_TIME = 1000L;
 
     static {
 
