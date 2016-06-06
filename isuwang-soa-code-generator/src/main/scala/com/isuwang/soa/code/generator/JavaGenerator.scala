@@ -339,9 +339,6 @@ class JavaGenerator extends CodeGenerator {
             public {toDataTypeTemplate(field.getDataType)} get{field.name.charAt(0).toUpper + field.name.substring(1)}()<block> return this.{field.name}; </block>
             public void set{field.name.charAt(0).toUpper + field.name.substring(1)}({toDataTypeTemplate(field.getDataType)} {field.name})<block> this.{field.name} = {field.name}; </block>
 
-            {if(field.dataType.kind == DataType.KIND.BOOLEAN) <div>public {toDataTypeTemplate(field.getDataType)} is{field.name.charAt(0).toUpper + field.name.substring(1)}() <block>
-            return this.{field.name};
-          </block></div>}
           </div>
         }
         }
