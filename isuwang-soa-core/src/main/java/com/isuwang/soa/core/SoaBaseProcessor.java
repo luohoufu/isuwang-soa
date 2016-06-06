@@ -53,6 +53,8 @@ public class SoaBaseProcessor<I> implements TProcessor {
             //TMessage tMessage = in.readMessageBegin();
             @SuppressWarnings("unchecked")
             SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>> soaProcessFunction = (SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>>) getProcessMapView().get(methodName);
+            if (soaProcessFunction == null)
+                throw new SoaException("系统错误", "方法(" + methodName + ")不存在");
             Object args = soaProcessFunction.getEmptyArgsInstance();
             soaProcessFunction.getReqSerializer().read(args, in);
             in.readMessageEnd();
