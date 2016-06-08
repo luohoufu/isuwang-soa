@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.isuwang</groupId>
-    <artifactId>isuwang-soa</artifactId>
+    <artifactId>dapeng-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.1-SNAPSHOT</version>
 
     <name>dapeng</name>
     <description>一个简单、易用、多特性的SOA框架</description>
@@ -36,19 +36,19 @@
     </scm>
 
     <modules>
-        <module>isuwang-soa-core</module>
-        <module>isuwang-soa-container</module>
-        <module>isuwang-soa-spring</module>
-        <module>isuwang-soa-zookeeper</module>
-        <module>isuwang-soa-maven-plugin</module>
-        <module>isuwang-soa-registry</module>
-        <module>isuwang-soa-code-generator</module>
-        <module>isuwang-soa-remoting</module>
-        <module>isuwang-soa-bootstrap</module>
-        <module>isuwang-soa-api-doc</module>
-        <module>isuwang-soa-monitor</module>
-        <module>isuwang-soa-transaction</module>
-        <module>isuwang-scala-dbc</module>
+        <module>dapeng-core</module>
+        <module>dapeng-container</module>
+        <module>dapeng-spring</module>
+        <module>dapeng-zookeeper</module>
+        <module>dapeng-maven-plugin</module>
+        <module>dapeng-registry</module>
+        <module>dapeng-code-generator</module>
+        <module>dapeng-remoting</module>
+        <module>dapeng-bootstrap</module>
+        <module>dapeng-api-doc</module>
+        <module>dapeng-monitor</module>
+        <module>dapeng-transaction</module>
+        <module>dapeng-scala-dbc</module>
     </modules>
 
     <properties>
@@ -253,7 +253,7 @@
 
             <dependency>
                 <groupId>com.isuwang</groupId>
-                <artifactId>isuwang-soa-core</artifactId>
+                <artifactId>dapeng-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
