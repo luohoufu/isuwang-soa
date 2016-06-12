@@ -129,7 +129,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix></classpathPrefix>
-                            <mainClass>com.isuwang.soa.code.Scrooge</mainClass>
+                            <mainClass>com.isuwang.dapeng.code.Scrooge</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

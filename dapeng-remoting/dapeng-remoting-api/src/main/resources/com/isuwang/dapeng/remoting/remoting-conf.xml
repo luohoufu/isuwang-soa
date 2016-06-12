@@ -6,6 +6,6 @@
         <soa-remoting-filter name="loadBalanceFilter" ref="com.isuwang.dapeng.remoting.filter.LoadBalanceFilter"/>
     </soa-remoting-filters>
 
-    <soa-remoting-connection-pool name="nettyPool" ref="com.isuwang.soa.remoting.netty.SoaConnectionPoolImpl"/>
+    <soa-remoting-connection-pool name="nettyPool" ref="com.isuwang.dapeng.remoting.netty.SoaConnectionPoolImpl"/>
 </soa-remoting>
 

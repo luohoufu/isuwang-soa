@@ -50,7 +50,7 @@ public class RunContainerPlugin extends SoaAbstractMojo {
                 while (iterator.hasNext()) {
                     URL url = iterator.next();
 
-                    if (url.getFile().matches("^.*/isuwang-soa-transaction-impl.*\\.jar$")) {
+                    if (url.getFile().matches("^.*/dapeng-transaction-impl.*\\.jar$")) {
                         iterator.remove();
 
                         continue;
@@ -105,13 +105,13 @@ public class RunContainerPlugin extends SoaAbstractMojo {
     }
 
     private boolean removeContainerAndBootstrap(Iterator<URL> iterator, URL url) {
-        if (url.getFile().matches("^.*/isuwang-soa-container.*\\.jar$")) {
+        if (url.getFile().matches("^.*/dapeng-container.*\\.jar$")) {
             iterator.remove();
 
             return true;
         }
 
-        if (url.getFile().matches("^.*/isuwang-soa-bootstrap.*\\.jar$")) {
+        if (url.getFile().matches("^.*/dapeng-bootstrap.*\\.jar$")) {
             iterator.remove();
 
             return true;

@@ -1,4 +1,4 @@
-package com.isuwang.dapeng.remoting.fake.json;//package com.isuwang.soa.remoting.fake.json;
+package com.isuwang.dapeng.remoting.fake.json;
 
 import com.google.gson.*;
 import com.isuwang.dapeng.core.metadata.*;

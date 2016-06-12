@@ -51,7 +51,7 @@ public class SpringContainer implements Container {
                     URL nextElement = resources.nextElement();
 
                     // not load isuwang-soa-transaction-impl
-                    if(!nextElement.getFile().matches(".*isuwang-soa-transaction-impl.*"))
+                    if(!nextElement.getFile().matches(".*dapeng-transaction-impl.*"))
                         xmlPaths.add(nextElement.toString());
                 }
 

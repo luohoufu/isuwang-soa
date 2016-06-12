@@ -42,7 +42,7 @@ public class TransactionContainer implements Container {
                 while (resources.hasMoreElements()) {
                     URL nextElement = resources.nextElement();
 
-                    if(nextElement.toString().matches(".*isuwang-soa-transaction.*"))
+                    if(nextElement.toString().matches(".*dapeng-transaction.*"))
                         xmlPaths.add(nextElement.toString());
                 }
 

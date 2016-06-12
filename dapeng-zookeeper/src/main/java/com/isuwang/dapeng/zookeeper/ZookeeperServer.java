@@ -18,7 +18,7 @@ public class ZookeeperServer {
         if (args != null && args.length > 0)
             QuorumPeerMain.main(args);
         else
-            QuorumPeerMain.main(new String[]{new File("isuwang-soa-zookeeper", "src/main/resources/conf/zoo.cfg").getAbsolutePath()});
+            QuorumPeerMain.main(new String[]{new File("dapeng-zookeeper", "src/main/resources/conf/zoo.cfg").getAbsolutePath()});
     }
 
 }

@@ -1578,7 +1578,7 @@ public class MonitorServiceCodec {
         public getServiceMetadata_result getResult(I iface, getServiceMetadata_args args) throws TException {
             getServiceMetadata_result result = new getServiceMetadata_result();
 
-            try (InputStreamReader isr = new InputStreamReader(MonitorServiceCodec.class.getClassLoader().getResourceAsStream("com.isuwang.soa.monitor.api.service.MonitorService.xml"));
+            try (InputStreamReader isr = new InputStreamReader(MonitorServiceCodec.class.getClassLoader().getResourceAsStream("com.isuwang.dapeng.monitor.api.service.MonitorService.xml"));
                  BufferedReader in = new BufferedReader(isr)) {
                 int len = 0;
                 StringBuilder str = new StringBuilder("");

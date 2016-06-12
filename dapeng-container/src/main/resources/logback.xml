@@ -83,7 +83,7 @@
         <appender-ref ref="SLOWTIMEFILE"/>
     </logger>
 
-    <logger name="com.isuwang.soa.transaction" additivity="true">
+    <logger name="com.isuwang.dapeng.transaction" additivity="true">
         <level value="INFO"/>
         <appender-ref ref="GBTRANSACTIONFILE"/>
     </logger>
