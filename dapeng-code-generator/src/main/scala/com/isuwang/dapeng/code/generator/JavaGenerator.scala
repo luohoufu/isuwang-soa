@@ -125,6 +125,8 @@ class JavaGenerator extends CodeGenerator {
         import com.isuwang.dapeng.core.*;
         import com.isuwang.org.apache.thrift.*;
         import com.isuwang.dapeng.remoting.BaseServiceClient;
+        import java.util.concurrent.CompletableFuture;
+        import java.util.concurrent.Future;
         import {service.namespace.substring(0, service.namespace.lastIndexOf(".")) + "." + service.name + "Codec.*"};
 
         public class {service.name}Client extends BaseServiceClient<block>
@@ -149,12 +151,49 @@ class JavaGenerator extends CodeGenerator {
         {
         toMethodArrayBuffer(service.methods).map{(method:Method)=>{
           <div>
-            /**
-            * {method.doc}
-            **/
-            public {toDataTypeTemplate(method.getResponse.getFields().get(0).getDataType)} {method.name}({toFieldArrayBuffer(method.getRequest.getFields).map{ (field: Field) =>{
-            <div>{toDataTypeTemplate(field.getDataType())} {field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}}}) throws SoaException<block>
-            initContext("{method.name}");
+         /**
+         * {method.doc}
+         **/
+            {
+              if(method.doc != null && method.doc.contains("@SoaAsyncFunction"))
+                <div>
+                  public Future{lt}{toDataTypeTemplate(method.getResponse.getFields().get(0).getDataType)}{gt} {method.name} ({toFieldArrayBuffer(method.getRequest.getFields).map{ (field: Field) =>{
+                  <div>{toDataTypeTemplate(field.getDataType())} {field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}}},long timeout) throws SoaException<block>
+                  initContext("{method.name}");
+
+                  try <block>
+                    {method.getRequest.name} {method.getRequest.name} = new {method.getRequest.name}();
+                    {
+                    toFieldArrayBuffer(method.getRequest.getFields).map{(field: Field)=>{
+                      <div>{method.getRequest.name}.set{field.name.charAt(0).toUpper + field.name.substring(1)}({field.name});
+                      </div>
+                    }
+                    }
+                    }
+                    CompletableFuture{lt}{method.response.name}{gt} resultFuture = (CompletableFuture) sendBaseAsync({method.request.name}, new {method.response.name}(), new {method.request.name.charAt(0).toUpper + method.request.name.substring(1)}Serializer(), new {method.response.name.charAt(0).toUpper + method.response.name.substring(1)}Serializer(),timeout);
+                    CompletableFuture{lt}{toDataTypeTemplate(method.getResponse.getFields().get(0).getDataType)}{gt} response = new CompletableFuture{lt}{gt}();
+                      resultFuture.whenComplete(({method.response.name}, ex) -{gt} <block>
+                      if ({method.response.name} != null) <block>
+                        response.complete({method.response.name}.getSuccess());
+                      </block>
+                      else <block>
+                        response.completeExceptionally(ex);
+                      </block>
+                    </block>);
+                    return response;
+                    </block>catch (SoaException e)<block>
+                    throw e;
+                  </block> catch (TException e)<block>
+                    throw new SoaException(e);
+                  </block>finally <block>
+                    destoryContext();
+                  </block>
+                  </block>
+                </div>
+              else <div>
+                public {toDataTypeTemplate(method.getResponse.getFields().get(0).getDataType)} {method.name}({toFieldArrayBuffer(method.getRequest.getFields).map{ (field: Field) =>{
+                  <div>{toDataTypeTemplate(field.getDataType())} {field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}}}) throws SoaException<block>
+                  initContext("{method.name}");
 
             try <block>
                {method.getRequest.name} {method.getRequest.name} = new {method.getRequest.name}();
@@ -192,6 +231,8 @@ class JavaGenerator extends CodeGenerator {
               destoryContext();
             </block>
             </block>
+              </div>
+            }
           </div>
         }
         }
@@ -321,6 +362,8 @@ class JavaGenerator extends CodeGenerator {
         import com.isuwang.dapeng.core.Service;
         import com.isuwang.dapeng.core.SoaGlobalTransactional;
 
+        import java.util.concurrent.Future;
+
         /**
         * {service.doc}
         **/
@@ -335,9 +378,18 @@ class JavaGenerator extends CodeGenerator {
             * {method.doc}
             **/
             {if(method.doc != null && method.doc.contains("@SoaGlobalTransactional")) <div>@SoaGlobalTransactional</div>}
-            {toDataTypeTemplate(method.getResponse.getFields().get(0).getDataType)} {method.name}({toFieldArrayBuffer(method.getRequest.getFields).map{ (field: Field) =>{
-            <div> {toDataTypeTemplate(field.getDataType())} {field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}
-          }}) throws com.isuwang.dapeng.core.SoaException;
+            {if(method.doc != null && method.doc.contains("@SoaAsyncFunction"))
+              <div>
+                Future{lt}{toDataTypeTemplate(method.getResponse.getFields().get(0).getDataType)}{gt} {method.name}({toFieldArrayBuffer(method.getRequest.getFields).map{ (field: Field) =>{
+                <div> {toDataTypeTemplate(field.getDataType())} {field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}
+              }}) throws com.isuwang.dapeng.core.SoaException;
+              </div>
+              else <div>
+               {toDataTypeTemplate(method.getResponse.getFields().get(0).getDataType)} {method.name}({toFieldArrayBuffer(method.getRequest.getFields).map{ (field: Field) =>{
+               <div> {toDataTypeTemplate(field.getDataType())} {field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}
+               }}) throws com.isuwang.dapeng.core.SoaException;
+              </div>
+            }
           </div>
         }
         }

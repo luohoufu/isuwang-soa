@@ -33,6 +33,8 @@ class JavaClientGenerator extends CodeGenerator {
         import java.io.InputStreamReader;
 
         import java.util.Optional;
+        import java.util.concurrent.CompletableFuture;
+        import java.util.concurrent.Future;
 
         public class {service.name}Codec <block>
         {
@@ -47,8 +49,8 @@ class JavaClientGenerator extends CodeGenerator {
         }
 
         {
-        toMethodArrayBuffer(service.methods).map{(method: Method)=>
-        {
+        toMethodArrayBuffer(service.methods).map{(method: Method)=> {
+
           <div>
             public static class {method.name}_args <block>
             {toFieldArrayBuffer(method.request.getFields).map{(field: Field)=>{
@@ -179,7 +181,36 @@ class JavaClientGenerator extends CodeGenerator {
                public {method.name}()<block>
                    super("{method.name}", new {method.name.charAt(0).toUpper + method.name.substring(1)}_argsSerializer(),  new {method.name.charAt(0).toUpper + method.name.substring(1)}_resultSerializer());
                </block>
+            {
+              if(method.doc != null && method.doc.contains("@SoaAsyncFunction") && {toDataTypeTemplate(method.response.getFields.get(0).getDataType)}!= DataType.KIND.VOID)
+                <div>
+                @Override
+                public {method.name}_result getResult(I iface, {method.name}_args args) throws TException<block>
+                  return null;
+                </block>
 
+                @Override
+                public Future{lt}{method.name}_result{gt} getResultAsync(I iface, {method.name}_args args) throws TException <block>
+
+                  CompletableFuture{lt}{method.name}_result{gt} result = new CompletableFuture{lt}{gt}();
+                  {toFieldArrayBuffer(method.getResponse().getFields()).map{(field:Field)=>
+                  <div>
+                  CompletableFuture{lt}{toDataTypeTemplate(method.response.getFields.get(0).getDataType)}{gt} realResult = (CompletableFuture{lt}{toDataTypeTemplate(method.response.getFields.get(0).getDataType)}{gt}) iface.{method.name}({toFieldArrayBuffer(method.getRequest.getFields).map{ (field: Field) =>{<div>args.{field.name}{if(field != method.getRequest.fields.get(method.getRequest.fields.size() - 1)) <span>,</span>}</div>}}});
+                  </div>
+                  }}
+                  realResult.whenComplete((str, ex) -> <block>
+                    if (str != null) <block>
+                      {method.name}_result r = new {method.name}_result();
+                     r.setSuccess(str);
+                     result.complete(r);
+                  </block> else <block>
+                     result.completeExceptionally(ex);
+                  </block>
+                </block>);
+                  return result;
+                </block>
+                </div>
+              else <div>
                @Override
                public {method.name}_result getResult(I iface, {method.name}_args args) throws TException<block>
                    {method.name}_result result = new {method.name}_result();
@@ -196,6 +227,8 @@ class JavaClientGenerator extends CodeGenerator {
               }}
                    return result;
                </block>
+              </div>
+            }
 
                @Override
                public {method.name}_args getEmptyArgsInstance()<block>
