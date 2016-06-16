@@ -41,11 +41,16 @@ public class ZookeeperHelper {
     }
 
     public void destroy() {
-        try {
-            zk.close();
-        } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
+
+        if (zk != null) {
+            try {
+                zk.close();
+                zk = null;
+            } catch (InterruptedException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         }
+
     }
 
     public void addOrUpdateServerInfo(String path, String data) {

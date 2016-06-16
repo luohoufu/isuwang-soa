@@ -48,7 +48,11 @@ public class RegistryAgentImpl implements RegistryAgent {
 
     @Override
     public void stop() {
+
         zooKeeperHelper.destroy();
+
+        if (siw != null)
+            siw.destroy();
     }
 
     @Override
