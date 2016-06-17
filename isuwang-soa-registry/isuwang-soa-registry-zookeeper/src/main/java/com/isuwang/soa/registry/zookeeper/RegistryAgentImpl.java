@@ -1,6 +1,9 @@
 package com.isuwang.soa.registry.zookeeper;
 
-import com.isuwang.soa.core.*;
+import com.isuwang.soa.core.ProcessorKey;
+import com.isuwang.soa.core.Service;
+import com.isuwang.soa.core.SoaBaseProcessor;
+import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.registry.ConfigKey;
 import com.isuwang.soa.registry.RegistryAgent;
 import com.isuwang.soa.registry.ServiceInfo;
@@ -58,7 +61,7 @@ public class RegistryAgentImpl implements RegistryAgent {
     @Override
     public void registerService(String serverName, String versionName) {
         try {
-            String path = "/soa/runtime/services/" + serverName + "/" + IPUtils.localIp() + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT + ":" + versionName;
+            String path = "/soa/runtime/services/" + serverName + "/" + SoaSystemEnvProperties.SOA_CONTAINER_IP + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT + ":" + versionName;
             String data = "";
             zooKeeperHelper.addOrUpdateServerInfo(path, data);
         } catch (Exception e) {

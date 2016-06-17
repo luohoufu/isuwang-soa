@@ -47,7 +47,7 @@ public class ZookeeperWatcher {
         getConfig("/soa/config");
 
         try {
-            connectDownLatch.await(5, TimeUnit.SECONDS);
+            connectDownLatch.await(3, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
         }
