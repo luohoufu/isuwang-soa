@@ -1,12 +1,12 @@
 package com.isuwang.dapeng.core;
 
+import com.isuwang.dapeng.core.filter.container.ContainerFilterChain;
 import com.isuwang.dapeng.core.filter.container.DispatchFilter;
 import com.isuwang.org.apache.thrift.TException;
 import com.isuwang.org.apache.thrift.TProcessor;
 import com.isuwang.org.apache.thrift.protocol.TMessage;
 import com.isuwang.org.apache.thrift.protocol.TMessageType;
 import com.isuwang.org.apache.thrift.protocol.TProtocol;
-import com.isuwang.dapeng.core.filter.container.ContainerFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +54,8 @@ public class SoaBaseProcessor<I> implements TProcessor {
             //TMessage tMessage = in.readMessageBegin();
             @SuppressWarnings("unchecked")
             SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>> soaProcessFunction = (SoaProcessFunction<I, Object, Object, ? extends TBeanSerializer<Object>, ? extends TBeanSerializer<Object>>) getProcessMapView().get(methodName);
+            if (soaProcessFunction == null)
+                throw new SoaException("系统错误", "方法(" + methodName + ")不存在");
             Object args = soaProcessFunction.getEmptyArgsInstance();
             soaProcessFunction.getReqSerializer().read(args, in);
             in.readMessageEnd();

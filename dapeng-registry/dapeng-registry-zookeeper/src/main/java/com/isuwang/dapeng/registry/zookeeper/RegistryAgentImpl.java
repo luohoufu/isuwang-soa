@@ -49,12 +49,14 @@ public class RegistryAgentImpl implements RegistryAgent {
     @Override
     public void stop() {
         zooKeeperHelper.destroy();
+        if (siw != null)
+            siw.destroy();
     }
 
     @Override
     public void registerService(String serverName, String versionName) {
         try {
-            String path = "/soa/runtime/services/" + serverName + "/" + IPUtils.localIp() + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT + ":" + versionName;
+            String path = "/soa/runtime/services/" + serverName + "/" + SoaSystemEnvProperties.SOA_CONTAINER_IP + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT + ":" + versionName;
             String data = "";
             zooKeeperHelper.addOrUpdateServerInfo(path, data);
         } catch (Exception e) {

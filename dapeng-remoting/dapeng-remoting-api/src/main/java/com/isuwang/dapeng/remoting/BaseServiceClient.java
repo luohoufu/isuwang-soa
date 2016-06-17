@@ -43,7 +43,7 @@ public class BaseServiceClient {
     static {
         final ClassLoader classLoader = BaseServiceClient.class.getClassLoader();
 
-        try (InputStream is = getInputStream("remoting-conf.xml")) {
+        try (InputStream is = getInputStream("dapeng-remoting-conf.xml")) {
             final SoaRemoting soaRemoting = JAXB.unmarshal(is, SoaRemoting.class);
             final SoaRemotingFilters remotingFilters = soaRemoting.getSoaRemotingFilters();
 
@@ -65,7 +65,7 @@ public class BaseServiceClient {
         }
 
         if (!SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local")) {
-            try (InputStream is = getInputStream("registry-conf.xml")) {
+            try (InputStream is = getInputStream("dapeng-registry-conf.xml")) {
                 final SoaRegistry soaRegistry = JAXB.unmarshal(is, SoaRegistry.class);
 
                 Class<?> aClass = classLoader.loadClass(soaRegistry.getRef());
