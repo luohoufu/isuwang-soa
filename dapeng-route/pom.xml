@@ -10,6 +10,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dapeng-route</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>dapeng-route-api</module>
+        <module>dapeng-route-impl</module>
+    </modules>
 
 
 </project>
