@@ -49,6 +49,7 @@
         <module>dapeng-monitor</module>
         <module>dapeng-transaction</module>
         <module>dapeng-scala-dbc</module>
+        <module>dapeng-route</module>
     </modules>
 
     <properties>
