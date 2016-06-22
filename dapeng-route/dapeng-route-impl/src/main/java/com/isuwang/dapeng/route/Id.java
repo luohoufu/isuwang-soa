@@ -24,4 +24,9 @@ public class Id {
     public void setParameter(boolean parameter) {
         isParameter = parameter;
     }
+
+    public Id(String name, boolean isParameter) {
+        this.name = name;
+        this.isParameter = isParameter;
+    }
 }

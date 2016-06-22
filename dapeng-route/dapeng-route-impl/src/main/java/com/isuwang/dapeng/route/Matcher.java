@@ -11,8 +11,6 @@ public class Matcher {
 
     public Id id;
 
-    public MatcherId matcherID;
-
     public List<Pattern> patterns;
 
     public Id getId() {
@@ -29,13 +27,5 @@ public class Matcher {
 
     public void setPatterns(List<Pattern> patterns) {
         this.patterns = patterns;
-    }
-
-    public MatcherId getMatcherID() {
-        return matcherID;
-    }
-
-    public void setMatcherID(MatcherId matcherID) {
-        this.matcherID = matcherID;
     }
 }

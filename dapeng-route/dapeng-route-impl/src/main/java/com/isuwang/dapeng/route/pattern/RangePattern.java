@@ -9,6 +9,7 @@ public class RangePattern extends Pattern {
 
     public long high;
 
+
     public long getLow() {
         return low;
     }
@@ -22,6 +23,11 @@ public class RangePattern extends Pattern {
     }
 
     public void setHigh(long high) {
+        this.high = high;
+    }
+
+    public RangePattern(long low, long high) {
+        this.low = low;
         this.high = high;
     }
 }

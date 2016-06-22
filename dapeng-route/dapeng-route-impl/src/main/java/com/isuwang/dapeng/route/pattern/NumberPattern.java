@@ -14,4 +14,8 @@ public class NumberPattern extends Pattern {
     public void setValue(long value) {
         this.value = value;
     }
+
+    public NumberPattern(long value) {
+        this.value = value;
+    }
 }

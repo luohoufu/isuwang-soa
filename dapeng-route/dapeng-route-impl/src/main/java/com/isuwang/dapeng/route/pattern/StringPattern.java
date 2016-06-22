@@ -14,4 +14,8 @@ public class StringPattern extends Pattern {
     public void setValue(String value) {
         this.value = value;
     }
+
+    public StringPattern(String value) {
+        this.value = value;
+    }
 }

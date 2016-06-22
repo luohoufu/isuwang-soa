@@ -14,4 +14,8 @@ public class RegexpPattern extends Pattern {
     public void setValue(String value) {
         this.value = value;
     }
+
+    public RegexpPattern(String value) {
+        this.value = value;
+    }
 }

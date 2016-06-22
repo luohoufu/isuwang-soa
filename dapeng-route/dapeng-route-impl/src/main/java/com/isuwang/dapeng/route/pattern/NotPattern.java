@@ -14,4 +14,8 @@ public class NotPattern extends Pattern {
     public void setPattern(Pattern pattern) {
         this.pattern = pattern;
     }
+
+    public NotPattern(Pattern pattern) {
+        this.pattern = pattern;
+    }
 }

@@ -7,8 +7,6 @@ import java.util.List;
  */
 public class Matchers extends MatchLeftSide {
 
-    public List<Matcher> matchers;
-
     public List<Matcher> getMatchers() {
         return matchers;
     }

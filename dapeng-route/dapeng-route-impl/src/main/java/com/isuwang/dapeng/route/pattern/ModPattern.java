@@ -24,4 +24,9 @@ public class ModPattern extends Pattern {
     public void setRemain(RangePattern remain) {
         this.remain = remain;
     }
+
+    public ModPattern(int base, RangePattern remain) {
+        this.base = base;
+        this.remain = remain;
+    }
 }

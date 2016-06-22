@@ -18,4 +18,8 @@ public class Route {
     public void setLeft(MatchLeftSide left) {
         this.left = left;
     }
+
+    public void setRight(Pattern right) {
+        this.right = right;
+    }
 }
