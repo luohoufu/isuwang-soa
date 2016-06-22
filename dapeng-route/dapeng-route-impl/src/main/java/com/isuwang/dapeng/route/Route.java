@@ -7,12 +7,16 @@ import com.isuwang.dapeng.route.pattern.Pattern;
  */
 public class Route {
 
-    public MatchLeftSide left;
+    private MatchLeftSide left;
 
-    public Pattern right;
+    private Pattern right;
 
     public MatchLeftSide getLeft() {
         return left;
+    }
+
+    public Pattern getRight() {
+        return right;
     }
 
     public void setLeft(MatchLeftSide left) {

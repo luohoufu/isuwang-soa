@@ -47,12 +47,12 @@ public class RouteParser {
             case "n'":
                 String rangeStr0 = rulePatterStr.substring(2, strLength - 1);
                 pattern = getRangePattern(rangeStr0);
-                System.out.println(String.format("rangeStr: %s ", rangeStr0));
+//                System.out.println(String.format("rangeStr: %s ", rangeStr0));
                 break;
             case "~n":
                 String rangeStr1 = rulePatterStr.substring(3, strLength - 1);
                 pattern = new NotPattern(getRangePattern(rangeStr1));
-                System.out.println(String.format("rangeStr: %s ", rangeStr1));
+//                System.out.println(String.format("rangeStr: %s ", rangeStr1));
                 break;
             case "r'":
                 String methodName = rulePatterStr.substring(2, strLength - 1);
@@ -96,7 +96,7 @@ public class RouteParser {
 
     public Pattern parseIpPattern(String rulePatterStr) {
         Pattern pattern = null;
-        String ipStr = rulePatterStr.substring(rulePatterStr.indexOf("'"), rulePatterStr.lastIndexOf("'"));
+        String ipStr = rulePatterStr.substring(rulePatterStr.indexOf("'") + 1, rulePatterStr.lastIndexOf("'"));
         if (rulePatterStr.startsWith("~")) {
             pattern = new NotPattern(extractIp(ipStr));
         } else {
