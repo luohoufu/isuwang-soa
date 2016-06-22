@@ -23,20 +23,17 @@ public class RouteParserTest {
                 "      operatorId match n'10' => ip'1.2.3.4'\n" +
                 "      operatorId match ~n'10..20' => ip'1.2.3.4'\n" +
                 "      callerFrom match s'app' => ip'1.2.3.4'\n" +
-                "      ip match ip'1.2.3/24' => ip'1.2.3.4'\n" +
+                "      ip match ip'1.2.3.0/24' => ip'1.2.3.4'\n" +
                 "      otherwise => ip'1.2.3.4'";
 
-        String str = "uip match %'1024n+0..9' => ip'1.2.3/24'";
+        String str = "ip match ip'1.2.3.0/24' => ip'1.2.3.4'";
         RouteParser parser = new RouteParser();
 
         List routes = new ArrayList<Route>();
-        parser.parseAll(routes, source);
+        parser.parseAll(routes, str);
 
         List<String> servers = new ArrayList<>();
         servers.add("1.2.3.4");
-        servers.add("1.2.3.5");
-        servers.add("1.2.4.3");
-        servers.add("1.2.5.3");
 
         InvocationContext ctx = new InvocationContext();
         SoaHeader soaHeader = new SoaHeader();
@@ -45,6 +42,8 @@ public class RouteParserTest {
         ctx.setHeader(soaHeader);
 
         Set<InetAddress> serverResult = RouteExecutor.execute(ctx, routes, servers);
+
+        System.out.println(serverResult);
 
 //        assert(serverResult == List("1.2.3.4", "1.2.3.5").map(InetAddress.getByName))
     }

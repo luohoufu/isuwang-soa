@@ -41,20 +41,24 @@ public class RouteExecutor {
     public static Set<InetAddress> execute(InvocationContext ctx, List<Route> routes, List<String> servers) {
         Set added = new HashSet<InetAddress>();// 匹配的服务器
         Set removed = new HashSet<InetAddress>();// 拒绝的服务器，对应于 ~ip"" 模式
+
+        //// TODO: 2016/6/22  如果没有一个规则匹配，则默认从所有servers可用，如果有规则匹配，则按规则
+
         for (Route route : routes) {
             boolean isMatched = checkRouteCondition(ctx, route.getLeft());
             if (isMatched) {
                 Pattern right = route.getRight();
-                if (right instanceof NotPattern) {
+                if (right instanceof IpPattern) {
                     added.addAll(filterServer(servers, right));
-                } else if (right instanceof IpPattern) {
+                } else if (right instanceof NotPattern) {
                     removed.addAll(filterServer(servers, right));
                 } else {
                     throw new AssertionError("route right must be IpPattern or ~IpPattern");
                 }
             }
         }
-        added.removeAll(removed); //todo added初始化应该为servers列表转为的所有InetAddress
+
+        added.removeAll(removed);
         return added;
     }
 

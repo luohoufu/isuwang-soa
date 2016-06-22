@@ -108,7 +108,13 @@ public class RouteParser {
     public Pattern extractIp(String ipStr) {
         Pattern pattern = null;
         if (ipStr.indexOf("/") != -1) {
-            pattern = new IpPattern(ipStr.substring(0, ipStr.indexOf("/")) + ".0", Integer.valueOf(ipStr.substring(ipStr.indexOf("/") + 1)));
+
+            int mask = Integer.valueOf(ipStr.substring(ipStr.indexOf("/") + 1));
+            ipStr = ipStr.substring(0, ipStr.indexOf("/"));
+            while (ipStr.split("[.]").length < 4) {
+                ipStr += ".0";
+            }
+            pattern = new IpPattern(ipStr, mask);
         } else {
             pattern = new IpPattern(ipStr, 32);
         }
