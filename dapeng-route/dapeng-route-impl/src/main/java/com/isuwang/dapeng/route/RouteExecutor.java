@@ -15,7 +15,18 @@ import java.util.Set;
  * @date
  */
 public class RouteExecutor {
+
+
+    /**
+     * 通过请求上下文，规则列表，当前服务ip，判断该请求是否可以访问此ip
+     *
+     * @param ctx    上下文
+     * @param routes 规则列表
+     * @param server 服务器ip地址
+     * @return
+     */
     public static boolean isServerMatched(InvocationContext ctx, List<Route> routes, InetAddress server) {
+
         boolean matchOne = false;
         boolean result = false;
         for (Route route : routes) {
@@ -25,24 +36,29 @@ public class RouteExecutor {
                 if (route.getRight() instanceof IpPattern) {
                     result = matched(server, (IpPattern) route.getRight());
                 } else if (route.getRight() instanceof NotPattern) {
-                    result = !matched(server, (IpPattern) route.getRight());
+                    result = !matched(server, (IpPattern) ((NotPattern) route.getRight()).getPattern());
                 } else {
                     throw new AssertionError("route right must be IpPattern or ~IpPattern");
                 }
             }
         }
-
         if (matchOne)
             return result;
         return true;
     }
 
 
+    /**
+     * 通过请求上下文，规则，以及备选的服务器ip列表，获取该请求可以访问的ip列表
+     *
+     * @param ctx     上下文
+     * @param routes  规则列表
+     * @param servers 备选的服务器ip列表
+     * @return
+     */
     public static Set<InetAddress> execute(InvocationContext ctx, List<Route> routes, List<String> servers) {
         Set added = new HashSet<InetAddress>();// 匹配的服务器
         Set removed = new HashSet<InetAddress>();// 拒绝的服务器，对应于 ~ip"" 模式
-
-        //// TODO: 2016/6/22  如果没有一个规则匹配，则默认从所有servers可用，如果有规则匹配，则按规则
 
         for (Route route : routes) {
             boolean isMatched = checkRouteCondition(ctx, route.getLeft());
@@ -73,6 +89,14 @@ public class RouteExecutor {
         return added;
     }
 
+
+    /**
+     * 返回满足Pattern条件的服务ip列表
+     *
+     * @param servers
+     * @param right
+     * @return
+     */
     public static List<InetAddress> filterServer(List<String> servers, Pattern right) {
         List<InetAddress> inetAddresses = new ArrayList<>();
         for (String server : servers) {
@@ -83,7 +107,6 @@ public class RouteExecutor {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-//                System.out.println(e.getLocalizedMessage());
             }
         }
         return inetAddresses;
@@ -108,6 +131,13 @@ public class RouteExecutor {
         return result;
     }
 
+    /**
+     * 根据matcher.Id，返回上下文中对应的值
+     *
+     * @param ctx
+     * @param matcher
+     * @return
+     */
     public static Object checkFieldMatcher(InvocationContext ctx, Matcher matcher) {
         Id id = matcher.getId();
         if ("operatorId".equals(id.getName())) {
@@ -152,6 +182,13 @@ public class RouteExecutor {
         return remain >= modPattern.getRemain().getLow() && remain <= modPattern.getRemain().getHigh();
     }
 
+    /**
+     * 判断ip是否符合IpPattern
+     *
+     * @param address
+     * @param ipPattern
+     * @return
+     */
     public static boolean matched(InetAddress address, IpPattern ipPattern) {
         InetAddress ip = null;
         try {

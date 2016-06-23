@@ -1,7 +1,7 @@
 package com.isuwang.dapeng.container.registry;
 
-import com.isuwang.dapeng.container.spring.SpringContainer;
 import com.isuwang.dapeng.container.Container;
+import com.isuwang.dapeng.container.spring.SpringContainer;
 import com.isuwang.dapeng.core.ProcessorKey;
 import com.isuwang.dapeng.core.Service;
 import com.isuwang.dapeng.core.SoaBaseProcessor;
@@ -10,6 +10,7 @@ import com.isuwang.dapeng.registry.ConfigKey;
 import com.isuwang.dapeng.registry.RegistryAgent;
 import com.isuwang.dapeng.registry.RegistryAgentProxy;
 import com.isuwang.dapeng.registry.ServiceInfo;
+import com.isuwang.dapeng.route.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,6 +105,11 @@ public class LocalRegistryContainer implements Container, RegistryAgent {
     @Override
     public Map<String, Map<ConfigKey, Object>> getConfig() {
         return new HashMap<>();
+    }
+
+    @Override
+    public List<Route> getRoutes() {
+        return new ArrayList<>();
     }
 
 }

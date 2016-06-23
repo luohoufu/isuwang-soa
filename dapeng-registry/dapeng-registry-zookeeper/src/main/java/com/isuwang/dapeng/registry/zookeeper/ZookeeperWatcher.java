@@ -108,6 +108,10 @@ public class ZookeeperWatcher {
         }
     }
 
+    public List<Route> getRoutes() {
+        return this.routes;
+    }
+
 
     private void tryCreateNode(String path) {
 

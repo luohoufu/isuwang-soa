@@ -9,15 +9,20 @@ import com.isuwang.dapeng.registry.ConfigKey;
 import com.isuwang.dapeng.registry.RegistryAgent;
 import com.isuwang.dapeng.registry.RegistryAgentProxy;
 import com.isuwang.dapeng.registry.ServiceInfo;
+import com.isuwang.dapeng.route.Route;
+import com.isuwang.dapeng.route.RouteExecutor;
 import com.isuwang.org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Created by tangliu on 2016/1/15.
@@ -44,6 +49,27 @@ public class LoadBalanceFilter implements Filter {
             if (usableList.size() <= 0) {
                 usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName(), true);
             }
+        }
+
+        //使用路由规则，过滤可用服务器 （local模式不考虑）
+        if (!isLocal) {
+            List<Route> routes = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).getRoutes();
+            List<ServiceInfo> tmpList = new ArrayList<>();
+
+            for (ServiceInfo sif : usableList) {
+                try {
+                    InetAddress inetAddress = InetAddress.getByName(sif.getHost());
+                    if (RouteExecutor.isServerMatched(context, routes, inetAddress)) {
+                        tmpList.add(sif);
+                    }
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            LOGGER.info("路由过滤前可用列表{}", usableList.stream().map(s -> s.getHost()).collect(Collectors.toList()));
+            usableList = tmpList;
+            LOGGER.info("路由过滤后可用列表{}", usableList.stream().map(s -> s.getHost()).collect(Collectors.toList()));
         }
 
         String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
@@ -73,7 +99,7 @@ public class LoadBalanceFilter implements Filter {
         } else if (isLocal) {
             context.setCalleeIp(SoaSystemEnvProperties.SOA_SERVICE_IP);
             context.setCalleePort(SoaSystemEnvProperties.SOA_SERVICE_PORT);
-        } else if(SoaSystemEnvProperties.SOA_SERVICE_IP_ISCONFIG){
+        } else if (SoaSystemEnvProperties.SOA_SERVICE_IP_ISCONFIG) {
             context.setCalleeIp(SoaSystemEnvProperties.SOA_SERVICE_IP);
             context.setCalleePort(SoaSystemEnvProperties.SOA_SERVICE_PORT);
         }

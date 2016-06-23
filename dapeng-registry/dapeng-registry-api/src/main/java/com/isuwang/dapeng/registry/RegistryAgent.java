@@ -2,6 +2,7 @@ package com.isuwang.dapeng.registry;
 
 import com.isuwang.dapeng.core.ProcessorKey;
 import com.isuwang.dapeng.core.SoaBaseProcessor;
+import com.isuwang.dapeng.route.Route;
 
 import java.util.List;
 import java.util.Map;
@@ -59,4 +60,9 @@ public interface RegistryAgent {
      * @return
      */
     Map<String, Map<ConfigKey, Object>> getConfig();
+
+    /**
+     * 获取路由规则
+     */
+    List<Route> getRoutes();
 }

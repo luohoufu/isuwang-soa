@@ -1,9 +1,13 @@
 package com.isuwang.dapeng.registry.zookeeper;
 
-import com.isuwang.dapeng.core.*;
+import com.isuwang.dapeng.core.ProcessorKey;
+import com.isuwang.dapeng.core.Service;
+import com.isuwang.dapeng.core.SoaBaseProcessor;
+import com.isuwang.dapeng.core.SoaSystemEnvProperties;
 import com.isuwang.dapeng.registry.ConfigKey;
 import com.isuwang.dapeng.registry.RegistryAgent;
 import com.isuwang.dapeng.registry.ServiceInfo;
+import com.isuwang.dapeng.route.Route;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,5 +105,11 @@ public class RegistryAgentImpl implements RegistryAgent {
     public Map<String, Map<ConfigKey, Object>> getConfig() {
         return siw.getConfig();
     }
+
+    @Override
+    public List<Route> getRoutes() {
+        return siw.getRoutes();
+    }
+
 
 }
