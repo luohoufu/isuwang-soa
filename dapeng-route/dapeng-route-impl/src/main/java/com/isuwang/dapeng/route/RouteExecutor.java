@@ -57,6 +57,17 @@ public class RouteExecutor {
                 }
             }
         }
+        //如果没有可匹配的服务，则匹配规则失效， 将服务列表全部作为信任服务
+        if (added.isEmpty()) {
+            for (String server : servers) {
+                try {
+                    InetAddress inetAddress = InetAddress.getByName(server);
+                    added.add(inetAddress);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         added.removeAll(removed);
         return added;
