@@ -46,12 +46,13 @@ public class StaticInfoHelper {
 
         createConfigNodeWithData("/soa", "");
         createConfigNodeWithData("/soa/config", "");
+        createConfigNodeWithData("/soa/config/service", "");
     }
 
     private void setLoadBalance() {
 
         //clear old properties on zookeeper
-        deleteAllChildren("/soa/config");
+        deleteAllChildren("/soa/config/service");
 
         Properties prop = new Properties();
         try {
@@ -69,7 +70,7 @@ public class StaticInfoHelper {
             Object value = entry.getValue();
             String t_value = ((String) value).replaceAll("/", "=");
 
-            createConfigNodeWithData("/soa/config/" + (String) key, t_value);
+            createConfigNodeWithData("/soa/config/service/" + (String) key, t_value);
         }
 
     }

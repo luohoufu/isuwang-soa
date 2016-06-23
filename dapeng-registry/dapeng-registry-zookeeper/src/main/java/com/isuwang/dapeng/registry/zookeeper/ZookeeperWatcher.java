@@ -4,6 +4,8 @@ import com.isuwang.dapeng.core.SoaSystemEnvProperties;
 import com.isuwang.dapeng.core.version.Version;
 import com.isuwang.dapeng.registry.ConfigKey;
 import com.isuwang.dapeng.registry.ServiceInfo;
+import com.isuwang.dapeng.route.Route;
+import com.isuwang.dapeng.route.parse.RouteParser;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ public class ZookeeperWatcher {
     private final boolean isClient;
     private final static Map<String, List<ServiceInfo>> caches = new ConcurrentHashMap<>();
     private final static Map<String, Map<ConfigKey, Object>> config = new ConcurrentHashMap<>();
+    private final static List<Route> routes = new ArrayList<>();
 
     private ZooKeeper zk;
     private CountDownLatch connectDownLatch;
@@ -44,12 +47,64 @@ public class ZookeeperWatcher {
             getServersList();
         }
 
-        getConfig("/soa/config");
+        getConfig("/soa/config/service");
+
+        getRouteConfig("/soa/config/route");
 
         try {
             connectDownLatch.await(3, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+
+    /**
+     * 获取路由配置
+     *
+     * @param path
+     */
+    private void getRouteConfig(String path) {
+
+        tryCreateNode(path);
+
+        zk.getData(path, watchedEvent -> {
+
+            if (watchedEvent.getType() == Watcher.Event.EventType.NodeDataChanged) {
+                LOGGER.info(watchedEvent.getPath() + "'s data changed, reset route config in memory");
+                getRouteConfig(watchedEvent.getPath());
+            }
+        }, (rc, path1, ctx, data, stat) -> {
+            switch (KeeperException.Code.get(rc)) {
+                case CONNECTIONLOSS:
+                    getRouteConfig(path1);
+                    break;
+                case OK:
+                    processRouteDate(data);
+                    break;
+                default:
+                    LOGGER.error("Error when trying to get data of {}.", path1);
+            }
+        }, path);
+    }
+
+
+    /**
+     * 拿到路由配置信息，解析成Routes列表
+     *
+     * @param bytes
+     */
+    private void processRouteDate(byte[] bytes) {
+
+        try {
+            String data = new String(bytes, "utf-8");
+
+            synchronized (routes) {
+                routes.clear();
+                new RouteParser().parseAll(routes, data);
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 
@@ -270,7 +325,7 @@ public class ZookeeperWatcher {
 
 
         //每次getConfig之前，先判断父节点是否存在，若不存在，则创建
-        tryCreateNode("/soa/config");
+        tryCreateNode("/soa/config/service");
 
         zk.getChildren(path, watchedEvent -> {
             if (watchedEvent.getType() == Watcher.Event.EventType.NodeChildrenChanged) {
@@ -405,5 +460,12 @@ public class ZookeeperWatcher {
 
     public Map<String, Map<ConfigKey, Object>> getConfig() {
         return config;
+    }
+
+
+    public static void main(String[] args) {
+        ZookeeperWatcher zw = new ZookeeperWatcher(true);
+        zw.init();
+
     }
 }
