@@ -18,7 +18,7 @@ import java.util.Set;
 public class RouteParserTest {
 
     public static void main(String args[]) {
-        String source = "operatorId match %'1024n+0..9' => ip'1.2.3/24'\n" +
+        String source = "operatorId match %'1024n+0..9' => ip'1.2.3/24 | 192.168.3.39'\n" +
                 "      operatorId match ~%'1024n+0..9' => ~ip'1.2.3.4'\n" +
                 "      operatorId match n'10,11,12,13' => ip'1.2.3.4'\n" +
                 "      operatorId match ~n'10..20' => ip'1.2.3.4'\n" +

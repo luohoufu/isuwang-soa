@@ -114,7 +114,7 @@ public class RouteParser {
     public Pattern extractIp(String str) {
         Pattern pattern = null;
 
-        String[] ips = str.split("|");
+        String[] ips = str.split("[|]");
         List<IpNode> ipNodes = new ArrayList<>();
         for (String ip : ips) {
 
