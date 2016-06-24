@@ -27,6 +27,7 @@ public class RouteExecutor {
      */
     public static boolean isServerMatched(InvocationContext ctx, List<Route> routes, InetAddress server) {
 
+        //todo 这里要考虑一个规则冲突的问题，如果在某一个规则中可以访问，在另一个规则中不能访问，怎么处理?
         boolean matchOne = false;
         boolean result = false;
         for (Route route : routes) {
