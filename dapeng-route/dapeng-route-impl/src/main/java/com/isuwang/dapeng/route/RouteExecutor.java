@@ -19,6 +19,8 @@ public class RouteExecutor {
 
     /**
      * 通过请求上下文，规则列表，当前服务ip，判断该请求是否可以访问此ip
+     * <p/>
+     * 对于多个规则可能冲突的情况，目前的处理是，匹配到第一个规则，则跳出匹配
      *
      * @param ctx    上下文
      * @param routes 规则列表
@@ -27,7 +29,6 @@ public class RouteExecutor {
      */
     public static boolean isServerMatched(InvocationContext ctx, List<Route> routes, InetAddress server) {
 
-        //todo 这里要考虑一个规则冲突的问题，如果在某一个规则中可以访问，在另一个规则中不能访问，怎么处理?
         boolean matchOne = false;
         boolean result = false;
         for (Route route : routes) {
@@ -41,6 +42,7 @@ public class RouteExecutor {
                 } else {
                     throw new AssertionError("route right must be IpPattern or ~IpPattern");
                 }
+                break;
             }
         }
         if (matchOne)
