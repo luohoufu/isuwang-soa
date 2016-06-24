@@ -78,7 +78,7 @@ public class RouteParser {
             int high = Integer.valueOf(rangeStr.substring(rangeStr.indexOf("..") + 2));
             pattern = new RangePattern(low, high);
         } else {
-            pattern = new NumberPattern(Integer.valueOf(rangeStr));
+            pattern = new NumberPattern(rangeStr);
         }
         return pattern;
     }

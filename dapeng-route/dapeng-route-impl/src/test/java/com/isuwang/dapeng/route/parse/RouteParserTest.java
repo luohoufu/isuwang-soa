@@ -20,17 +20,17 @@ public class RouteParserTest {
     public static void main(String args[]) {
         String source = "operatorId match %'1024n+0..9' => ip'1.2.3/24'\n" +
                 "      operatorId match ~%'1024n+0..9' => ~ip'1.2.3.4'\n" +
-                "      operatorId match n'10' => ip'1.2.3.4'\n" +
+                "      operatorId match n'10,11,12,13' => ip'1.2.3.4'\n" +
                 "      operatorId match ~n'10..20' => ip'1.2.3.4'\n" +
-                "      callerFrom match s'app' => ip'1.2.3.4'\n" +
+                "      callerFrom match s'app,oss' => ip'1.2.3.4'\n" +
                 "      ip match ip'1.2.3.0/24' => ip'1.2.3.4'\n" +
                 "      otherwise => ip'1.2.3.4'";
 
-        String str = "ip match ip'1.2.3.0/24' => ip'1.2.3.4'";
+//        String str = "ip match ip'1.2.3.0/24' => ip'1.2.3.4'";
         RouteParser parser = new RouteParser();
 
         List routes = new ArrayList<Route>();
-        parser.parseAll(routes, str);
+        parser.parseAll(routes, source);
 
         List<String> servers = new ArrayList<>();
         servers.add("1.2.3.4");

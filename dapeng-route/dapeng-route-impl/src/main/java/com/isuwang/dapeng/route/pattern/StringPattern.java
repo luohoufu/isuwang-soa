@@ -5,17 +5,17 @@ package com.isuwang.dapeng.route.pattern;
  */
 public class StringPattern extends Pattern {
 
-    public String value;
+    public String[] value;
 
-    public String getValue() {
+    public String[] getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(String[] value) {
         this.value = value;
     }
 
     public StringPattern(String value) {
-        this.value = value;
+        this.value = value.split(",");
     }
 }

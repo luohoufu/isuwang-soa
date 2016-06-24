@@ -161,11 +161,11 @@ public class RouteExecutor {
         } else if (pattern instanceof ModPattern) {
             return matched(Long.valueOf(value.toString()), (ModPattern) pattern);
         } else if (pattern instanceof StringPattern) {
-            return ((StringPattern) pattern).getValue().equals(value);
+            return matched((String) value, (StringPattern) pattern);
         } else if (pattern instanceof RegexpPattern) {
             return ((String) value).matches(((RegexpPattern) pattern).getValue());
         } else if (pattern instanceof NumberPattern) {
-            return ((NumberPattern) pattern).getValue() == Long.valueOf(value.toString());
+            return matched(Long.valueOf(value.toString()), (NumberPattern) pattern);
         } else if (pattern instanceof RangePattern) {
             return Long.valueOf(value.toString()) > ((RangePattern) pattern).getLow() && Long.valueOf(value.toString()) <= ((RangePattern) pattern).getHigh();
         } else if (pattern instanceof IpPattern) {
@@ -178,9 +178,31 @@ public class RouteExecutor {
         return false;
     }
 
+    public static boolean matched(String str, StringPattern stringPattern) {
+        boolean isMatch = false;
+        for (String temp : stringPattern.getValue()) {
+            if (str.equals(temp)) {
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
+    }
+
     public static boolean matched(Long num, ModPattern modPattern) {
         Long remain = num % modPattern.getBase();
         return remain >= modPattern.getRemain().getLow() && remain <= modPattern.getRemain().getHigh();
+    }
+
+    public static boolean matched(Long num, NumberPattern numberPattern) {
+        boolean isMatch = false;
+        for (Long temp : numberPattern.getValue()) {
+            if (temp == num) {
+                isMatch = true;
+                break;
+            }
+        }
+        return isMatch;
     }
 
     /**
