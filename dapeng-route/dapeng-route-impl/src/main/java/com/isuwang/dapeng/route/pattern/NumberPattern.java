@@ -16,7 +16,7 @@ public class NumberPattern extends Pattern {
     }
 
     public NumberPattern(String value) {
-        String[] valuesStr = value.split(",");
+        String[] valuesStr = value.split("[|]");
         this.value = new long[valuesStr.length];
         for (int i = 0; i < valuesStr.length; i++) {
             this.value[i] = Long.parseLong(valuesStr[i]);

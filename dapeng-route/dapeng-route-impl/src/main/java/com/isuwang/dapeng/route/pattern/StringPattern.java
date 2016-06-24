@@ -16,6 +16,6 @@ public class StringPattern extends Pattern {
     }
 
     public StringPattern(String value) {
-        this.value = value.split(",");
+        this.value = value.split("[|]");
     }
 }
