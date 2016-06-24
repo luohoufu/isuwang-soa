@@ -1,32 +1,27 @@
 package com.isuwang.dapeng.route.pattern;
 
+import java.util.List;
+
 /**
  * Created by tangliu on 2016/6/19.
  */
 public class IpPattern extends Pattern {
 
-    public String ip;
+    public IpPattern() {
 
-    public int mask;
-
-    public String getIp() {
-        return ip;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public IpPattern(List<IpNode> nodes) {
+        this.ips = nodes;
     }
 
-    public int getMask() {
-        return mask;
+    public List<IpNode> ips;
+
+    public List<IpNode> getIps() {
+        return ips;
     }
 
-    public void setMask(int mask) {
-        this.mask = mask;
-    }
-
-    public IpPattern(String ip, int mask) {
-        this.ip = ip;
-        this.mask = mask;
+    public void setIps(List<IpNode> ips) {
+        this.ips = ips;
     }
 }

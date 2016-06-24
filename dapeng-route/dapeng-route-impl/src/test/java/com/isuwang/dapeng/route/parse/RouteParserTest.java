@@ -26,11 +26,11 @@ public class RouteParserTest {
                 "      ip match ip'1.2.3.0/24' => ip'1.2.3.4'\n" +
                 "      otherwise => ip'1.2.3.4'";
 
-//        String str = "ip match ip'1.2.3.0/24' => ip'1.2.3.4'";
+        String str = "ip match ip'1.2.3.0/24' => ~ip'1.2.3.4'";
         RouteParser parser = new RouteParser();
 
         List routes = new ArrayList<Route>();
-        parser.parseAll(routes, source);
+        parser.parseAll(routes, str);
 
         List<String> servers = new ArrayList<>();
         servers.add("1.2.3.4");

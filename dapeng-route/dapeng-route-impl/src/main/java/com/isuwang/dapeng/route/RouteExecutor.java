@@ -213,6 +213,25 @@ public class RouteExecutor {
      * @return
      */
     public static boolean matched(InetAddress address, IpPattern ipPattern) {
+
+        List<IpNode> ips = ipPattern.getIps();
+
+        for (IpNode node : ips) {
+            if (matched(address, node))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断ip地址是否符合规则
+     *
+     * @param address
+     * @param ipPattern
+     * @return
+     */
+    public static boolean matched(InetAddress address, IpNode ipPattern) {
+
         InetAddress ip = null;
         try {
             ip = InetAddress.getByName(ipPattern.getIp());
@@ -231,5 +250,6 @@ public class RouteExecutor {
         int addressInt = ((addressBytes[0] & 0xFF) << 24) | ((addressBytes[1] & 0xFF) << 16) | ((addressBytes[2] & 0xFF) << 8) | ((addressBytes[3] & 0xFF));
 
         return (addressInt & mask1Flag) == (ipInt & mask1Flag);
+
     }
 }

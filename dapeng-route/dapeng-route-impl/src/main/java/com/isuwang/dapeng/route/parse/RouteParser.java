@@ -105,19 +105,38 @@ public class RouteParser {
         return pattern;
     }
 
-    public Pattern extractIp(String ipStr) {
+    /**
+     * 1.2.3.4 | 1.2.3.5/32 | 1。2.3.6/32
+     *
+     * @param str
+     * @return
+     */
+    public Pattern extractIp(String str) {
         Pattern pattern = null;
-        if (ipStr.indexOf("/") != -1) {
 
-            int mask = Integer.valueOf(ipStr.substring(ipStr.indexOf("/") + 1));
-            ipStr = ipStr.substring(0, ipStr.indexOf("/"));
-            while (ipStr.split("[.]").length < 4) {
-                ipStr += ".0";
+        String[] ips = str.split("|");
+        List<IpNode> ipNodes = new ArrayList<>();
+        for (String ip : ips) {
+
+            ip = ip.trim();
+            if (ip.indexOf("/") != -1) {
+
+                int mask = Integer.valueOf(ip.substring(ip.indexOf("/") + 1));
+                ip = ip.substring(0, ip.indexOf("/"));
+                while (ip.split("[.]").length < 4) {
+                    ip += ".0";
+                }
+                IpNode node = new IpNode(ip, mask);
+                ipNodes.add(node);
+            } else {
+
+                IpNode node = new IpNode(ip, 32);
+                ipNodes.add(node);
             }
-            pattern = new IpPattern(ipStr, mask);
-        } else {
-            pattern = new IpPattern(ipStr, 32);
         }
+
+        pattern = new IpPattern(ipNodes);
+
         return pattern;
     }
 
