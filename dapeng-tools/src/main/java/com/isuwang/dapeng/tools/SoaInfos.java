@@ -10,10 +10,10 @@ public class SoaInfos {
     private static final String META_DATA = "metadata";
     private static final String REQUEST = "request";
     private static final String JSON = "json";
-    private static final String ROUT_INFO = "routInfo";
+    private static final String ROUT_INFO = "routeInfo";
 
     private static String help = "-----------------------------------------------------------------------\n" +
-            " |commands: runningInfo | metadata | request | json  \n" +
+            " |commands: runningInfo | metadata | request | json | routeInfo\n" +
             " | 通过指定服务名，或服务名+版本号，获取对应的服务的容器ip和端口: \n" +
             " |    java -jar dapeng.jar runningInfo com.isuwang.soa.hello.service.HelloService\n" +
             " |    java -jar dapeng.jar runningInfo com.isuwang.soa.hello.service.HelloService 1.0.1\n" +
@@ -25,6 +25,10 @@ public class SoaInfos {
             " |    java -Dsoa.service.ip=192.168.0.1 -Dsoa.service.port=9091 -jar dapeng.jar request request.json\n" +
             " | 通过服务名/版本号/方法名，获取请求json的示例: \n" +
             " |    java -jar dapeng.jar json com.isuwang.soa.hello.service.HelloService 1.0.0 sayHello\n" +
+            " | 获取服务路由信息：\n" +
+            " |    java -jar dapeng.jar routeInfo\n" +
+            " | 设置服务路由信息：\n" +
+            " |    java -jar dapeng.jar routeInfo route.cfg\n" +
             "-----------------------------------------------------------------------";
 
     public static void main(String[] args) {
