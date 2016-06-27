@@ -5,7 +5,6 @@ import com.isuwang.dapeng.route.pattern.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * Created by Eric on 2016/6/22.
@@ -167,35 +166,41 @@ public class RouteParser {
     public Route constructRoute(String routeLine) {
         Route route = new Route();
 
-        String matchersStr = routeLine.split(TARGETTOKEN)[0];
+        String matchersStr = routeLine.split(TARGETTOKEN)[0].trim();
 
-        MatchLeftSide left  = null;
-        if(!matchersStr.trim().startsWith(OTHERWISE)){
+        MatchLeftSide left = null;
+        if (!matchersStr.startsWith(OTHERWISE)) {
             String[] matcherArray = matchersStr.split(MATCHERTOKEN);
             List<Matcher> matchers = new ArrayList<>();
-            Matcher matcher ;
+            Matcher matcher;
             String matcherStr = null;
             String idStr = null;
             String rulePatterStr = null;
-            for(int i=0 ; i< matcherArray.length;i++){
+            for (int i = 0; i < matcherArray.length; i++) {
                 matcherStr = matcherArray[i].trim();
                 idStr = matcherStr.split(WHITESPACE)[0];
-                rulePatterStr= matcherStr.split(WHITESPACE)[2];
-                matcher = parseMatcher(idStr,rulePatterStr);
-                if(i==0 || routeLine.split(WHITESPACE)[i*3].equals("and") )
-                    matcher.setPrefix("and");
-                else{
-                    matcher.setPrefix("or");
-                }
-                    matchers.add(matcher);
+                rulePatterStr = matcherStr.split(WHITESPACE)[2];
+                matcher = parseMatcher(idStr, rulePatterStr);
+//                if (i == 0 || routeLine.split(WHITESPACE)[i * 3].equals("and"))
+//                    matcher.setPrefix("and");
+//                else {
+//                    matcher.setPrefix("or");
+//                }
+                matchers.add(matcher);
             }
             left = new Matchers();
-            ((Matchers)left).setMatchers(matchers);
-        }else {
+            if (matchersStr.contains(" or "))
+                ((Matchers) left).setAndOrOr(false);
+            else
+                ((Matchers) left).setAndOrOr(true);
+
+            ((Matchers) left).setMatchers(matchers);
+
+        } else {
             left = new OtherWise();
         }
 
-        String targetPatterStr = routeLine.split(TARGETTOKEN)[1];
+        String targetPatterStr = routeLine.split(TARGETTOKEN)[1].trim();
         Pattern right = parseIpPattern(targetPatterStr);
 
         route.setLeft(left);
