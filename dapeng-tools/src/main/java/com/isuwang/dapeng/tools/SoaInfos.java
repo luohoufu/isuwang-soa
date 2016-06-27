@@ -48,7 +48,7 @@ public class SoaInfos {
                 JsonRequestExampleHelper.getRequestJson(args);
                 break;
             case ROUT_INFO:
-                RouteInfoHelper.getRouteInfo(args);
+                RouteInfoHelper.routeInfo(args);
                 break;
             default:
                 System.out.println(help);

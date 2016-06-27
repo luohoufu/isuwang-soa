@@ -30,10 +30,6 @@ public class RouteInfoHelper {
             e.printStackTrace();
         }
     }
-//    private static void init() {
-//        createConfigNodeWithData("/soa", "");
-//        createConfigNodeWithData("/soa/config", "");
-//    }
 
     private static void createConfigNodeWithData(String path, String data) {
         zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, configNodeCreateCallBack, data);
@@ -79,11 +75,7 @@ public class RouteInfoHelper {
         }
     };
 
-
-    private static void writeRouteConfig(String configContent) {
-        createConfigNodeWithData(PATH, configContent);
-    }
-    public static void getRouteInfo(String... args) {
+    public static void routeInfo(String... args) {
         try {
             RouteInfoHelper routeInfoHelper = new RouteInfoHelper();
             routeInfoHelper.connect();
