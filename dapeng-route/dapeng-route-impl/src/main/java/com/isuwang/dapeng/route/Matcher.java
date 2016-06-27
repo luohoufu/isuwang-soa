@@ -11,8 +11,6 @@ public class Matcher {
 
     public Id id;
 
-    public String prefix;
-
     public List<Pattern> patterns;
 
     public Id getId() {
@@ -29,13 +27,5 @@ public class Matcher {
 
     public void setPatterns(List<Pattern> patterns) {
         this.patterns = patterns;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
     }
 }

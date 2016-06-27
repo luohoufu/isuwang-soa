@@ -115,32 +115,49 @@ public class RouteExecutor {
         return inetAddresses;
     }
 
+    /**
+     * 判断上下文是否满足Matchers条件,Matchers由一系列Matcher组成:
+     * <p/>
+     * 如果是“and（与）”关系，则全部满足才返回true，否则返回false;
+     * 如果是“or(或)”关系，则有一个满足则返回true,都不满足返回false
+     *
+     * @param ctx
+     * @param left
+     * @return
+     */
     public static boolean checkRouteCondition(InvocationContext ctx, MatchLeftSide left) {
-        boolean result = false;
-        if (left instanceof OtherWise) {
-            return result;//// TODO: 2016/6/22 OtherWise的定义再仔细考虑一下 
-        } else if (left instanceof Matchers) {
-            List<Matcher> matchers = ((Matchers) left).getMatchers();
-            boolean previousMatchResult=true;
-            for (Matcher matcher : matchers) {
-                boolean currentMatchResult = true;
-                Object value = checkFieldMatcher(ctx, matcher);
-                if (value != null) {
-                    List<Pattern> patterns = matcher.getPatterns();
-                    String logicStr = matcher.getPrefix();
-                    for (Pattern pattern : patterns) {
-                        currentMatchResult= currentMatchResult && matched(pattern, value);
-                    }
 
-                    if(logicStr.equals("and")){
-                        previousMatchResult = previousMatchResult && currentMatchResult;
-                    }else if(logicStr.equals("or")){
-                        previousMatchResult = previousMatchResult || currentMatchResult;
+        if (left instanceof OtherWise) {
+            return true;
+        } else {
+            List<Matcher> matchers = ((Matchers) left).getMatchers();
+
+            if (((Matchers) left).isAndOrOr()) {
+                for (Matcher matcher : matchers) {
+                    Object value = checkFieldMatcher(ctx, matcher);
+                    if (value != null) {
+                        List<Pattern> patterns = matcher.getPatterns();
+                        for (Pattern pattern : patterns) {
+                            if (!matched(pattern, value))
+                                return false;
+                        }
                     }
                 }
+                return true;
+            } else {
+                for (Matcher matcher : matchers) {
+                    Object value = checkFieldMatcher(ctx, matcher);
+                    if (value != null) {
+                        List<Pattern> patterns = matcher.getPatterns();
+                        for (Pattern pattern : patterns) {
+                            if (matched(pattern, value))
+                                return true;
+                        }
+                    }
+                }
+                return false;
             }
         }
-        return result;
     }
 
     /**
@@ -158,6 +175,8 @@ public class RouteExecutor {
             return ctx.getHeader().getCallerFrom().orElse(null);
         } else if ("ip".equals(id.getName())) {
             return ctx.getHeader().getCallerIp().orElse(null);
+        } else if ("customerId".equals(id.getName())) {
+            return ctx.getHeader().getCustomerId().orElse(null);
         } else if ("methodName".equals(id.getName())) {
             throw new AssertionError("not support methodName");
         } else {

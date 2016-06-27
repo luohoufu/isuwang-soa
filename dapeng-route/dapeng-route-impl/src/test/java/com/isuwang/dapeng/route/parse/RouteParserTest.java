@@ -24,7 +24,7 @@ public class RouteParserTest {
                 "      callerFrom match s'app|oss' => ~ip'1.2.3/24'\n" +
                 "      ip match ~ip'1.2.3.0/24|192.168.3.39' => ~ip'1.2.3.4|192.168.1.39/32'\n";
 
-        String str = "operatorId match %'1024n+0..9' and ip match ip'192.168.3.39'=> ip'1.2.3.4'";
+        String str = "operatorId match %'1024n+0..9' and ip match ip'192.168.3/24' => ~ip'1.2.3.4|192.168.1.1/24'";
         RouteParser parser = new RouteParser();
 
         List routes = new ArrayList<Route>();
@@ -36,8 +36,8 @@ public class RouteParserTest {
 
         InvocationContext ctx = new InvocationContext();
         SoaHeader soaHeader = new SoaHeader();
-        soaHeader.setOperatorId(Optional.of(1033));
-        soaHeader.setCallerIp(Optional.of("1.2.3.1"));
+        soaHeader.setOperatorId(Optional.of(1024));
+        soaHeader.setCallerIp(Optional.of("192.168.3.39"));
         soaHeader.setCallerFrom(Optional.of("app"));
         ctx.setHeader(soaHeader);
 
