@@ -1,9 +1,6 @@
 package com.isuwang.dapeng.tools;
 
-import com.isuwang.dapeng.tools.helpers.JsonRequestExampleHelper;
-import com.isuwang.dapeng.tools.helpers.JsonRequestHelper;
-import com.isuwang.dapeng.tools.helpers.MetaInfoHelper;
-import com.isuwang.dapeng.tools.helpers.ZookeeperSerachHelper;
+import com.isuwang.dapeng.tools.helpers.*;
 
 /**
  * 命令行工具入口
@@ -13,6 +10,7 @@ public class SoaInfos {
     private static final String META_DATA = "metadata";
     private static final String REQUEST = "request";
     private static final String JSON = "json";
+    private static final String ROUT_INFO = "routInfo";
 
     private static String help = "-----------------------------------------------------------------------\n" +
             " |commands: runningInfo | metadata | request | json  \n" +
@@ -48,6 +46,9 @@ public class SoaInfos {
                 break;
             case JSON:
                 JsonRequestExampleHelper.getRequestJson(args);
+                break;
+            case ROUT_INFO:
+                RouteInfoHelper.getRouteInfo(args);
                 break;
             default:
                 System.out.println(help);
