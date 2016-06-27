@@ -50,6 +50,7 @@
         <module>dapeng-transaction</module>
         <module>dapeng-scala-dbc</module>
         <module>dapeng-route</module>
+        <module>dapeng-tools</module>
     </modules>
 
     <properties>

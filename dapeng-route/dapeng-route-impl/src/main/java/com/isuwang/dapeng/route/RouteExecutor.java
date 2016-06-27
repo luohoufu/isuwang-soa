@@ -121,12 +121,21 @@ public class RouteExecutor {
             return result;//// TODO: 2016/6/22 OtherWise的定义再仔细考虑一下 
         } else if (left instanceof Matchers) {
             List<Matcher> matchers = ((Matchers) left).getMatchers();
+            boolean previousMatchResult=true;
             for (Matcher matcher : matchers) {
+                boolean currentMatchResult = true;
                 Object value = checkFieldMatcher(ctx, matcher);
                 if (value != null) {
                     List<Pattern> patterns = matcher.getPatterns();
+                    String logicStr = matcher.getPrefix();
                     for (Pattern pattern : patterns) {
-                        result = matched(pattern, value);
+                        currentMatchResult= currentMatchResult && matched(pattern, value);
+                    }
+
+                    if(logicStr.equals("and")){
+                        previousMatchResult = previousMatchResult && currentMatchResult;
+                    }else if(logicStr.equals("or")){
+                        previousMatchResult = previousMatchResult || currentMatchResult;
                     }
                 }
             }

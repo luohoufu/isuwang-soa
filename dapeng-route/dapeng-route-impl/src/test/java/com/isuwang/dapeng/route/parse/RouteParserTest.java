@@ -24,7 +24,7 @@ public class RouteParserTest {
                 "      callerFrom match s'app|oss' => ~ip'1.2.3/24'\n" +
                 "      ip match ~ip'1.2.3.0/24|192.168.3.39' => ~ip'1.2.3.4|192.168.1.39/32'\n";
 
-        String str = "operatorId match %'1024n+0..9' => ip'1.2.3.4'";
+        String str = "operatorId match %'1024n+0..9' and ip match ip'192.168.3.39'=> ip'1.2.3.4'";
         RouteParser parser = new RouteParser();
 
         List routes = new ArrayList<Route>();

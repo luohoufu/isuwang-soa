@@ -5,13 +5,17 @@ import com.isuwang.dapeng.route.pattern.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by Eric on 2016/6/22.
  */
 public class RouteParser {
-    private static final String whiteSpace = " ";
-    private static final String eol = "\\n";
+    private static final String WHITESPACE = " ";
+    private static final String TARGETTOKEN = "=>";
+    private static final String MATCHERTOKEN = " and | or ";
+    private static final String OTHERWISE = "otherwise";
+    private static final String EOL = "\\n";
 
     public List<Route> parse(String config) {
         List<Route> routes = new ArrayList<>();
@@ -112,7 +116,7 @@ public class RouteParser {
     }
 
     /**
-     * 1.2.3.4 | 1.2.3.5/32 | 1。2.3.6/32
+     * 1.2.3.4 | 1.2.3.5/32 | 1.2.3.6/32
      *
      * @param str
      * @return
@@ -146,40 +150,52 @@ public class RouteParser {
         return pattern;
     }
 
-    public List<Matcher> parseMatchers(String matcherStr, String rulePatterStr) {
-        List<Matcher> matchers = new ArrayList<>();
+    public Matcher parseMatcher(String idStr, String rulePatterStr) {
         Matcher matcher = null;
         Id id;
-        if (matcherStr != null) {
-            id = new Id(matcherStr, false);
+        if (idStr != null) {
+            id = new Id(idStr, false);
             matcher = new Matcher();
             matcher.setId(id);
             List<Pattern> patterns = new ArrayList<>();
             parseRulePatterns(patterns, rulePatterStr);
             matcher.setPatterns(patterns);
         }
-        matchers.add(matcher);
-        return matchers;
+        return matcher;
     }
 
     public Route constructRoute(String routeLine) {
         Route route = new Route();
-        String ruleArray[] = routeLine.split(whiteSpace);
-        String idStr = null;
-        String rulePatterStr = null;
-        String targetPatterStr = null;
-        MatchLeftSide left;
-        if (ruleArray.length == 5) {
-            idStr = ruleArray[0];
-            rulePatterStr = ruleArray[2];
-            targetPatterStr = ruleArray[4];
+
+        String matchersStr = routeLine.split(TARGETTOKEN)[0];
+
+        MatchLeftSide left  = null;
+        if(!matchersStr.trim().startsWith(OTHERWISE)){
+            String[] matcherArray = matchersStr.split(MATCHERTOKEN);
+            List<Matcher> matchers = new ArrayList<>();
+            Matcher matcher ;
+            String matcherStr = null;
+            String idStr = null;
+            String rulePatterStr = null;
+            for(int i=0 ; i< matcherArray.length;i++){
+                matcherStr = matcherArray[i].trim();
+                idStr = matcherStr.split(WHITESPACE)[0];
+                rulePatterStr= matcherStr.split(WHITESPACE)[2];
+                matcher = parseMatcher(idStr,rulePatterStr);
+                if(i==0 || routeLine.split(WHITESPACE)[i*3].equals("and") )
+                    matcher.setPrefix("and");
+                else{
+                    matcher.setPrefix("or");
+                }
+                    matchers.add(matcher);
+            }
             left = new Matchers();
-            left.matchers = (parseMatchers(idStr, rulePatterStr));
-        } else {
-            targetPatterStr = ruleArray[2];
+            ((Matchers)left).setMatchers(matchers);
+        }else {
             left = new OtherWise();
         }
 
+        String targetPatterStr = routeLine.split(TARGETTOKEN)[1];
         Pattern right = parseIpPattern(targetPatterStr);
 
         route.setLeft(left);
@@ -188,7 +204,7 @@ public class RouteParser {
     }
 
     public void parseAll(List<Route> routes, String config) {
-        String[] routeLines = config.split(eol);
+        String[] routeLines = config.split(EOL);
         for (String routeLine : routeLines) {
             routes.add(constructRoute(routeLine.trim()));
         }
