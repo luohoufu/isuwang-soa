@@ -1,6 +1,5 @@
 package com.isuwang.dapeng.tools.helpers;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.isuwang.soa.core.SoaHeader;
@@ -8,7 +7,9 @@ import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.metadata.Service;
 import com.isuwang.soa.remoting.fake.json.JSONPost;
 import com.isuwang.soa.remoting.filter.LoadBalanceFilter;
-import net.sf.json.xml.XMLSerializer;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +25,6 @@ import java.util.Optional;
 public class RequestHelper {
 
     private static JSONPost jsonPost;
-
-    private static final String HOST = "soa.service.ip";
-    private static final String PORT = "soa.service.port";
-
     public static void post(String... args) {
 
         String jsonFile = checkArg(args);
@@ -41,7 +38,7 @@ public class RequestHelper {
             isJson=true;
             jsonString = readFromeFile(jsonFile);
         }else if(jsonFile.endsWith(".xml")){
-            jsonString = parseFromXmlToJson(jsonFile);
+           jsonString = parseFromXmlToJson(jsonFile);
         }
 
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
@@ -113,9 +110,44 @@ public class RequestHelper {
     }
 
     private static String parseFromXmlToJson(String file) {
-        SAXReader sax = new SAXReader();
+        String str = " ";
+        try {
+            SAXReader sax = new SAXReader();
+            File xmlFile = new File(file);
+            Document document = sax.read(xmlFile);
+            Element root = document.getRootElement();
+            str =  getNodes(root);
+        }catch(Exception e){
+            System.out.println(e.getLocalizedMessage());
+        }
+        System.out.print(str.substring(0,str.length()-1));
+        return str.substring(0,str.length()-1);
+    }
 
-        return null;
+    public static String getNodes( Element node) {
+        StringBuffer sb = new StringBuffer();
+        if(node.elements().size()==0){
+            sb.append(String.format("\"%s\":\"%s\",", node.getName(), node.getTextTrim()));
+//                    System.out.println(String.format("%s, %s", node.getName(), new JsonPrimitive(node.getTextTrim())));
+        }else{
+            // 递归遍历当前节点所有的子节点
+            if(!node.isRootElement()){
+                sb.append(String.format("\"%s\":",node.getName()));
+            }
+            sb.append("{");
+
+            List<Element> listElement = node.elements();
+            for (int i=0;i<listElement.size();i++) {
+                String temp = getNodes(listElement.get(i));
+                if(i==listElement.size()-1){
+                    sb.append(temp.substring(0,temp.length()-1));
+                }else{
+                    sb.append(temp);
+                }
+            }
+            sb.append("},");
+        }
+        return sb.toString();
     }
 
     private static String readFromeFile(String jsonFile) {
@@ -131,4 +163,7 @@ public class RequestHelper {
         return sb.toString();
     }
 
+    public static void main(String[] args) {
+//        parseFromXmlToJson("C:\\Users\\Shadow\\Desktop\\XMLRequest.xml");
+    }
 }
