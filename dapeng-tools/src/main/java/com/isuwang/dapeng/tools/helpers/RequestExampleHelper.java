@@ -5,6 +5,8 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.isuwang.soa.core.metadata.*;
+import net.sf.json.JSONArray;
+import net.sf.json.xml.XMLSerializer;
 
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -12,7 +14,7 @@ import java.util.*;
 /**
  * @author Eric on 2016/2/16.
  */
-public class JsonRequestExampleHelper {
+public class RequestExampleHelper {
 
     public static void getRequestJson(String... args) {
         if (args.length != 4) {
@@ -29,9 +31,35 @@ public class JsonRequestExampleHelper {
         for (Struct struct : structs) {
             System.out.println("---------------------------------------------------------------");
             List<Field> parameters = struct.getFields();
-            Map<String, Object> jsonSample = getJsonSample(service, parameters);
+            Map<String, Object> jsonSample = getSample(service, parameters);
             System.out.println(gson_format.toJson(jsonSample));
         }
+    }
+
+
+    public static void getRequestXml(String... args) {
+        if (args.length != 4) {
+            System.out.println("example: java -jar dapeng.jar xml com.isuwang.soa.hello.service.HelloService 1.0.0 sayHello");
+            System.exit(0);
+        }
+        String serviceName = args[1];
+        String versionName = args[2];
+        String methodName = args[3];
+
+        System.out.println("Getting Service metadata ...");
+        Service service = getService(serviceName, versionName, methodName);
+        List<Struct> structs = getMethod(service, methodName);
+        List<Map<String, Object>> lists= new ArrayList<Map<String, Object>>();
+        for (Struct struct : structs) {
+            System.out.println("---------------------------------------------------------------");
+            List<Field> parameters = struct.getFields();
+            Map<String, Object> jsonSample = getSample(service, parameters);
+            lists.add(jsonSample);
+        }
+
+        XMLSerializer xmlserializer = new XMLSerializer();
+        JSONArray jobj = JSONArray.fromObject(gson_format.toJson(lists));
+        System.out.println(xmlserializer.write(jobj));
     }
 
     private static Service getService(String serviceName, String versionName, String methodName) {
@@ -64,7 +92,7 @@ public class JsonRequestExampleHelper {
         }
     }).setPrettyPrinting().create();
 
-    private static Map<String, Object> getJsonSample(Service service, List<Field> parameters) {
+    private static Map<String, Object> getSample(Service service, List<Field> parameters) {
         String fieldName;
         DataType fieldType;
         Map<String, Object> mapTemp = new HashMap<String, Object>();
@@ -72,12 +100,12 @@ public class JsonRequestExampleHelper {
             Field parameter = parameters.get(i);
             fieldName = parameter.getName();
             fieldType = parameter.getDataType();
-            mapTemp.put(fieldName, fillValue(service, fieldType));
+            mapTemp.put(fieldName, assignValue(service, fieldType));
         }
         return mapTemp;
     }
 
-    private static Object fillValue(Service service, DataType fieldType) {
+    private static Object assignValue(Service service, DataType fieldType) {
         Object randomValue = null;
         switch (fieldType.getKind()) {
             case VOID:
@@ -110,8 +138,8 @@ public class JsonRequestExampleHelper {
                 DataType keyType = fieldType.getKeyType();
                 DataType valueType = fieldType.getValueType();
                 Map<Object, Object> mapTemp = new HashMap<Object, Object>();
-                Object key = fillValue(service, keyType);
-                Object value = fillValue(service, valueType);
+                Object key = assignValue(service, keyType);
+                Object value = assignValue(service, valueType);
                 mapTemp.put(key, value);
 
                 randomValue = mapTemp;
@@ -119,16 +147,16 @@ public class JsonRequestExampleHelper {
             case LIST:
                 List list = new ArrayList<Object>();
                 DataType listValueType = fieldType.getValueType();
-                list.add(fillValue(service, listValueType));
-                list.add(fillValue(service, listValueType));
+                list.add(assignValue(service, listValueType));
+                list.add(assignValue(service, listValueType));
 
                 randomValue = list;
                 break;
             case SET:
                 Set set = new HashSet<Object>();
                 DataType setValueType = fieldType.getValueType();
-                set.add(fillValue(service, setValueType));
-                set.add(fillValue(service, setValueType));
+                set.add(assignValue(service, setValueType));
+                set.add(assignValue(service, setValueType));
                 randomValue = set;
                 break;
             case ENUM:
@@ -147,7 +175,7 @@ public class JsonRequestExampleHelper {
                 for (int i = 0; i < structs.size(); i++) {
                     Struct struct = structs.get(i);
                     if ((struct.getNamespace() + '.' + struct.getName()).equals(fieldType.getQualifiedName())) {
-                        randomValue = getJsonSample(service, struct.getFields());
+                        randomValue = getSample(service, struct.getFields());
                     }
                 }
                 break;

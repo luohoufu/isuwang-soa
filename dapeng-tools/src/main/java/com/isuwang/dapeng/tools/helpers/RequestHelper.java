@@ -1,5 +1,6 @@
 package com.isuwang.dapeng.tools.helpers;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.isuwang.soa.core.SoaHeader;
@@ -7,6 +8,7 @@ import com.isuwang.soa.core.SoaSystemEnvProperties;
 import com.isuwang.soa.core.metadata.Service;
 import com.isuwang.soa.remoting.fake.json.JSONPost;
 import com.isuwang.soa.remoting.filter.LoadBalanceFilter;
+import net.sf.json.xml.XMLSerializer;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,28 +21,32 @@ import java.util.Optional;
 /**
  * @author Eric on 2016/2/15.
  */
-public class JsonRequestHelper {
+public class RequestHelper {
 
     private static JSONPost jsonPost;
 
     private static final String HOST = "soa.service.ip";
     private static final String PORT = "soa.service.port";
 
-    public static void postJson(String... args) {
-        if (args.length != 2) {
-            System.out.println("example: java -jar dapeng.jar request request.json");
-            System.out.println("         java -Dsoa.service.ip=192.168.0.1 -Dsoa.service.port=9091 -jar dapeng.jar request request.json");
-            System.exit(0);
-        }
-        String jsonFile = args[1];
+    public static void post(String... args) {
 
-        File requestFile = new File(jsonFile);
-        if (!requestFile.exists()) {
-            System.out.println("文件(" + requestFile + ")不存在");
-            return;
+        String jsonFile = checkArg(args);
+
+        if (jsonFile == null) return;
+
+
+        String jsonString = null;
+        boolean isJson=false;
+        if(jsonFile.endsWith(".json")){
+            isJson=true;
+            jsonString = readFromeFile(jsonFile);
+        }else if(jsonFile.endsWith(".xml")){
+            jsonString = parseFromXmlToJson(jsonFile);
         }
 
-        JsonObject jsonObject = parseService(jsonFile);
+        JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
+
+
         String serviceName = jsonObject.get("serviceName").getAsString();
         String versionName = jsonObject.get("version").getAsString();
         String methodName = jsonObject.get("methodName").getAsString();
@@ -50,9 +56,26 @@ public class JsonRequestHelper {
         header.setServiceName(serviceName);
         header.setVersionName(versionName);
         header.setMethodName(methodName);
-        header.setCallerFrom(Optional.of("dapeng-command"));
+        header.setCallerFrom(Optional.of("dapeng-command")) ;
 
         invokeService(serviceName, versionName, methodName, header, parameter);
+    }
+
+    private static String checkArg(String... args) {
+        if (args.length != 2) {
+            System.out.println("example: java -jar dapeng.jar request request.json");
+            System.out.println("         java -Dsoa.service.ip=192.168.0.1 -Dsoa.service.port=9091 -jar dapeng.jar request request.json");
+            System.out.println("         java -Dsoa.service.ip=192.168.0.1 -Dsoa.service.port=9091 -jar dapeng.jar request request.xml");
+            System.exit(0);
+        }
+        String jsonFile = args[1];
+
+        File requestFile = new File(jsonFile);
+        if (!requestFile.exists()) {
+            System.out.println("文件(" + requestFile + ")不存在");
+            return null;
+        }
+        return jsonFile;
     }
 
 
@@ -89,10 +112,10 @@ public class JsonRequestHelper {
         }
     }
 
-    private static JsonObject parseService(String jsonFile) {
-        String jsonString = readFromeFile(jsonFile);
-        JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
-        return jsonObject;
+    private static String parseFromXmlToJson(String file) {
+        SAXReader sax = new SAXReader();
+
+        return null;
     }
 
     private static String readFromeFile(String jsonFile) {
@@ -102,7 +125,6 @@ public class JsonRequestHelper {
             for (String line : lines) {
                 sb.append(line);
             }
-//            System.out.println( sb.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

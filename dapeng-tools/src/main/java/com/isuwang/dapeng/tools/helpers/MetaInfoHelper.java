@@ -5,7 +5,6 @@ import com.isuwang.soa.remoting.fake.metadata.MetadataClient;
 
 /**
  * @author Eric on  2016/2/15.
- * @date
  */
 public class MetaInfoHelper {
 
