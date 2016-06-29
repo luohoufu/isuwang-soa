@@ -8,8 +8,12 @@ import com.isuwang.soa.core.metadata.*;
 import net.sf.json.JSONArray;
 import net.sf.json.xml.XMLSerializer;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
+
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -63,7 +67,6 @@ public class RequestExampleHelper {
         JSONArray jobj = JSONArray.fromObject(gson_format.toJson(lists));
 
         String xmlStr = (xmlserializer.write(jobj));
-        System.out.println("xmlStr: " + xmlStr);
 
         printXmlPretty(xmlStr);
     }
@@ -74,34 +77,75 @@ public class RequestExampleHelper {
             org.dom4j.Document document = sax.read(new StringReader(xmlStr));
             org.dom4j.Element root = document.getRootElement();
             List<Element> listElement = root.elements();
+            StringBuffer xmlBuf = new StringBuffer();
+            xmlBuf.append("<soaXmlRequest>").append("\n");
             if(listElement.size()>=1){
-                printNodes(listElement.get(0));
+                printNodes(listElement.get(0),xmlBuf," ");
             }
+            xmlBuf.append("</soaXmlRequest>");
+//            System.out.println(xmlBuf.toString());
+            OutputFormat formater = OutputFormat.createPrettyPrint();
+            formater.setEncoding("utf-8");
+            StringWriter out=new StringWriter();
+            XMLWriter writer=new XMLWriter(out,formater);
+
+            System.out.println(xmlBuf);
+
+            writer.write(xmlBuf);
+            writer.close();
 
         }catch(Exception e){
+            e.printStackTrace();
             System.out.println(e.getLocalizedMessage());
         }
     }
 
-    public static void printNodes(Element node) {
+    public static void printNodes(Element node,StringBuffer xmlBuf,String prefix) {
         if(node.elements().size()==0){
-            System.out.println(String.format("<%s>%s<%s>", node.getName(), node.getTextTrim(),node.getName()));
+           xmlBuf.append(String.format("%s<%s>%s</%s>", prefix,node.getName(), node.getTextTrim(), node.getName())).append("\n");
         }else{
-            List<Element> listElement = node.elements();
             if(!"e".equals(node.getName()))
-            System.out.println(String.format("<%s>",node.getName()));
+                xmlBuf.append(String.format("%s<%s>", prefix,node.getName())).append("\n");
 
-            Element currentElement = null;
-                for (int i=0;i<listElement.size();i++) {
-                    currentElement = listElement.get(i);
-                    if("object".equals(currentElement.attributeValue("class"))) {
-                        printNodes(currentElement);
+            if("array".equals(node.attributeValue("class"))){
+                List<Element> arrayElements = node.elements();
+                for (int i=0;i<arrayElements.size();i++) {
+                    Element arrayElement = arrayElements.get(i);
+                    String attValue= arrayElement.attributeValue("type");
+                    if("e".equals(arrayElement.getName()) && ("string".equals(attValue)||"number".equals(attValue))){
+                        if("string".equals(attValue)){
+                            if(i!=arrayElements.size() - 1) {
+                                xmlBuf.append(String.format("%s\"%s\",",prefix+"     ",arrayElement.getTextTrim()));
+                            }else{
+                                xmlBuf.append(String.format("\"%s\"", arrayElement.getTextTrim())).append("\n");
+                            }
+                        }else if("number".equals(attValue)){
+                            if(i!=arrayElements.size() - 1) {
+                                xmlBuf.append(String.format("%s%s,",prefix+"     ",arrayElement.getTextTrim()));
+                            }else{
+                                xmlBuf.append(String.format("%s", arrayElement.getTextTrim())).append("\n");
+                            }
+                        }
+
                     }
                 }
+            }else{
+                List<Element> listElement = node.elements();
+                Element currentElement = null;
+                for (int i=0;i<listElement.size();i++) {
+                    currentElement = listElement.get(i);
+                    printNodes(currentElement,xmlBuf,"  ");
+                }
+            }
+
             if(!"e".equals(node.getName()))
-            System.out.println(String.format("</%s>",node.getName()));
+                xmlBuf.append(String.format("%s</%s>", prefix,node.getName())).append("\n");
         }
+
+
     }
+
+
     private static Service getService(String serviceName, String versionName, String methodName) {
 
         Service service = ServiceCache.getService(serviceName, versionName);
