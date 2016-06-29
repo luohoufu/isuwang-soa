@@ -7,7 +7,9 @@ import com.google.gson.GsonBuilder;
 import com.isuwang.soa.core.metadata.*;
 import net.sf.json.JSONArray;
 import net.sf.json.xml.XMLSerializer;
-
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -59,9 +61,47 @@ public class RequestExampleHelper {
 
         XMLSerializer xmlserializer = new XMLSerializer();
         JSONArray jobj = JSONArray.fromObject(gson_format.toJson(lists));
-        System.out.println(xmlserializer.write(jobj));
+
+        String xmlStr = (xmlserializer.write(jobj));
+        System.out.println("xmlStr: " + xmlStr);
+
+        printXmlPretty(xmlStr);
     }
 
+    private static void printXmlPretty(String xmlStr){
+        try {
+            SAXReader sax = new SAXReader();
+            org.dom4j.Document document = sax.read(new StringReader(xmlStr));
+            org.dom4j.Element root = document.getRootElement();
+            List<Element> listElement = root.elements();
+            if(listElement.size()>=1){
+                printNodes(listElement.get(0));
+            }
+
+        }catch(Exception e){
+            System.out.println(e.getLocalizedMessage());
+        }
+    }
+
+    public static void printNodes(Element node) {
+        if(node.elements().size()==0){
+            System.out.println(String.format("<%s>%s<%s>", node.getName(), node.getTextTrim(),node.getName()));
+        }else{
+            List<Element> listElement = node.elements();
+            if(!"e".equals(node.getName()))
+            System.out.println(String.format("<%s>",node.getName()));
+
+            Element currentElement = null;
+                for (int i=0;i<listElement.size();i++) {
+                    currentElement = listElement.get(i);
+                    if("object".equals(currentElement.attributeValue("class"))) {
+                        printNodes(currentElement);
+                    }
+                }
+            if(!"e".equals(node.getName()))
+            System.out.println(String.format("</%s>",node.getName()));
+        }
+    }
     private static Service getService(String serviceName, String versionName, String methodName) {
 
         Service service = ServiceCache.getService(serviceName, versionName);

@@ -127,7 +127,7 @@ public class RequestHelper {
     public static String getNodes( Element node) {
         StringBuffer sb = new StringBuffer();
         if(node.elements().size()==0){
-            sb.append(String.format("\"%s\":\"%s\",", node.getName(), node.getTextTrim()));
+            sb.append(String.format("\"%s\":%s,", node.getName(), "".equals(node.getTextTrim())?"{}":node.getTextTrim()));
 //                    System.out.println(String.format("%s, %s", node.getName(), new JsonPrimitive(node.getTextTrim())));
         }else{
             // 递归遍历当前节点所有的子节点
