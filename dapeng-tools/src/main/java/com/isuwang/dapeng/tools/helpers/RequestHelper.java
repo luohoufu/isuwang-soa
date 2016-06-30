@@ -1,5 +1,7 @@
 package com.isuwang.dapeng.tools.helpers;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.isuwang.soa.core.SoaHeader;
@@ -8,16 +10,20 @@ import com.isuwang.soa.core.metadata.Service;
 import com.isuwang.soa.remoting.fake.json.JSONPost;
 import com.isuwang.soa.remoting.filter.LoadBalanceFilter;
 import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Eric on 2016/2/15.
@@ -55,7 +61,7 @@ public class RequestHelper {
         header.setMethodName(methodName);
         header.setCallerFrom(Optional.of("dapeng-command")) ;
 
-        invokeService(serviceName, versionName, methodName, header, parameter);
+        invokeService(serviceName, versionName, methodName, header, parameter,isJson);
     }
 
     private static String checkArg(String... args) {
@@ -76,7 +82,7 @@ public class RequestHelper {
     }
 
 
-    private static void invokeService(String serviceName, String versionName, String methodName, SoaHeader header, String parameter) {
+    private static void invokeService(String serviceName, String versionName, String methodName, SoaHeader header, String parameter,boolean isJson) {
 
         System.out.println("Getting service from server...");
         Service service = ServiceCache.getService(serviceName, versionName);
@@ -103,9 +109,65 @@ public class RequestHelper {
 
         try {
             System.out.println("Calling Service ...");
-            System.out.println(jsonPost.callServiceMethod(header, parameter, service));
-        } catch (Exception e) {
 
+            String response = jsonPost.callServiceMethod(header, parameter, service);
+            if(isJson){
+                System.out.println(response);
+            }else{
+                JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+                StringBuffer xmlBuf = new StringBuffer();
+                xmlBuf.append("<soaResponse>").append("\n");
+                parseFromJsonToXml(xmlBuf, jsonObject);
+                xmlBuf.append("</soaResponse>");
+
+                Document document = null;
+                document = DocumentHelper.parseText(xmlBuf.toString());
+                OutputFormat formater = OutputFormat.createPrettyPrint();
+                formater.setEncoding("utf-8");
+                StringWriter out=new StringWriter();
+                XMLWriter writer=new XMLWriter(out,formater);
+                writer.write(document);
+                writer.close();
+                System.out.println(out.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void  parseFromJsonToXml(StringBuffer sbxml,JsonObject jsonObject){
+        Set<Map.Entry<String, JsonElement>>  set = jsonObject.entrySet();
+        Iterator<Map.Entry<String, JsonElement>>  iterator = set.iterator();
+        while(iterator.hasNext()){
+            Map.Entry<String, JsonElement> mJson = iterator.next();
+            String tag = mJson.getKey();
+            JsonElement innerEl = mJson.getValue();
+            StringBuffer xmlTemp = new StringBuffer();
+            if(innerEl.isJsonObject()){
+                xmlTemp.append(String.format("<%s>", tag)).append("\n");
+                parseFromJsonToXml(xmlTemp, (JsonObject) innerEl);
+                xmlTemp.append(String.format("</%s>", tag));
+                sbxml.append(xmlTemp);
+            }else if(innerEl.isJsonArray()){
+                JsonArray innerElArray = ((JsonArray)innerEl);
+                if(!tag.endsWith("s")){
+                    tag = tag+"s";
+                }
+                xmlTemp.append(String.format("<%s>", tag)).append("\n");
+                 for(int i=0;i<innerElArray.size();i++){
+                     xmlTemp.append(String.format("<%s>", tag.substring(0,tag.length()-1))).append("\n");
+                     JsonElement innerArrayEl  = innerElArray.get(i);
+                     parseFromJsonToXml(xmlTemp, (JsonObject)innerArrayEl);
+                     xmlTemp.append(String.format("</%s>", tag.substring(0,tag.length()-1)));
+                 }
+                xmlTemp.append(String.format("</%s>", tag)).append("\n");
+                sbxml.append(xmlTemp);
+            }else if(innerEl.isJsonPrimitive()){
+                xmlTemp.append(String.format("<%s>%s</%s>", tag, innerEl.getAsJsonPrimitive(), tag)).append("\n");
+                sbxml.append(xmlTemp);
+            }else if(innerEl.isJsonNull()){
+                xmlTemp.append(String.format("<%s/>", tag));
+            }
         }
     }
 
@@ -120,7 +182,7 @@ public class RequestHelper {
         }catch(Exception e){
             System.out.println(e.getLocalizedMessage());
         }
-        System.out.print(str.substring(0,str.length()-1));
+//        System.out.print(str.substring(0,str.length()-1));
         return str.substring(0,str.length()-1);
     }
 
@@ -128,7 +190,6 @@ public class RequestHelper {
         StringBuffer sb = new StringBuffer();
         if(node.elements().size()==0){
             sb.append(String.format("\"%s\":%s,", node.getName(), "".equals(node.getTextTrim())?"{}":node.getTextTrim()));
-//                    System.out.println(String.format("%s, %s", node.getName(), new JsonPrimitive(node.getTextTrim())));
         }else{
             // 递归遍历当前节点所有的子节点
             if(!node.isRootElement()){
