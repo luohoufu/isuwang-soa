@@ -10,6 +10,7 @@ import com.isuwang.dapeng.core.metadata.Service;
 import com.isuwang.dapeng.remoting.fake.json.JSONPost;
 import com.isuwang.dapeng.remoting.filter.LoadBalanceFilter;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
@@ -28,6 +29,14 @@ import java.util.*;
  * @author Eric on 2016/2/15.
  */
 public class RequestHelper {
+    private static final String SERVICENAME="serviceName";
+    private static final String VERSION="version";
+    private static final String METHODNAME="methodName";
+
+    private static final String TAGSTART = "<%s>";
+    private static final String TAGEND = "</%s>";
+    private static final String TAGEMPTY = "<%s/>";
+
 
     private static JSONPost jsonPost;
 
@@ -36,7 +45,6 @@ public class RequestHelper {
         String jsonFile = checkArg(args);
 
         if (jsonFile == null) return;
-
 
         String jsonString = null;
         boolean isJson = false;
@@ -48,25 +56,30 @@ public class RequestHelper {
         }
 
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
-
-
-        String serviceName = jsonObject.get("serviceName").getAsString();
-        String versionName = jsonObject.get("version").getAsString();
-        String methodName = jsonObject.get("methodName").getAsString();
         String parameter = jsonObject.get("params").toString();
 
+        SoaHeader header = constructHeader(jsonObject);
+
+        invokeService(header, parameter, isJson);
+    }
+
+    private static SoaHeader constructHeader(JsonObject jsonObject){
+
+        String serviceName = jsonObject.get(SERVICENAME).getAsString();
+        String versionName = jsonObject.get(VERSION).getAsString();
+        String methodName = jsonObject.get(METHODNAME).getAsString();
         SoaHeader header = new SoaHeader();
         header.setServiceName(serviceName);
         header.setVersionName(versionName);
         header.setMethodName(methodName);
         header.setCallerFrom(Optional.of("dapeng-command"));
-
-        invokeService(serviceName, versionName, methodName, header, parameter, isJson);
+        return header;
     }
 
     private static String checkArg(String... args) {
         if (args.length != 2) {
             System.out.println("example: java -jar dapeng.jar request request.json");
+            System.out.println("         java -jar dapeng.jar request request.xml");
             System.out.println("         java -Dsoa.service.ip=192.168.0.1 -Dsoa.service.port=9091 -jar dapeng.jar request request.json");
             System.out.println("         java -Dsoa.service.ip=192.168.0.1 -Dsoa.service.port=9091 -jar dapeng.jar request request.xml");
             System.exit(0);
@@ -82,10 +95,10 @@ public class RequestHelper {
     }
 
 
-    private static void invokeService(String serviceName, String versionName, String methodName, SoaHeader header, String parameter, boolean isJson) {
+    private static void invokeService(SoaHeader header, String parameter, boolean isJson) {
 
         System.out.println("Getting service from server...");
-        Service service = ServiceCache.getService(serviceName, versionName);
+        Service service = ServiceCache.getService(header.getServiceName(), header.getVersionName());
 
         if (service == null) {
             System.out.println("没有找到可用服务");
@@ -93,7 +106,7 @@ public class RequestHelper {
         }
 
         System.out.println("Getting caller Info ...");
-        String callerInfo = LoadBalanceFilter.getCallerInfo(serviceName, versionName, methodName);
+        String callerInfo = LoadBalanceFilter.getCallerInfo(header.getServiceName(), header.getVersionName(), header.getMethodName());
 
         if (callerInfo != null) {
             String[] infos = callerInfo.split(":");
@@ -119,20 +132,22 @@ public class RequestHelper {
                 xmlBuf.append("<soaResponse>").append("\n");
                 parseFromJsonToXml(xmlBuf, jsonObject);
                 xmlBuf.append("</soaResponse>");
-
-                Document document = null;
-                document = DocumentHelper.parseText(xmlBuf.toString());
-                OutputFormat formater = OutputFormat.createPrettyPrint();
-                formater.setEncoding("utf-8");
-                StringWriter out = new StringWriter();
-                XMLWriter writer = new XMLWriter(out, formater);
-                writer.write(document);
-                writer.close();
-                System.out.println(out.toString());
+                printPrettyXml(xmlBuf);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void printPrettyXml(StringBuffer xmlBuf) throws DocumentException, IOException {
+        Document document = DocumentHelper.parseText(xmlBuf.toString());
+        OutputFormat formater = OutputFormat.createPrettyPrint();
+        formater.setEncoding("utf-8");
+        StringWriter out = new StringWriter();
+        XMLWriter writer = new XMLWriter(out, formater);
+        writer.write(document);
+        writer.close();
+        System.out.println(out.toString());
     }
 
     private static void parseFromJsonToXml(StringBuffer sbxml, JsonObject jsonObject) {
@@ -144,29 +159,29 @@ public class RequestHelper {
             JsonElement innerEl = mJson.getValue();
             StringBuffer xmlTemp = new StringBuffer();
             if (innerEl.isJsonObject()) {
-                xmlTemp.append(String.format("<%s>", tag)).append("\n");
+                xmlTemp.append(String.format(TAGSTART, tag)).append("\n");
                 parseFromJsonToXml(xmlTemp, (JsonObject) innerEl);
-                xmlTemp.append(String.format("</%s>", tag));
+                xmlTemp.append(String.format(TAGEND, tag));
                 sbxml.append(xmlTemp);
             } else if (innerEl.isJsonArray()) {
                 JsonArray innerElArray = ((JsonArray) innerEl);
                 if (!tag.endsWith("s")) {
                     tag = tag + "s";
                 }
-                xmlTemp.append(String.format("<%s>", tag)).append("\n");
+                xmlTemp.append(String.format(TAGSTART, tag)).append("\n");
                 for (int i = 0; i < innerElArray.size(); i++) {
-                    xmlTemp.append(String.format("<%s>", tag.substring(0, tag.length() - 1))).append("\n");
+                    xmlTemp.append(String.format(TAGSTART, tag.substring(0, tag.length() - 1))).append("\n");
                     JsonElement innerArrayEl = innerElArray.get(i);
                     parseFromJsonToXml(xmlTemp, (JsonObject) innerArrayEl);
-                    xmlTemp.append(String.format("</%s>", tag.substring(0, tag.length() - 1)));
+                    xmlTemp.append(String.format(TAGEND, tag.substring(0, tag.length() - 1)));
                 }
-                xmlTemp.append(String.format("</%s>", tag)).append("\n");
+                xmlTemp.append(String.format(TAGEND, tag)).append("\n");
                 sbxml.append(xmlTemp);
             } else if (innerEl.isJsonPrimitive()) {
-                xmlTemp.append(String.format("<%s>%s</%s>", tag, innerEl.getAsJsonPrimitive(), tag)).append("\n");
+                xmlTemp.append(String.format(TAGSTART+"%s"+TAGEND, tag, innerEl.getAsJsonPrimitive(), tag)).append("\n");
                 sbxml.append(xmlTemp);
             } else if (innerEl.isJsonNull()) {
-                xmlTemp.append(String.format("<%s/>", tag));
+                xmlTemp.append(String.format(TAGEMPTY, tag));
             }
         }
     }
@@ -182,7 +197,6 @@ public class RequestHelper {
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
         }
-//        System.out.print(str.substring(0,str.length()-1));
         return str.substring(0, str.length() - 1);
     }
 
@@ -191,7 +205,6 @@ public class RequestHelper {
         if (node.elements().size() == 0) {
             sb.append(String.format("\"%s\":%s,", node.getName(), "".equals(node.getTextTrim()) ? "{}" : node.getTextTrim()));
         } else {
-            // 递归遍历当前节点所有的子节点
             if (!node.isRootElement()) {
                 sb.append(String.format("\"%s\":", node.getName()));
             }
@@ -222,9 +235,5 @@ public class RequestHelper {
             e.printStackTrace();
         }
         return sb.toString();
-    }
-
-    public static void main(String[] args) {
-//        parseFromXmlToJson("C:\\Users\\Shadow\\Desktop\\XMLRequest.xml");
     }
 }

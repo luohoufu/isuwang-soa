@@ -36,6 +36,8 @@ public class Main {
             " |    java -jar dapeng.jar routInfo\n" +
             " | 10.指定配置文件，设置路由信息: \n" +
             " |    java -jar dapeng.jar routInfo route.cfg \n" +
+            " | 11.指定数据库以及表,生成相应的scala对象，thrift文件: \n" +
+            " |    java -jar dapeng.jar [po|dto|enum|all] reverse.conf \n" +
             "-----------------------------------------------------------------------";
 
     public static void main(String[] args) {
@@ -65,7 +67,7 @@ public class Main {
                 RouteInfoHelper.routeInfo(args);
                 break;
             default:
-                System.out.println(help);
+                DbReverserHelper.gen(args);
         }
 
         System.exit(0);

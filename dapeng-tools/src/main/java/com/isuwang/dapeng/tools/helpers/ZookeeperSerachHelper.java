@@ -82,14 +82,14 @@ public class ZookeeperSerachHelper {
         String host = infos[0];
         String port = infos[1];
         String version = infos[2];
-        fullFillString(serviceName, 60);
-        fullFillString(version, 20);
-        fullFillString(host, 30);
-        fullFillString(port, 25);
+        padString(serviceName, 60);
+        padString(version, 20);
+        padString(host, 30);
+        padString(port, 25);
 
     }
 
-    private void fullFillString(String info, int length) {
+    private void padString(String info, int length) {
         infoBuf.append(info);
         int infoLength = info.length();
         while (infoLength < length) {
