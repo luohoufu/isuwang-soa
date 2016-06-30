@@ -3,10 +3,7 @@ package com.isuwang.dapeng.tools.helpers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -31,9 +28,6 @@ public class DbReverserHelper {
 
   public static Connection conn ;
 
-  static{
-    conn = JdbcUtils.getConnection();
-  }
   /**
    * 檢查參數
    * @param args
@@ -48,22 +42,34 @@ public class DbReverserHelper {
    */
   public static void gen(String... args){
     checkArg(args);
-
     readConf(args[1]);
     readMode();
-    intReverseTables();
-    intMetaInfos();
 
-    if (tablesToReverseMeta.size() == 0) {
-      System.out.println("No new created table has been detected");
+    try{
+      JdbcUtils.getConnection();
+      intReverseTables();
+      intMetaInfos();
+
+      if (tablesToReverseMeta.size() == 0) {
+        System.out.println("No new created table has been detected");
+      }
+      for (Map.Entry<String, Map<String, String>> entry : tablesToReverseMeta.entrySet()) {
+         reverse((String) entry.getKey(), (Map) entry.getValue());
+      }
+    }finally{
+        try{
+          if(conn!=null&&!conn.isClosed())
+            conn.close();
+        }catch (SQLException e){
+          e.printStackTrace();
+        }
     }
-    for (Map.Entry<String, Map<String, String>> entry : tablesToReverseMeta.entrySet()) {
-       reverse((String) entry.getKey(), (Map) entry.getValue());
-    }
+
+
   }
 
   public static void reverse(String key, Map value){
-
+      System.out.println(key + "" + value);
   }
   /**
    * 读取配置
@@ -116,11 +122,11 @@ public class DbReverserHelper {
     }
   }
   public static void intMetaInfos(){
-    for (String newAddedTable : tablesToReverse) {
+    for (String table : tablesToReverse) {
       try {
-        ResultSet rs = conn.getMetaData().getColumns(null, "%", newAddedTable, "%");
+        ResultSet rs = conn.getMetaData().getColumns(null, "%", table, "%");
         LinkedHashMap<String, String> map = new LinkedHashMap();
-        tablesToReverseMeta.putIfAbsent(newAddedTable, map);
+        tablesToReverseMeta.putIfAbsent(table, map);
         String colname;
         String typeName;
         String remark;
@@ -181,15 +187,15 @@ public class DbReverserHelper {
    */
   public static class JdbcUtils {
 
-    public static Connection getConnection() {
+    public static void getConnection() {
       try {
         Class.forName(properties.getProperty("dataBaseDriver"));
         String databaseConnectUrl = properties.getProperty("url");
-        DriverManager.getConnection(databaseConnectUrl, properties.getProperty("username"), properties.getProperty("password"));
+        databaseConnectUrl = databaseConnectUrl.replace("@module", db);
+        conn = DriverManager.getConnection(databaseConnectUrl, properties.getProperty("username"), properties.getProperty("password"));
       } catch (Exception e) {
         e.printStackTrace();
       }
-      return null;
     }
   }
   /**
