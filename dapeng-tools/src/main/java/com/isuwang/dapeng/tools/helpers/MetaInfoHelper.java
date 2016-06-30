@@ -1,7 +1,7 @@
 package com.isuwang.dapeng.tools.helpers;
 
-import com.isuwang.soa.core.SoaException;
-import com.isuwang.soa.remoting.fake.metadata.MetadataClient;
+import com.isuwang.dapeng.core.SoaException;
+import com.isuwang.dapeng.remoting.fake.metadata.MetadataClient;
 
 /**
  * @author Eric on  2016/2/15.

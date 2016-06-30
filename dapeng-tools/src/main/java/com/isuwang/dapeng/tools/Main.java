@@ -11,7 +11,7 @@ public class Main {
     private static final String REQUEST = "request";
     private static final String JSON = "json";
     private static final String XML = "xml";
-    private static final String ROUT_INFO = "routInfo";
+    private static final String ROUT_INFO = "routeInfo";
 
     private static String help = "-----------------------------------------------------------------------\n" +
             " |commands: runningInfo | metadata | request | json  \n" +

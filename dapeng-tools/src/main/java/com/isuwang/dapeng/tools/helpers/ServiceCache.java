@@ -5,9 +5,9 @@ package com.isuwang.dapeng.tools.helpers;
  * @date
  */
 
-import com.isuwang.soa.core.SoaException;
-import com.isuwang.soa.core.metadata.Service;
-import com.isuwang.soa.remoting.fake.metadata.MetadataClient;
+import com.isuwang.dapeng.core.SoaException;
+import com.isuwang.dapeng.core.metadata.Service;
+import com.isuwang.dapeng.remoting.fake.metadata.MetadataClient;
 
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
