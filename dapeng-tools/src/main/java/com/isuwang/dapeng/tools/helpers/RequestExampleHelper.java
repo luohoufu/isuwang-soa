@@ -7,6 +7,8 @@ import com.google.gson.GsonBuilder;
 import com.isuwang.soa.core.metadata.*;
 import net.sf.json.JSONArray;
 import net.sf.json.xml.XMLSerializer;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
@@ -80,19 +82,17 @@ public class RequestExampleHelper {
             StringBuffer xmlBuf = new StringBuffer();
             xmlBuf.append("<soaXmlRequest>").append("\n");
             if(listElement.size()>=1){
-                printNodes(listElement.get(0),xmlBuf," ");
+                printNodes(listElement.get(0),xmlBuf);
             }
             xmlBuf.append("</soaXmlRequest>");
-//            System.out.println(xmlBuf.toString());
+            Document documentResult = DocumentHelper.parseText(xmlBuf.toString());
             OutputFormat formater = OutputFormat.createPrettyPrint();
             formater.setEncoding("utf-8");
             StringWriter out=new StringWriter();
             XMLWriter writer=new XMLWriter(out,formater);
-
-            System.out.println(xmlBuf);
-
-            writer.write(xmlBuf);
+            writer.write(documentResult);
             writer.close();
+            System.out.println(out.toString());
 
         }catch(Exception e){
             e.printStackTrace();
@@ -100,12 +100,12 @@ public class RequestExampleHelper {
         }
     }
 
-    public static void printNodes(Element node,StringBuffer xmlBuf,String prefix) {
+    public static void printNodes(Element node,StringBuffer xmlBuf) {
         if(node.elements().size()==0){
-           xmlBuf.append(String.format("%s<%s>%s</%s>", prefix,node.getName(), node.getTextTrim(), node.getName())).append("\n");
+           xmlBuf.append(String.format("<%s>%s</%s>", node.getName(), node.getTextTrim(), node.getName())).append("\n");
         }else{
             if(!"e".equals(node.getName()))
-                xmlBuf.append(String.format("%s<%s>", prefix,node.getName())).append("\n");
+                xmlBuf.append(String.format("<%s>",node.getName())).append("\n");
 
             if("array".equals(node.attributeValue("class"))){
                 List<Element> arrayElements = node.elements();
@@ -115,13 +115,13 @@ public class RequestExampleHelper {
                     if("e".equals(arrayElement.getName()) && ("string".equals(attValue)||"number".equals(attValue))){
                         if("string".equals(attValue)){
                             if(i!=arrayElements.size() - 1) {
-                                xmlBuf.append(String.format("%s\"%s\",",prefix+"     ",arrayElement.getTextTrim()));
+                                xmlBuf.append(String.format("\"%s\",",arrayElement.getTextTrim()));
                             }else{
                                 xmlBuf.append(String.format("\"%s\"", arrayElement.getTextTrim())).append("\n");
                             }
                         }else if("number".equals(attValue)){
                             if(i!=arrayElements.size() - 1) {
-                                xmlBuf.append(String.format("%s%s,",prefix+"     ",arrayElement.getTextTrim()));
+                                xmlBuf.append(String.format("%s,",arrayElement.getTextTrim()));
                             }else{
                                 xmlBuf.append(String.format("%s", arrayElement.getTextTrim())).append("\n");
                             }
@@ -134,12 +134,12 @@ public class RequestExampleHelper {
                 Element currentElement = null;
                 for (int i=0;i<listElement.size();i++) {
                     currentElement = listElement.get(i);
-                    printNodes(currentElement,xmlBuf,"  ");
+                    printNodes(currentElement,xmlBuf);
                 }
             }
 
             if(!"e".equals(node.getName()))
-                xmlBuf.append(String.format("%s</%s>", prefix,node.getName())).append("\n");
+                xmlBuf.append(String.format("</%s>",node.getName())).append("\n");
         }
 
 
