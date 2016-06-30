@@ -39,8 +39,12 @@ public class RequestExampleHelper {
         for (Struct struct : structs) {
             System.out.println("---------------------------------------------------------------");
             List<Field> parameters = struct.getFields();
-            Map<String, Object> jsonSample = getSample(service, parameters);
-            System.out.println(gson_format.toJson(jsonSample));
+            Map<String, Object>  map = new HashMap<>();
+            map.put("serviceName",serviceName);
+            map.put("version",versionName);
+            map.put("methodName",methodName);
+            map.put("params",getSample(service, parameters));
+            System.out.println(gson_format.toJson(map));
         }
     }
 
@@ -70,10 +74,10 @@ public class RequestExampleHelper {
 
         String xmlStr = (xmlserializer.write(jobj));
 
-        printXmlPretty(xmlStr);
+        printXmlPretty(xmlStr,serviceName, versionName, methodName);
     }
 
-    private static void printXmlPretty(String xmlStr) {
+    private static void printXmlPretty(String xmlStr,String serviceName, String versionName,String methodName) {
         try {
             SAXReader sax = new SAXReader();
             org.dom4j.Document document = sax.read(new StringReader(xmlStr));
@@ -81,9 +85,14 @@ public class RequestExampleHelper {
             List<Element> listElement = root.elements();
             StringBuffer xmlBuf = new StringBuffer();
             xmlBuf.append("<soaXmlRequest>").append("\n");
+            xmlBuf.append(String.format("<serviceName>%s</serviceName>",serviceName));
+            xmlBuf.append(String.format("<methodName>%s</methodName>",methodName));
+            xmlBuf.append(String.format("<version>%s</version>",versionName));
+            xmlBuf.append(String.format("<params>"));
             if (listElement.size() >= 1) {
                 printNodes(listElement.get(0), xmlBuf);
             }
+            xmlBuf.append(String.format("</params>"));
             xmlBuf.append("</soaXmlRequest>");
             Document documentResult = DocumentHelper.parseText(xmlBuf.toString());
             OutputFormat formater = OutputFormat.createPrettyPrint();

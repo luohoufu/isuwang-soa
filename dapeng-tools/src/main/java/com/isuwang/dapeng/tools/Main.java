@@ -57,6 +57,7 @@ public class Main {
                 break;
             case JSON:
                 RequestExampleHelper.getRequestJson(args);
+                break;
             case XML:
                 RequestExampleHelper.getRequestXml(args);
                 break;
