@@ -34,6 +34,7 @@ public class RouteInfoHelper {
     private static void createConfigNodeWithData(String path, String data) {
         zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT, configNodeCreateCallBack, data);
     }
+
     /**
      * back call of createConfigNodeWithData
      */
@@ -80,11 +81,11 @@ public class RouteInfoHelper {
             RouteInfoHelper routeInfoHelper = new RouteInfoHelper();
             routeInfoHelper.connect();
 
-            if(args.length == 2){
+            if (args.length == 2) {
                 String routeRules = readRouteFromConfFile(args[1]);
-                updateConfigNodeData(PATH,routeRules);
-            }else{
-                byte[] data = zk.getData(PATH,false, null);
+                updateConfigNodeData(PATH, routeRules);
+            } else {
+                byte[] data = zk.getData(PATH, false, null);
                 System.out.println(new String(data));
             }
         } catch (Exception e) {

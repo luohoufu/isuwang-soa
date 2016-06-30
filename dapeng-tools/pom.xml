@@ -103,7 +103,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix></classpathPrefix>
-                            <mainClass>com.isuwang.dapeng.tools.SoaInfos</mainClass>
+                            <mainClass>com.isuwang.dapeng.tools.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

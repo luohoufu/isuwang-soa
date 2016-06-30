@@ -57,7 +57,7 @@ public class RequestExampleHelper {
         System.out.println("Getting Service metadata ...");
         Service service = getService(serviceName, versionName, methodName);
         List<Struct> structs = getMethod(service, methodName);
-        List<Map<String, Object>> lists= new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> lists = new ArrayList<Map<String, Object>>();
         for (Struct struct : structs) {
             System.out.println("---------------------------------------------------------------");
             List<Field> parameters = struct.getFields();
@@ -73,7 +73,7 @@ public class RequestExampleHelper {
         printXmlPretty(xmlStr);
     }
 
-    private static void printXmlPretty(String xmlStr){
+    private static void printXmlPretty(String xmlStr) {
         try {
             SAXReader sax = new SAXReader();
             org.dom4j.Document document = sax.read(new StringReader(xmlStr));
@@ -81,65 +81,65 @@ public class RequestExampleHelper {
             List<Element> listElement = root.elements();
             StringBuffer xmlBuf = new StringBuffer();
             xmlBuf.append("<soaXmlRequest>").append("\n");
-            if(listElement.size()>=1){
-                printNodes(listElement.get(0),xmlBuf);
+            if (listElement.size() >= 1) {
+                printNodes(listElement.get(0), xmlBuf);
             }
             xmlBuf.append("</soaXmlRequest>");
             Document documentResult = DocumentHelper.parseText(xmlBuf.toString());
             OutputFormat formater = OutputFormat.createPrettyPrint();
             formater.setEncoding("utf-8");
-            StringWriter out=new StringWriter();
-            XMLWriter writer=new XMLWriter(out,formater);
+            StringWriter out = new StringWriter();
+            XMLWriter writer = new XMLWriter(out, formater);
             writer.write(documentResult);
             writer.close();
             System.out.println(out.toString());
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e.getLocalizedMessage());
         }
     }
 
-    public static void printNodes(Element node,StringBuffer xmlBuf) {
-        if(node.elements().size()==0){
-           xmlBuf.append(String.format("<%s>%s</%s>", node.getName(), node.getTextTrim(), node.getName())).append("\n");
-        }else{
-            if(!"e".equals(node.getName()))
-                xmlBuf.append(String.format("<%s>",node.getName())).append("\n");
+    public static void printNodes(Element node, StringBuffer xmlBuf) {
+        if (node.elements().size() == 0) {
+            xmlBuf.append(String.format("<%s>%s</%s>", node.getName(), node.getTextTrim(), node.getName())).append("\n");
+        } else {
+            if (!"e".equals(node.getName()))
+                xmlBuf.append(String.format("<%s>", node.getName())).append("\n");
 
-            if("array".equals(node.attributeValue("class"))){
+            if ("array".equals(node.attributeValue("class"))) {
                 List<Element> arrayElements = node.elements();
-                for (int i=0;i<arrayElements.size();i++) {
+                for (int i = 0; i < arrayElements.size(); i++) {
                     Element arrayElement = arrayElements.get(i);
-                    String attValue= arrayElement.attributeValue("type");
-                    if("e".equals(arrayElement.getName()) && ("string".equals(attValue)||"number".equals(attValue))){
-                        if("string".equals(attValue)){
-                            if(i!=arrayElements.size() - 1) {
-                                xmlBuf.append(String.format("\"%s\",",arrayElement.getTextTrim()));
-                            }else{
+                    String attValue = arrayElement.attributeValue("type");
+                    if ("e".equals(arrayElement.getName()) && ("string".equals(attValue) || "number".equals(attValue))) {
+                        if ("string".equals(attValue)) {
+                            if (i != arrayElements.size() - 1) {
+                                xmlBuf.append(String.format("\"%s\",", arrayElement.getTextTrim()));
+                            } else {
                                 xmlBuf.append(String.format("\"%s\"", arrayElement.getTextTrim())).append("\n");
                             }
-                        }else if("number".equals(attValue)){
-                            if(i!=arrayElements.size() - 1) {
-                                xmlBuf.append(String.format("%s,",arrayElement.getTextTrim()));
-                            }else{
+                        } else if ("number".equals(attValue)) {
+                            if (i != arrayElements.size() - 1) {
+                                xmlBuf.append(String.format("%s,", arrayElement.getTextTrim()));
+                            } else {
                                 xmlBuf.append(String.format("%s", arrayElement.getTextTrim())).append("\n");
                             }
                         }
 
                     }
                 }
-            }else{
+            } else {
                 List<Element> listElement = node.elements();
                 Element currentElement = null;
-                for (int i=0;i<listElement.size();i++) {
+                for (int i = 0; i < listElement.size(); i++) {
                     currentElement = listElement.get(i);
-                    printNodes(currentElement,xmlBuf);
+                    printNodes(currentElement, xmlBuf);
                 }
             }
 
-            if(!"e".equals(node.getName()))
-                xmlBuf.append(String.format("</%s>",node.getName())).append("\n");
+            if (!"e".equals(node.getName()))
+                xmlBuf.append(String.format("</%s>", node.getName())).append("\n");
         }
 
 

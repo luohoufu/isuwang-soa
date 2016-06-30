@@ -5,7 +5,7 @@ import com.isuwang.dapeng.tools.helpers.*;
 /**
  * 命令行工具入口
  */
-public class SoaInfos {
+public class Main {
     private static final String RUNNING_INFO = "runningInfo";
     private static final String META_DATA = "metadata";
     private static final String REQUEST = "request";

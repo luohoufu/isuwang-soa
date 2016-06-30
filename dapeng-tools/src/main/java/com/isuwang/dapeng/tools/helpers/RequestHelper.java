@@ -18,7 +18,6 @@ import org.dom4j.io.XMLWriter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,6 +30,7 @@ import java.util.*;
 public class RequestHelper {
 
     private static JSONPost jsonPost;
+
     public static void post(String... args) {
 
         String jsonFile = checkArg(args);
@@ -39,12 +39,12 @@ public class RequestHelper {
 
 
         String jsonString = null;
-        boolean isJson=false;
-        if(jsonFile.endsWith(".json")){
-            isJson=true;
+        boolean isJson = false;
+        if (jsonFile.endsWith(".json")) {
+            isJson = true;
             jsonString = readFromeFile(jsonFile);
-        }else if(jsonFile.endsWith(".xml")){
-           jsonString = parseFromXmlToJson(jsonFile);
+        } else if (jsonFile.endsWith(".xml")) {
+            jsonString = parseFromXmlToJson(jsonFile);
         }
 
         JsonObject jsonObject = new JsonParser().parse(jsonString).getAsJsonObject();
@@ -59,9 +59,9 @@ public class RequestHelper {
         header.setServiceName(serviceName);
         header.setVersionName(versionName);
         header.setMethodName(methodName);
-        header.setCallerFrom(Optional.of("dapeng-command")) ;
+        header.setCallerFrom(Optional.of("dapeng-command"));
 
-        invokeService(serviceName, versionName, methodName, header, parameter,isJson);
+        invokeService(serviceName, versionName, methodName, header, parameter, isJson);
     }
 
     private static String checkArg(String... args) {
@@ -82,7 +82,7 @@ public class RequestHelper {
     }
 
 
-    private static void invokeService(String serviceName, String versionName, String methodName, SoaHeader header, String parameter,boolean isJson) {
+    private static void invokeService(String serviceName, String versionName, String methodName, SoaHeader header, String parameter, boolean isJson) {
 
         System.out.println("Getting service from server...");
         Service service = ServiceCache.getService(serviceName, versionName);
@@ -111,9 +111,9 @@ public class RequestHelper {
             System.out.println("Calling Service ...");
 
             String response = jsonPost.callServiceMethod(header, parameter, service);
-            if(isJson){
+            if (isJson) {
                 System.out.println(response);
-            }else{
+            } else {
                 JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                 StringBuffer xmlBuf = new StringBuffer();
                 xmlBuf.append("<soaResponse>").append("\n");
@@ -124,8 +124,8 @@ public class RequestHelper {
                 document = DocumentHelper.parseText(xmlBuf.toString());
                 OutputFormat formater = OutputFormat.createPrettyPrint();
                 formater.setEncoding("utf-8");
-                StringWriter out=new StringWriter();
-                XMLWriter writer=new XMLWriter(out,formater);
+                StringWriter out = new StringWriter();
+                XMLWriter writer = new XMLWriter(out, formater);
                 writer.write(document);
                 writer.close();
                 System.out.println(out.toString());
@@ -135,37 +135,37 @@ public class RequestHelper {
         }
     }
 
-    private static void  parseFromJsonToXml(StringBuffer sbxml,JsonObject jsonObject){
-        Set<Map.Entry<String, JsonElement>>  set = jsonObject.entrySet();
-        Iterator<Map.Entry<String, JsonElement>>  iterator = set.iterator();
-        while(iterator.hasNext()){
+    private static void parseFromJsonToXml(StringBuffer sbxml, JsonObject jsonObject) {
+        Set<Map.Entry<String, JsonElement>> set = jsonObject.entrySet();
+        Iterator<Map.Entry<String, JsonElement>> iterator = set.iterator();
+        while (iterator.hasNext()) {
             Map.Entry<String, JsonElement> mJson = iterator.next();
             String tag = mJson.getKey();
             JsonElement innerEl = mJson.getValue();
             StringBuffer xmlTemp = new StringBuffer();
-            if(innerEl.isJsonObject()){
+            if (innerEl.isJsonObject()) {
                 xmlTemp.append(String.format("<%s>", tag)).append("\n");
                 parseFromJsonToXml(xmlTemp, (JsonObject) innerEl);
                 xmlTemp.append(String.format("</%s>", tag));
                 sbxml.append(xmlTemp);
-            }else if(innerEl.isJsonArray()){
-                JsonArray innerElArray = ((JsonArray)innerEl);
-                if(!tag.endsWith("s")){
-                    tag = tag+"s";
+            } else if (innerEl.isJsonArray()) {
+                JsonArray innerElArray = ((JsonArray) innerEl);
+                if (!tag.endsWith("s")) {
+                    tag = tag + "s";
                 }
                 xmlTemp.append(String.format("<%s>", tag)).append("\n");
-                 for(int i=0;i<innerElArray.size();i++){
-                     xmlTemp.append(String.format("<%s>", tag.substring(0,tag.length()-1))).append("\n");
-                     JsonElement innerArrayEl  = innerElArray.get(i);
-                     parseFromJsonToXml(xmlTemp, (JsonObject)innerArrayEl);
-                     xmlTemp.append(String.format("</%s>", tag.substring(0,tag.length()-1)));
-                 }
+                for (int i = 0; i < innerElArray.size(); i++) {
+                    xmlTemp.append(String.format("<%s>", tag.substring(0, tag.length() - 1))).append("\n");
+                    JsonElement innerArrayEl = innerElArray.get(i);
+                    parseFromJsonToXml(xmlTemp, (JsonObject) innerArrayEl);
+                    xmlTemp.append(String.format("</%s>", tag.substring(0, tag.length() - 1)));
+                }
                 xmlTemp.append(String.format("</%s>", tag)).append("\n");
                 sbxml.append(xmlTemp);
-            }else if(innerEl.isJsonPrimitive()){
+            } else if (innerEl.isJsonPrimitive()) {
                 xmlTemp.append(String.format("<%s>%s</%s>", tag, innerEl.getAsJsonPrimitive(), tag)).append("\n");
                 sbxml.append(xmlTemp);
-            }else if(innerEl.isJsonNull()){
+            } else if (innerEl.isJsonNull()) {
                 xmlTemp.append(String.format("<%s/>", tag));
             }
         }
@@ -178,31 +178,31 @@ public class RequestHelper {
             File xmlFile = new File(file);
             Document document = sax.read(xmlFile);
             Element root = document.getRootElement();
-            str =  getNodes(root);
-        }catch(Exception e){
+            str = getNodes(root);
+        } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
         }
 //        System.out.print(str.substring(0,str.length()-1));
-        return str.substring(0,str.length()-1);
+        return str.substring(0, str.length() - 1);
     }
 
-    public static String getNodes( Element node) {
+    public static String getNodes(Element node) {
         StringBuffer sb = new StringBuffer();
-        if(node.elements().size()==0){
-            sb.append(String.format("\"%s\":%s,", node.getName(), "".equals(node.getTextTrim())?"{}":node.getTextTrim()));
-        }else{
+        if (node.elements().size() == 0) {
+            sb.append(String.format("\"%s\":%s,", node.getName(), "".equals(node.getTextTrim()) ? "{}" : node.getTextTrim()));
+        } else {
             // 递归遍历当前节点所有的子节点
-            if(!node.isRootElement()){
-                sb.append(String.format("\"%s\":",node.getName()));
+            if (!node.isRootElement()) {
+                sb.append(String.format("\"%s\":", node.getName()));
             }
             sb.append("{");
 
             List<Element> listElement = node.elements();
-            for (int i=0;i<listElement.size();i++) {
+            for (int i = 0; i < listElement.size(); i++) {
                 String temp = getNodes(listElement.get(i));
-                if(i==listElement.size()-1){
-                    sb.append(temp.substring(0,temp.length()-1));
-                }else{
+                if (i == listElement.size() - 1) {
+                    sb.append(temp.substring(0, temp.length() - 1));
+                } else {
                     sb.append(temp);
                 }
             }
