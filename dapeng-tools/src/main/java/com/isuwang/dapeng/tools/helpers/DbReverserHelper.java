@@ -1,8 +1,7 @@
 package com.isuwang.dapeng.tools.helpers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import javax.swing.filechooser.FileSystemView;
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 
@@ -28,12 +27,62 @@ public class DbReverserHelper {
 
   public static Connection conn ;
 
+  public static String entityName ;
+  public static String instanceName ;
+  private static String desktopDir = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath();
+
+  private static String command ;
   /**
    * 檢查參數
    * @param args
    */
-  private static void checkArg(String... args){
-
+  private static boolean checkArg(String... args){
+    command = args[0].split(":")[1].trim().toUpperCase();
+    boolean checkResult = false;
+    if(command.equalsIgnoreCase("conf")){
+      StringBuffer confBuf = new StringBuffer();
+      confBuf.append("dataBaseDriver=com.mysql.jdbc.Driver\n\n");
+      confBuf.append("## 数据库连接信息\n");
+      confBuf.append("url=jdbc:mysql://localhost:3306/@module?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull\n");
+      confBuf.append("username=iplastest\n");
+      confBuf.append("password=123456\n\n");
+      confBuf.append("## 生成结构体的时候，中间的包名\n");
+      confBuf.append("package = promotion\n\n");
+      confBuf.append("## 将要访问的db\n");
+      confBuf.append("db = promotiondb\n\n");
+      confBuf.append("##scanAll：反射整个库,  specify: 反转指定表\n");
+      confBuf.append("mode = scanAll\n\n");
+      confBuf.append("## specify模式下， 反转列表\n");
+      confBuf.append("tables = coupons,use_condition");
+      Utils.write(confBuf.toString(), ContentType.CONF);
+      checkResult = false;
+    } else if(command.equalsIgnoreCase("enumFmt")){
+      StringBuffer enumFmtBuf = new StringBuffer();
+      enumFmtBuf.append("枚举例子\n `enum_type` smallint(1) NOT NULL COMMENT '枚举描述,1:枚举1(enumOne);2:枚举2(enumTwo);3:枚举3(enumThree)'\n");
+      enumFmtBuf.append("結果 :\n  /**\n  *抵扣用途\n  **/");
+      enumFmtBuf.append("\nenum enumType{\n" +
+              "   /**\n  *枚举1\n  **/\n" +
+              "   ENUM_ONE=1,\n\n" +
+              "   /**\n   *枚举2\n   **/\n" +
+              "   ENUM_TWO=2,\n\n" +
+              "   /**\n   *枚举3\n   **/\n" +
+              "   ENUM_THREE=3\n" +
+              "}");
+      System.out.println(enumFmtBuf.toString());
+      checkResult = false;
+    }else{
+      for(ContentType type : ContentType.values()){
+        if(type.name().endsWith(command)){
+            if(args.length>=2 && new File(args[1]).isFile()){
+              checkResult=true;
+            }
+        }
+      }
+      if(!checkResult){
+        System.out.println("java -jar dapeng.jar reverse:[po|struct|enum|all|enumFmt|conf] [reverse.conf] \n");
+      }
+    }
+    return checkResult;
   }
 
   /**
@@ -41,7 +90,9 @@ public class DbReverserHelper {
    * @param args
    */
   public static void gen(String... args){
-    checkArg(args);
+    if(!checkArg(args))
+      return;
+
     readConf(args[1]);
     readMode();
 
@@ -54,7 +105,20 @@ public class DbReverserHelper {
         System.out.println("No new created table has been detected");
       }
       for (Map.Entry<String, Map<String, String>> entry : tablesToReverseMeta.entrySet()) {
-         reverse((String) entry.getKey(), (Map) entry.getValue());
+        initCurrentEntityNames(entry.getKey());
+        switch (ContentType.valueOf(command)) {
+          case PO: genPo(entry); break;
+          case STRUCT: genStruct(entry); break;
+          case ENUM:
+            genEnums(entry); break;
+          case ALL:
+            genPo(entry);
+            genStruct(entry);
+            genEnums(entry);
+            break;
+          default:
+            System.out.println("example: java -jar dapeng.jar reverseConf");
+        }
       }
     }finally{
         try{
@@ -68,8 +132,15 @@ public class DbReverserHelper {
 
   }
 
-  public static void reverse(String key, Map value){
-      System.out.println(key + "" + value);
+  public static void initCurrentEntityNames(String tableName){
+     entityName = Utils.underlineToCamel(true, tableName, true);
+    if (entityName.endsWith("s")) {
+      entityName = entityName.substring(0, entityName.length() - 1);
+    }
+    if (entityName.endsWith("ies")) {
+      entityName = entityName.substring(0, entityName.length() - 3) + "y";
+    }
+     instanceName = Utils.underlineToCamel(true, entityName, false);
   }
   /**
    * 读取配置
@@ -124,9 +195,8 @@ public class DbReverserHelper {
   public static void intMetaInfos(){
     for (String table : tablesToReverse) {
       try {
-        ResultSet rs = conn.getMetaData().getColumns(null, "%", table, "%");
+        ResultSet rs = conn.getMetaData().getColumns(null, "%", table.trim(), "%");
         LinkedHashMap<String, String> map = new LinkedHashMap();
-        tablesToReverseMeta.putIfAbsent(table, map);
         String colname;
         String typeName;
         String remark;
@@ -154,6 +224,7 @@ public class DbReverserHelper {
             map.putIfAbsent(colname, typeName + arraySeperator + nullable + arraySeperator + remark);
           }
         }
+        tablesToReverseMeta.putIfAbsent(table, map);
       }catch (Exception e){
         e.printStackTrace();
       }
@@ -162,26 +233,127 @@ public class DbReverserHelper {
 
   /**
    * 生成scala對象
-   * @param file
+   * @param tableMeta
    */
-  public static void genPo(String file){
-
+  public static void genPo(Map.Entry<String, Map<String, String>> tableMeta){
+    StringBuffer poBuf = new StringBuffer();
+    poBuf.append(String.format("package com.kuaisu.%s.dbc.entity\n",packageName));
+    poBuf.append("import wangzx.scala_commons.sql._\n");
+    poBuf.append("  /**\n" +
+            "  * @author dapeng-tool\n" +
+            "  */");
+    poBuf.append(String.format("@Table(value = \"%s\", camelToUnderscore = true)\n", tableMeta.getKey()));
+    poBuf.append(String.format("class %s extends java.io.Serializable {\n", entityName));
+    Iterator<Map.Entry<String, String>> it = tableMeta.getValue().entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry<String, String> entryTemp = (Map.Entry) it.next();
+      poBuf.append("   /**\n" +
+              "   * " + (String) entryTemp.getValue().split(arraySeperator)[2] + "\n" +
+              "   */\n");
+      if("id".equals(entryTemp.getKey())){
+        poBuf.append("  @Id(auto=true)").append("\r\n");
+      }
+      poBuf.append("  var " + Utils.underlineToCamel(true,entryTemp.getKey(), false) + " : " + Utils.toScalaType((entryTemp.getValue()).split(arraySeperator)[0]) + " =_")
+              .append("\r\n\r\n");
+    }
+    poBuf.append("}\n");
+    Utils.write(poBuf.toString(), ContentType.PO);
   }
+
   /**
    * 生成thrift结构体
-   * @param file
+   * @param tableMeta
    */
-  public static void genStruct(String file){
-
+  public static void genStruct(Map.Entry<String, Map<String, String>> tableMeta){
+    StringBuffer structBuf = new StringBuffer();
+    structBuf.append(String.format("namespace java com.kuaisu.%s.dto\n\n",packageName));
+    structBuf.append(String.format("struct T%s{\n", entityName));
+    Iterator<Map.Entry<String, String>> it = tableMeta.getValue().entrySet().iterator();
+    int i = 0;
+    while (it.hasNext()) {
+      i++;
+      Map.Entry<String, String> entryTemp = (Map.Entry) it.next();
+      structBuf.append("   /**\n" +
+              "   * " + (String) entryTemp.getValue().split(arraySeperator)[2] + "\n" +
+              "   */\n");
+      structBuf.append(" " + i + " : " + (!(Boolean.valueOf(entryTemp.getValue().split(arraySeperator)[1])) ? "" : "optional") + " "
+              + Utils.toThriftType(((String) entryTemp.getValue()).split(arraySeperator)[0])
+              + " " + Utils.underlineToCamel(false, entryTemp.getKey(), false))
+              .append(",\r\n");
+    }
+    structBuf.append("}\n");
+    Utils.write(structBuf.toString(), ContentType.STRUCT);
   }
   /**
    * 生成thrift枚举
-   * @param file
+   * @param tableMeta
    */
-  public static void genEnumes(String file){
+  public static void genEnums(Map.Entry<String, Map<String, String>> tableMeta){
+    StringBuffer enumBuf = new StringBuffer();
+    Iterator<Map.Entry<String, String>> it = tableMeta.getValue().entrySet().iterator();
+    String enumeComment = null;
+    String enumeName = null;
+    String[] enumeItems = null;
+    boolean hasEnum = false;
+    int i = 0;
+    while (it.hasNext()) {
+      i++;
+      Map.Entry<String, String> entryTemp = (Map.Entry) it.next();
+      if ((entryTemp.getValue().startsWith("SMALLINT"))) {
+        hasEnum=true;
+        if(i==1){
+          enumBuf.append(String.format("namespace java com.kuaisu.%s.enums\n\n", packageName));
+        }
+        String currentEnumesToGen = entryTemp.getValue();
+        try {
+          enumeComment = currentEnumesToGen.split(",")[0].split(">")[2];
+          enumeName = instanceName + Utils.underlineToCamel(false, entryTemp.getKey(), true);
+          enumeItems = currentEnumesToGen.split(",")[1].split(";");
 
+          enumBuf.append("/**").append("\r\n")
+                  .append("*").append(enumeComment).append("\r\n")
+                  .append("**/").append("\r\n");
+          enumBuf.append("enum ").append(enumeName).append("{");
+          String itemComment;
+          String itemName;
+          String itemValue;
+
+          for (int j = 0; j < enumeItems.length; j++) {
+            itemComment = enumeItems[j].substring(enumeItems[j].indexOf(":") + 1, enumeItems[j].indexOf("("));
+            itemName = enumeItems[j].substring(enumeItems[j].indexOf("(") + 1, enumeItems[j].indexOf(")"));
+            itemValue = enumeItems[j].split(":")[0];
+            enumBuf.append("\r\n").append("   /**").append("\r\n")
+                    .append("   *").append(itemComment).append("\r\n")
+                    .append("   **/").append("\r\n")
+                    .append("   " + Utils.underlineToCamel(itemName).toUpperCase() + "=" + itemValue);
+            if (j < enumeItems.length - 1) {
+              enumBuf.append(",").append("\r\n");
+            }
+            if (j == enumeItems.length - 1) {
+              enumBuf.append("\r\n}").append("\r\n");
+            }
+          }
+        } catch (Exception e) {
+          System.err.println(String.format("instanceName-> %s enumeName:%s: enumeComment:%s 不符合规范 skipped",instanceName,enumeName,enumeComment));
+          continue;
+        }
+      }
+    }
+    if(hasEnum){
+      Utils.write(enumBuf.toString(),ContentType.ENUM);
+    }
   }
 
+
+
+
+  public static enum ContentType{
+    CONF,
+    STRUCT,
+    ENUM,
+    PO,
+    ALL
+  }
   /**
    * JdbcUtils
    */
@@ -304,7 +476,6 @@ public class DbReverserHelper {
       return type;
     }
 
-
     public static String toThriftType(String type) {
       if (type.equalsIgnoreCase("CHAR")
               || type.equalsIgnoreCase("VARCHAR")
@@ -355,6 +526,45 @@ public class DbReverserHelper {
         return "binary";
       }
       return type;
+    }
+
+    public static void write(String content, ContentType contentType){
+      String fileAbsolutePath = "";
+      String fileExtension ="";
+      switch (contentType){
+        case PO:
+          fileAbsolutePath = desktopDir+File.separator+ "PO/";
+          fileExtension = ".scala";
+          break;
+        case STRUCT: fileAbsolutePath = desktopDir+File.separator+ "dto/";
+          fileExtension = "Domain.thrift";
+          break;
+        case ENUM: fileAbsolutePath = desktopDir+File.separator+ "enum/";
+          fileExtension = "Enums.thrift";
+          break;
+        case CONF: fileAbsolutePath = desktopDir+File.separator+ "dapeng-reverse-conf/";
+          entityName = "reverse";
+          fileExtension = ".conf";
+          break;
+        default:
+      }
+
+      File direcrory = new File(fileAbsolutePath);
+      if(!direcrory.exists()){
+        direcrory.mkdirs();
+      }
+      File file = new File(fileAbsolutePath + entityName + fileExtension);
+      FileWriter fw = null;
+      BufferedWriter writer = null;
+      try{
+        fw = new FileWriter(file);
+        writer = new BufferedWriter(fw);
+        writer.write(content);
+        writer.flush();
+      } catch(IOException ioe){
+        ioe.printStackTrace();
+      }
+      System.out.println(String.format("%s--> %s generated",contentType.name(),entityName));
     }
   }
 }
