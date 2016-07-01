@@ -113,6 +113,50 @@
    
 10. 指定配置文件，设置路由信息
    java -jar dapeng.jar routInfo route.cfg
+   
+11. 指定配置文件，scala和thrift实体，枚举映射
+   java -jar dapeng.jar reverse:[po|struct|enum|enumFmt|all|conf] [reverse.conf] 
+    
+    11.1 获取样例配置文件，生成在桌面 ~\Desktop\dapeng-reverse-conf\reverse.conf
+         java -jar dapeng.jar reverse:conf 
+    
+    11.2 获取枚举类生成规则和示例
+        java -jar dapeng.jar reverse:enumFmt
+        
+    11.3  根据配置  生成scala实体
+        java -jar dapeng.jar reverse:po reverse.conf
+    
+    11.4 根据配置  生成thrift结构体
+        java -jar dapeng.jar reverse:struct reverse.conf
+    
+    11.5 根据配置  生成thrift枚举类
+        java -jar dapeng.jar reverse:enum reverse.conf
+    
+    11.6 根据配置  生成所有
+        java -jar dapeng.jar reverse:all reverse.conf
+    
+    reverse.conf 說明:
+    
+    ## 数据库驱动
+    dataBaseDriver=com.mysql.jdbc.Driver
+    
+    ## 数据库连接信息
+    url=jdbc:mysql://localhost:3306/@module?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username=test
+    password=123456
+    
+    ## 生成结构体的时候，中间的包名
+    package = test
+    
+    ## 将要访问的db
+    db = test
+    
+    ##scanAll：反射整个库,  specify: 反转指定表
+    mode = scanAll
+    
+    ## specify模式下， 反转列表
+    tables = table1,table2
+
 #### 目录说明
 
 
