@@ -111,6 +111,7 @@ public class RequestExampleHelper {
 
     public static void printNodes(Element node, StringBuffer xmlBuf) {
         if (node.elements().size() == 0) {
+            if (!"e".equals(node.getName()))
             xmlBuf.append(String.format("<%s>%s</%s>", node.getName(), node.getTextTrim(), node.getName())).append("\n");
         } else {
             if (!"e".equals(node.getName()))
