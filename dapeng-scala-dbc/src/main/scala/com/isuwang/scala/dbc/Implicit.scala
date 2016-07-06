@@ -117,6 +117,10 @@ object Implicit {
     def toDate(): Date = new Date(l)
   }
 
+  implicit class JavaLongImplicit(l: java.lang.Long) {
+    def toDate(): Date = new Date(l)
+  }
+
   implicit class ByteBufferImplicit(byteBuffer: ByteBuffer) {
     def toArray(): Array[Byte] = if (byteBuffer != null) java.util.Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit()) else null
   }
