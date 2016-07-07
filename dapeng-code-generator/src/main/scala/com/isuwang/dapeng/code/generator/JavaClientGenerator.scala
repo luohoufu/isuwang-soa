@@ -503,7 +503,7 @@ class JavaClientGenerator extends CodeGenerator {
       case KIND.STRUCT => <div>com.isuwang.org.apache.thrift.protocol.TType.STRUCT</div>
       case KIND.DATE => <div>com.isuwang.org.apache.thrift.protocol.TType.I64</div>
       case KIND.BIGDECIMAL => <div>com.isuwang.org.apache.thrift.protocol.TType.STRING</div>
-      case KIND.BINARY => <div>com.isuwang.org.apache.thrift.protocol.TType.BINARY</div>
+      case KIND.BINARY => <div>com.isuwang.org.apache.thrift.protocol.TType.STRING</div>
       case _ => <div></div>
     }
   }

@@ -5,10 +5,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.isuwang.dapeng.core.metadata.*;
-import com.isuwang.org.apache.thrift.protocol.*;
 import com.isuwang.org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.protocol.*;
 
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -52,6 +53,8 @@ public abstract class TBaseBeanSerializer implements TBeanSerializer<InvocationI
                 oprot.writeString(value instanceof JsonObject ? value.toString() : (isJsonElement ? jsonElement.getAsString() : value.toString()));
                 break;
             case BINARY:
+                String tmp = value instanceof JsonObject ? value.toString() : (isJsonElement ? jsonElement.getAsString() : value.toString());
+                oprot.writeBinary(ByteBuffer.wrap(tmp.getBytes()));
                 break;
             case DATE:
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
@@ -321,6 +324,9 @@ public abstract class TBaseBeanSerializer implements TBeanSerializer<InvocationI
                 return TType.I64;
 
             case BIGDECIMAL:
+                return TType.STRING;
+
+            case BINARY:
                 return TType.STRING;
 
             default:

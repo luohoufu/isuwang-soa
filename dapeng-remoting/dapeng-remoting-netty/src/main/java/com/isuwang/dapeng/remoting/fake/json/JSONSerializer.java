@@ -1,12 +1,16 @@
 package com.isuwang.dapeng.remoting.fake.json;
 
 import com.google.gson.*;
-import com.isuwang.dapeng.core.metadata.*;
-import com.isuwang.org.apache.thrift.protocol.*;
 import com.isuwang.dapeng.core.SoaException;
+import com.isuwang.dapeng.core.metadata.*;
 import com.isuwang.org.apache.thrift.TException;
+import com.isuwang.org.apache.thrift.protocol.*;
 
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -133,6 +137,16 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 value = new JsonPrimitive(iprot.readString());
                 break;
             case BINARY:
+                ByteBuffer bf = iprot.readBinary();
+                CharBuffer charBuffer = null;
+                try {
+                    Charset charset = Charset.forName("UTF-8");
+                    CharsetDecoder decoder = charset.newDecoder();
+                    charBuffer = decoder.decode(bf.asReadOnlyBuffer());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                value = new JsonPrimitive(charBuffer.toString());
                 break;
             case DATE:
                 Long time = iprot.readI64();
