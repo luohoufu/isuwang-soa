@@ -145,8 +145,10 @@ public class JSONSerializer extends TBaseBeanSerializer {
                     charBuffer = decoder.decode(bf.asReadOnlyBuffer());
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                    value = new JsonPrimitive("ByteBuffer转String出错，可能不是UTF-8编码");
                 }
-                value = new JsonPrimitive(charBuffer.toString());
+                if (charBuffer != null)
+                    value = new JsonPrimitive(charBuffer.toString());
                 break;
             case DATE:
                 Long time = iprot.readI64();
