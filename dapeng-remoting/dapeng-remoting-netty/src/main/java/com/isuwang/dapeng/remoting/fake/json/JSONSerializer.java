@@ -8,9 +8,6 @@ import com.isuwang.org.apache.thrift.protocol.*;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -138,17 +135,22 @@ public class JSONSerializer extends TBaseBeanSerializer {
                 break;
             case BINARY:
                 ByteBuffer bf = iprot.readBinary();
-                CharBuffer charBuffer = null;
-                try {
-                    Charset charset = Charset.forName("UTF-8");
-                    CharsetDecoder decoder = charset.newDecoder();
-                    charBuffer = decoder.decode(bf.asReadOnlyBuffer());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    value = new JsonPrimitive("ByteBuffer转String出错，可能不是UTF-8编码");
-                }
-                if (charBuffer != null)
-                    value = new JsonPrimitive(charBuffer.toString());
+                byte[] bytes = new byte[bf.remaining()];
+                bf.get(bytes);
+
+                value = new JsonPrimitive(new String(bytes));
+
+//                CharBuffer charBuffer = null;
+//                try {
+//                    Charset charset = Charset.forName("UTF-8");
+//                    CharsetDecoder decoder = charset.newDecoder();
+//                    charBuffer = decoder.decode(bf.asReadOnlyBuffer());
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                    value = new JsonPrimitive("ByteBuffer转String出错，可能不是UTF-8编码");
+//                }
+//                if (charBuffer != null)
+//                    value = new JsonPrimitive(charBuffer.toString());
                 break;
             case DATE:
                 Long time = iprot.readI64();
@@ -299,6 +301,18 @@ public class JSONSerializer extends TBaseBeanSerializer {
 
         oprot.writeFieldStop();
         oprot.writeStructEnd();
+    }
+
+
+    public static void main(String[] args) {
+        String test = "test";
+
+        byte[] bytes = test.getBytes();
+        System.out.println(new String(bytes));
+        System.out.println(bytes);
+        for (int i = 0; i < bytes.length; i++) {
+            System.out.println(bytes[i]);
+        }
     }
 
 }
