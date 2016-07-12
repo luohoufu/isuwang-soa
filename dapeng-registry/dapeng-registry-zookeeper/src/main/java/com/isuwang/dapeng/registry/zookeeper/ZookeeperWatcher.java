@@ -99,6 +99,9 @@ public class ZookeeperWatcher {
         try {
             String data = new String(bytes, "utf-8");
 
+            if (data.trim().equals(""))
+                return;
+
             synchronized (routes) {
                 routes.clear();
                 new RouteParser().parseAll(routes, data);

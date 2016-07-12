@@ -210,10 +210,12 @@ public class ZookeeperHelper {
             case OK:
                 //被选为master
                 isMaster.put((String) ctx, true);
+                LOGGER.info("{}竞选master成功, data为[{}]", (String) ctx, currentContainerAddr);
                 break;
             case NODEEXISTS:
                 //master节点上已存在相同的service:version，自己没选上
                 isMaster.put((String) ctx, false);
+                LOGGER.info("{}竞选master失败, data为[{}]", (String) ctx, currentContainerAddr);
                 //保持监听
                 masterExists((String) ctx);
                 break;
