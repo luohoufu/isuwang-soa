@@ -63,6 +63,7 @@ public class RegistryAgentImpl implements RegistryAgent {
             String path = "/soa/runtime/services/" + serverName + "/" + SoaSystemEnvProperties.SOA_CONTAINER_IP + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT + ":" + versionName;
             String data = "";
             zooKeeperHelper.addOrUpdateServerInfo(path, data);
+            zooKeeperHelper.runForMaster(ZookeeperHelper.generateKey(serverName, versionName));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -1,10 +1,14 @@
 package com.isuwang.dapeng.registry.zookeeper;
 
+import com.isuwang.dapeng.core.SoaSystemEnvProperties;
 import com.isuwang.dapeng.registry.RegistryAgent;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by tangliu on 2016/2/29.
@@ -13,7 +17,7 @@ public class ZookeeperHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperHelper.class);
 
-    private String zookeeperHost = "127.0.0.1:2181";
+    private String zookeeperHost = SoaSystemEnvProperties.SOA_ZOOKEEPER_HOST;
 
     private ZooKeeper zk;
     private RegistryAgent registryAgent;
@@ -33,6 +37,7 @@ public class ZookeeperHelper {
                     registryAgent.registerAllServices();//重新注册服务
                 } else if (Watcher.Event.KeeperState.SyncConnected == watchedEvent.getState()) {
                     LOGGER.info("Registry {} [Zookeeper]", zookeeperHost);
+                    addMasterRoute();
                 }
             });
         } catch (Exception e) {
@@ -41,7 +46,7 @@ public class ZookeeperHelper {
     }
 
     public void destroy() {
-        if(zk != null){
+        if (zk != null) {
             try {
                 zk.close();
                 zk = null;
@@ -169,5 +174,150 @@ public class ZookeeperHelper {
 
     public void setZookeeperHost(String zookeeperHost) {
         this.zookeeperHost = zookeeperHost;
+    }
+
+
+    //----------------------------竞选master-------------------------------------------------------------------------
+    public static Map<String, Boolean> isMaster = new HashMap<>();
+
+    public static boolean isMaster(String servieName, String versionName) {
+
+        String key = generateKey(servieName, versionName);
+        if (!isMaster.containsKey(key)) {
+            return false;
+        } else {
+            return isMaster.get(key);
+        }
+    }
+
+    private static final String PATH = "/soa/master/services/";
+
+    /**
+     * 竞选Master
+     * <p/>
+     * /soa/master/services/**.**.**.AccountService:1.0.0   data [192.168.99.100:9090]
+     */
+    public void runForMaster(String key) {
+        zk.create(PATH + key, currentContainerAddr.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL, masterCreateCb, key);
+    }
+
+    private AsyncCallback.StringCallback masterCreateCb = (rc, path, ctx, name) -> {
+        switch (KeeperException.Code.get(rc)) {
+            case CONNECTIONLOSS:
+                //检查master状态
+                checkMaster((String) ctx);
+                break;
+            case OK:
+                //被选为master
+                isMaster.put((String) ctx, true);
+                break;
+            case NODEEXISTS:
+                //master节点上已存在相同的service:version，自己没选上
+                isMaster.put((String) ctx, false);
+                //保持监听
+                masterExists((String) ctx);
+                break;
+            case NONODE:
+                LOGGER.error("{}的父节点不存在，创建失败", path);
+                break;
+            default:
+                LOGGER.error("创建{}异常：{}", path, KeeperException.Code.get(rc));
+        }
+    };
+
+    /**
+     * 监听master是否存在
+     */
+    private void masterExists(String key) {
+
+        zk.exists(PATH + key, event -> {
+            //若master节点已被删除,则竞争master
+            if (event.getType() == Watcher.Event.EventType.NodeDeleted) {
+                String serviceKey = event.getPath().replace(PATH, "");
+                runForMaster(serviceKey);
+            }
+
+        }, (rc, path, ctx, stat) -> {
+
+            switch (KeeperException.Code.get(rc)) {
+                case CONNECTIONLOSS:
+                    masterExists((String) ctx);
+                    break;
+                case NONODE:
+                    runForMaster((String) ctx);
+                    break;
+                case OK:
+                    if (stat == null) {
+                        runForMaster((String) ctx);
+                    } else {
+                        checkMaster((String) ctx);
+                    }
+                    break;
+                default:
+                    checkMaster((String) ctx);
+                    break;
+            }
+
+        }, key);
+    }
+
+    /**
+     * 检查master
+     *
+     * @param serviceKey
+     */
+    private void checkMaster(String serviceKey) {
+
+        zk.getData(PATH + serviceKey, false, (rc, path, ctx, data, stat) -> {
+            switch (KeeperException.Code.get(rc)) {
+                case CONNECTIONLOSS:
+                    checkMaster((String) ctx);
+                    return;
+                case NONODE: // 没有master节点存在，则尝试获取领导权
+                    runForMaster((String) ctx);
+                    return;
+                case OK:
+                    String value = new String(data);
+                    if (value.equals(currentContainerAddr))
+                        isMaster.put((String) ctx, true);
+                    else
+                        isMaster.put((String) ctx, false);
+                    return;
+            }
+
+        }, serviceKey);
+    }
+
+
+    public static String generateKey(String serviceName, String versionName) {
+        return serviceName + ":" + versionName;
+    }
+
+    private static final String currentContainerAddr = SoaSystemEnvProperties.SOA_CONTAINER_IP + ":" + String.valueOf(SoaSystemEnvProperties.SOA_CONTAINER_PORT);
+
+    /**
+     * 创建/soa/master/services节点
+     */
+    private void addMasterRoute() {
+        String[] paths = PATH.split("/");
+        String route = "/";
+        for (int i = 1; i < paths.length; i++) {
+            route += paths[i];
+            addPersistServerNode(route, "");
+            route += "/";
+        }
+    }
+
+    public static void main(String[] args) {
+        ZookeeperHelper master = new ZookeeperHelper(null);
+        master.connect();
+        master.addMasterRoute();
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 }
