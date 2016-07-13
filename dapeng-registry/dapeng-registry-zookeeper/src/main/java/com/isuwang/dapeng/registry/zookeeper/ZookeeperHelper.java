@@ -1,13 +1,13 @@
 package com.isuwang.dapeng.registry.zookeeper;
 
 import com.isuwang.dapeng.core.SoaSystemEnvProperties;
+import com.isuwang.dapeng.core.helper.MasterHelper;
 import com.isuwang.dapeng.registry.RegistryAgent;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -178,17 +178,7 @@ public class ZookeeperHelper {
 
 
     //----------------------------竞选master-------------------------------------------------------------------------
-    public static Map<String, Boolean> isMaster = new HashMap<>();
-
-    public static boolean isMaster(String servieName, String versionName) {
-
-        String key = generateKey(servieName, versionName);
-        if (!isMaster.containsKey(key)) {
-            return false;
-        } else {
-            return isMaster.get(key);
-        }
-    }
+    public static Map<String, Boolean> isMaster = MasterHelper.isMaster;
 
     private static final String PATH = "/soa/master/services/";
 
@@ -308,18 +298,5 @@ public class ZookeeperHelper {
             addPersistServerNode(route, "");
             route += "/";
         }
-    }
-
-    public static void main(String[] args) {
-        ZookeeperHelper master = new ZookeeperHelper(null);
-        master.connect();
-        master.addMasterRoute();
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
     }
 }
