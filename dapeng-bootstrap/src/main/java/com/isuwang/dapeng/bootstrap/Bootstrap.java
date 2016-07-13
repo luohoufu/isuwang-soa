@@ -45,6 +45,49 @@ public class Bootstrap {
 
         setAppClassLoader();
 
+        //TODO 开启端口，等待连接，接收文件，放到临时文件夹，并加载服务
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    Thread.sleep(10000);
+
+                    final File appsPath = new File("C:\\Users\\tangliu\\Desktop\\Test", "dynamic");
+                    loadAppsUrls(appsPath);
+
+                    List<URL> appURL = appURLs.get(appURLs.size() - 1);
+                    AppClassLoader appClassLoader = new AppClassLoader(appURL.toArray(new URL[appURL.size()]));
+                    ClassLoaderManager.appClassLoaders.add(appClassLoader);
+
+                    //spring加载服务
+                    Class<?> springContainerClass = ClassLoaderManager.platformClassLoader.loadClass("com.isuwang.dapeng.container.spring.SpringContainer");
+                    Method loadDynamicServiceMethod = springContainerClass.getMethod("loadDynamicService", ClassLoader.class);
+                    Object context = loadDynamicServiceMethod.invoke(springContainerClass, appClassLoader);
+
+                    //zookeeper注册服务
+                    Class<?> zookeeperRegistryClass = ClassLoaderManager.platformClassLoader.loadClass("com.isuwang.dapeng.container.registry.ZookeeperRegistryContainer");
+                    Method registryServiceService = zookeeperRegistryClass.getMethod("registryService", Object.class);
+                    registryServiceService.invoke(zookeeperRegistryClass, context);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+//                try {
+//                    final ServerSocket server = new ServerSocket(9091);
+//                    do {
+//                        final Socket client = server.accept();
+//                        //...
+//
+//                    } while (true);
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+            }
+        }).start();
+
+
         startup();
     }
 
@@ -87,6 +130,11 @@ public class Bootstrap {
         platformURLs.addAll(findJarURLs(new File(enginePath, "bin/lib")));
 
         final File appsPath = new File(enginePath, "apps");
+        loadAppsUrls(appsPath);
+    }
+
+
+    private static void loadAppsUrls(File appsPath) throws MalformedURLException {
 
         if (appsPath.exists() && appsPath.isDirectory()) {
             final File[] files = appsPath.listFiles();
@@ -103,6 +151,8 @@ public class Bootstrap {
                     appURLs.add(urlList);
             }
         }
+
+
     }
 
     private static List<URL> findJarURLs(File file) throws MalformedURLException {

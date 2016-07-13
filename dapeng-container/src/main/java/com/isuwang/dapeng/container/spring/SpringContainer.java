@@ -42,37 +42,7 @@ public class SpringContainer implements Container {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
         for (ClassLoader appClassLoader : SpringContainer.appClassLoaders) {
-            try {
-                List<String> xmlPaths = new ArrayList<>();
-
-                Enumeration<URL> resources = appClassLoader.getResources(configPath);
-
-                while (resources.hasMoreElements()) {
-                    URL nextElement = resources.nextElement();
-
-                    // not load isuwang-soa-transaction-impl
-                    if(!nextElement.getFile().matches(".*dapeng-transaction-impl.*"))
-                        xmlPaths.add(nextElement.toString());
-                }
-
-                // ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new Object[]{xmlPaths.toArray(new String[0])});
-                // context.start();
-                Class<?> appClass = appClassLoader.loadClass("org.springframework.context.support.ClassPathXmlApplicationContext");
-
-                Class<?>[] parameterTypes = new Class[]{String[].class};
-                Constructor<?> constructor = appClass.getConstructor(parameterTypes);
-
-                Thread.currentThread().setContextClassLoader(appClassLoader);
-
-                Object context = constructor.newInstance(new Object[]{xmlPaths.toArray(new String[0])});
-
-                Method startMethod = appClass.getMethod("start");
-                startMethod.invoke(context);
-
-                contexts.put(context, appClass);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
+            loadService(appClassLoader, configPath);
         }
 
         Thread.currentThread().setContextClassLoader(contextClassLoader);
@@ -99,6 +69,68 @@ public class SpringContainer implements Container {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * 动态加载服务
+     *
+     * @param appClassLoader
+     */
+    public static Object loadDynamicService(ClassLoader appClassLoader) {
+
+        String configPath = System.getProperty(SPRING_CONFIG);
+        if (configPath == null || configPath.length() <= 0) {
+            configPath = DEFAULT_SPRING_CONFIG;
+        }
+
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+
+        Object context = loadService(appClassLoader, configPath);
+
+        Thread.currentThread().setContextClassLoader(contextClassLoader);
+
+        return context;
+    }
+
+    /**
+     * 根据services.xml加载服务
+     *
+     * @param appClassLoader
+     * @param configPath
+     */
+    public static Object loadService(ClassLoader appClassLoader, String configPath) {
+        try {
+            List<String> xmlPaths = new ArrayList<>();
+
+            Enumeration<URL> resources = appClassLoader.getResources(configPath);
+
+            while (resources.hasMoreElements()) {
+                URL nextElement = resources.nextElement();
+
+                // not load isuwang-soa-transaction-impl
+                if (!nextElement.getFile().matches(".*dapeng-transaction-impl.*"))
+                    xmlPaths.add(nextElement.toString());
+            }
+            Class<?> appClass = appClassLoader.loadClass("org.springframework.context.support.ClassPathXmlApplicationContext");
+
+            Class<?>[] parameterTypes = new Class[]{String[].class};
+            Constructor<?> constructor = appClass.getConstructor(parameterTypes);
+
+            Thread.currentThread().setContextClassLoader(appClassLoader);
+
+            Object context = constructor.newInstance(new Object[]{xmlPaths.toArray(new String[0])});
+
+            Method startMethod = appClass.getMethod("start");
+            startMethod.invoke(context);
+
+            contexts.put(context, appClass);
+            return context;
+
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
+        return null;
     }
 
 }
