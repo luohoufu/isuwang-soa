@@ -6,10 +6,13 @@ import com.isuwang.dapeng.bootstrap.classloader.PlatformClassLoader;
 import com.isuwang.dapeng.bootstrap.classloader.ShareClassLoader;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +27,8 @@ public class Bootstrap {
 
     private static final List<URL> shareURLs = new ArrayList<>();
     private static final List<URL> platformURLs = new ArrayList<>();
-    private static final List<List<URL>> appURLs = new ArrayList<>();
-    private static final String enginePath = System.getProperty("soa.base", new File(Bootstrap.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent());
+    public static final List<List<URL>> appURLs = new ArrayList<>();
+    public static final String enginePath = System.getProperty("soa.base", new File(Bootstrap.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent());
     private static final String soaRunMode = System.getProperty("soa.run.mode", "maven");
 
     public static void main(String[] args) throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -45,48 +48,24 @@ public class Bootstrap {
 
         setAppClassLoader();
 
-        //TODO 开启端口，等待连接，接收文件，放到临时文件夹，并加载服务
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+//        if (!isRunInMaven) {
 
-                try {
-                    Thread.sleep(10000);
+        new Thread(() -> {
+            try {
+                System.out.println("开启ServerSocket");
+                final ServerSocket server = new ServerSocket(9091);
+                do {
+                    final Socket socket = server.accept();
+                    socket.setKeepAlive(true);
+                    Thread thread = new Thread(new DynamicThreadHandler(socket));
+                    thread.start();
+                } while (true);
 
-                    final File appsPath = new File("C:\\Users\\tangliu\\Desktop\\Test", "dynamic");
-                    loadAppsUrls(appsPath);
-
-                    List<URL> appURL = appURLs.get(appURLs.size() - 1);
-                    AppClassLoader appClassLoader = new AppClassLoader(appURL.toArray(new URL[appURL.size()]));
-                    ClassLoaderManager.appClassLoaders.add(appClassLoader);
-
-                    //spring加载服务
-                    Class<?> springContainerClass = ClassLoaderManager.platformClassLoader.loadClass("com.isuwang.dapeng.container.spring.SpringContainer");
-                    Method loadDynamicServiceMethod = springContainerClass.getMethod("loadDynamicService", ClassLoader.class);
-                    Object context = loadDynamicServiceMethod.invoke(springContainerClass, appClassLoader);
-
-                    //zookeeper注册服务
-                    Class<?> zookeeperRegistryClass = ClassLoaderManager.platformClassLoader.loadClass("com.isuwang.dapeng.container.registry.ZookeeperRegistryContainer");
-                    Method registryServiceService = zookeeperRegistryClass.getMethod("registryService", Object.class);
-                    registryServiceService.invoke(zookeeperRegistryClass, context);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-//                try {
-//                    final ServerSocket server = new ServerSocket(9091);
-//                    do {
-//                        final Socket client = server.accept();
-//                        //...
-//
-//                    } while (true);
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }).start();
-
+//        }
 
         startup();
     }
@@ -133,8 +112,13 @@ public class Bootstrap {
         loadAppsUrls(appsPath);
     }
 
-
-    private static void loadAppsUrls(File appsPath) throws MalformedURLException {
+    /**
+     * 给定apps目录，加载目录下所有URL
+     *
+     * @param appsPath
+     * @throws MalformedURLException
+     */
+    public static void loadAppsUrls(File appsPath) throws MalformedURLException {
 
         if (appsPath.exists() && appsPath.isDirectory()) {
             final File[] files = appsPath.listFiles();
