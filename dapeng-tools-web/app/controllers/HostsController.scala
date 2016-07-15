@@ -2,10 +2,9 @@ package controllers
 
 import javax.inject._
 
+import com.isuwang.dapeng.tools.helpers.{RouteInfoHelper, RequestExampleHelper, MetaInfoHelper}
 import module.ServiceInfo
 import play.api.mvc._
-import services.Counter
-import util.ZookeeperHelper
 
 import scala.collection.mutable.ListBuffer
 
@@ -21,36 +20,48 @@ class HostsController @Inject() extends Controller {
     //    val anyStatus = Status(488)("Strange response type")  488
     //    Ok(views.html.index("服务治理平台."))
     //    Redirect("/count")
-//    val result2 = Ok(<h3>Hello World!</h3>).as(HTML)
-//    ok
-//    result2
-    val serviceInfos = ZookeeperHelper.getInfos()
+    //    val result2 = Ok(<h3>Hello World!</h3>).as(HTML)
+    //    ok
+    //    result2
+    val serviceInfos: scala.collection.mutable.Map[String, ListBuffer[ServiceInfo]] = scala.collection.mutable.Map[String, ListBuffer[ServiceInfo]]()
+    serviceInfos += ("192.0.0.1" -> ListBuffer(new ServiceInfo("service1","1.0.0","8080"),new ServiceInfo("service2","1.0.0","8080"),new ServiceInfo("service3","1.0.0","8080")))
+    serviceInfos += ("192.0.0.2" -> ListBuffer(new ServiceInfo("service1","1.0.0","8080"),new ServiceInfo("service2","1.0.0","8080"),new ServiceInfo("service3","1.0.0","8080")))
+    serviceInfos += ("192.0.0.3" -> ListBuffer(new ServiceInfo("service1","1.0.0","8080"),new ServiceInfo("service2","1.0.0","8080"),new ServiceInfo("service3","1.0.0","8080")))
+
+    //    val serviceInfos = ZookeeperHelper.getInfos()
     println("serviceInfos: " + serviceInfos.size)
-    Ok(views.html.hosts.render(serviceInfos))
+    Ok(views.html.hosts.render(serviceInfos.toMap))
   }
 
   //通过服务名和版本号，获取元信息:
   def metadata = Action{
+    MetaInfoHelper.getService()
     Ok("123")
   }
 
-  //通过json文件，请求对应服务，并打印结果:
    def jsonResult = Action{
+    RequestExampleHelper.getRequestJson()
     Ok("123")
   }
 
-  //通过xml文件，请求对应服务，并打印结果:
   def xmlResult = Action{
+    RequestExampleHelper.getRequestXml()
     Ok("123")
   }
 
-  //通过系统参数，json文件，调用指定服务器的服务并打印结果:
   def jsonResultWithPara = Action{
+    RequestExampleHelper.getRequestJson()
+    Ok("123")
+  }
+
+  def xmlResultWithPara = Action{
+    RequestExampleHelper.getRequestXml()
     Ok("123")
   }
 
   //通过系统参数，xml文件，调用指定服务器的服务并打印结果:
-  def xmlResultWithPara = Action{
+  def routeInfo = Action{
+    RouteInfoHelper.routeInfo()
     Ok("123")
   }
 }
