@@ -18,9 +18,9 @@
     <body>
         @* And here's where we render the `Html` object containing
          * the page content.
-        @content*@
-        <div>
-             服务治理功能
+        *@
+        <div style="padding-left: 30%">
+                 &nbsp;&nbsp;&nbsp;服务治理功能
             <ul>
                 <li> 1. 列出服务注册的所有机器地址， 注册时间</li>
                 <li> 2. 点击某个机器地址， 列出其下面所有的服务，版本号，启动时间</li>
@@ -31,5 +31,7 @@
                 <li> 7. 安全设计</li>
             </ul>
         </div>
+        @content
+
     </body>
 </html>

@@ -10,7 +10,13 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
+  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
+  "org.apache.zookeeper" % "zookeeper" % "3.4.7",
+  "com.isuwang" % "dapeng-tools" % "1.1-SNAPSHOT" from "http://nexus.oa.isuwang.com/content/groups/public/com/isuwang/dapeng-tools/1.1-SNAPSHOT/dapeng-tools-1.1-20160713.025130-4.jar"
+)
+resolvers ++= Seq(
+  "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 )
 
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+
+
