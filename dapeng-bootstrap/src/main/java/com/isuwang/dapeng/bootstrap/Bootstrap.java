@@ -4,6 +4,8 @@ import com.isuwang.dapeng.bootstrap.classloader.AppClassLoader;
 import com.isuwang.dapeng.bootstrap.classloader.ClassLoaderManager;
 import com.isuwang.dapeng.bootstrap.classloader.PlatformClassLoader;
 import com.isuwang.dapeng.bootstrap.classloader.ShareClassLoader;
+import com.isuwang.dapeng.bootstrap.dynamic.DynamicInfo;
+import com.isuwang.dapeng.bootstrap.dynamic.DynamicThreadHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,8 +30,10 @@ public class Bootstrap {
     private static final List<URL> shareURLs = new ArrayList<>();
     private static final List<URL> platformURLs = new ArrayList<>();
     public static final List<List<URL>> appURLs = new ArrayList<>();
+    public static final List<DynamicInfo> dynamicServicesInfo = new ArrayList<>();
     public static final String enginePath = System.getProperty("soa.base", new File(Bootstrap.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent());
     private static final String soaRunMode = System.getProperty("soa.run.mode", "maven");
+
 
     public static void main(String[] args) throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         System.setProperty("soa.run.mode", soaRunMode);
@@ -111,6 +115,27 @@ public class Bootstrap {
         final File appsPath = new File(enginePath, "apps");
         loadAppsUrls(appsPath);
     }
+
+    /**
+     * 指定文件或文件夹，加载URL
+     *
+     * @param appFile 服务打成的jar包
+     */
+    public static List<URL> loadAppsUrl(File appFile) throws MalformedURLException {
+
+        List<URL> urlList = new ArrayList<>();
+
+        if (appFile.isFile() && appFile.getName().endsWith(".jar")) {
+            urlList.add(appFile.toURI().toURL());
+        } else if (appFile.isDirectory()) {
+            urlList.addAll(findJarURLs(appFile));
+        }
+        if (!urlList.isEmpty())
+            appURLs.add(urlList);
+
+        return urlList;
+    }
+
 
     /**
      * 给定apps目录，加载目录下所有URL
