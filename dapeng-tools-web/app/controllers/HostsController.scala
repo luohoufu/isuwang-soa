@@ -28,4 +28,29 @@ class HostsController @Inject() extends Controller {
     println("serviceInfos: " + serviceInfos.size)
     Ok(views.html.hosts.render(serviceInfos))
   }
+
+  //通过服务名和版本号，获取元信息:
+  def metadata = Action{
+    Ok("123")
+  }
+
+  //通过json文件，请求对应服务，并打印结果:
+   def jsonResult = Action{
+    Ok("123")
+  }
+
+  //通过xml文件，请求对应服务，并打印结果:
+  def xmlResult = Action{
+    Ok("123")
+  }
+
+  //通过系统参数，json文件，调用指定服务器的服务并打印结果:
+  def jsonResultWithPara = Action{
+    Ok("123")
+  }
+
+  //通过系统参数，xml文件，调用指定服务器的服务并打印结果:
+  def xmlResultWithPara = Action{
+    Ok("123")
+  }
 }
