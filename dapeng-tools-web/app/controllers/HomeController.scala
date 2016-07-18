@@ -10,5 +10,4 @@ class HomeController @Inject() extends Controller {
   def index = Action {
     Ok(views.html.index("服务治理平台."))
   }
-
 }

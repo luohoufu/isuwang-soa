@@ -4,6 +4,7 @@ import module.ServiceInfo
 import org.apache.zookeeper.{WatchedEvent, Watcher, ZooKeeper}
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.Set
 
 /**
  * @author Eric on 2016/7/13 11:07
