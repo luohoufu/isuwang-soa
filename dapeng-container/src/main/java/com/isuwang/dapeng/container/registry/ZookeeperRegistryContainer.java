@@ -12,8 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Registry Container
@@ -25,6 +28,8 @@ public class ZookeeperRegistryContainer implements Container {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperRegistryContainer.class);
 
     private final static RegistryAgent registryAgent = new RegistryAgentImpl(false);
+
+    private static ConcurrentHashMap<Integer,List<String>> tmpServices = new ConcurrentHashMap<>();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -53,7 +58,10 @@ public class ZookeeperRegistryContainer implements Container {
 
 
     public static void registryService(Object context) {
+        registryService(context, false);
+    }
 
+    public static void registryService(Object context, Boolean isTmp) {
         Map<Object, Class<?>> contexts = SpringContainer.getContexts();
         Class<?> contextClass = contexts.get(context);
 
@@ -77,5 +85,11 @@ public class ZookeeperRegistryContainer implements Container {
             LOGGER.error(e.getMessage(), e);
         }
     }
+
+    // TODO 添加一个方法获得临时的service
+    public Map<Integer,List<String>> getTmpService() {
+        return tmpServices;
+    }
+
 
 }

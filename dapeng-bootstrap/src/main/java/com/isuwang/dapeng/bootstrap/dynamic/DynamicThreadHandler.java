@@ -35,6 +35,7 @@ public class DynamicThreadHandler implements Runnable {
                 DataOutputStream dos = new DataOutputStream(socket.getOutputStream())) {
 
             String serviceName = dis.readUTF();
+            String version = dis.readUTF();
             String fileName = dis.readUTF();
             long fileLength = dis.readLong();
 
@@ -97,7 +98,7 @@ public class DynamicThreadHandler implements Runnable {
                 if (serviceRunning(file))
                     continue;
                 else
-                    loadService(file, serviceName);
+                    loadService(file, serviceName, version);
             }
 
             while (true) {
@@ -128,7 +129,7 @@ public class DynamicThreadHandler implements Runnable {
         return false;
     }
 
-    private static void loadService(File appPath, String serviceName) {
+    private static void loadService(File appPath, String serviceName, String version) {
 
         try {
             System.out.println(">>开始加载服务<<");
@@ -157,6 +158,7 @@ public class DynamicThreadHandler implements Runnable {
 
             DynamicInfo info = new DynamicInfo();
             info.setServiceName(serviceName);
+            info.setVersionName(version);
             info.setServiceFile(appPath);
             info.setAppUrl(appURL);
             info.setAppClassLoader(appClassLoader);
@@ -168,6 +170,27 @@ public class DynamicThreadHandler implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 从zookeeper移除服务  TODO 移除对应socket的服务
+     */
+    private static void deleteDynamicService(List<DynamicInfo> serviceList) {
+        try {
+            Class<?> zookeeperHelperClass = ClassLoaderManager.platformClassLoader.loadClass("com.isuwang.dapeng.registry.zookeeper.ZookeeperHelper");
+            Method deleteServiceInfoService = zookeeperHelperClass.getMethod("deleteService", String.class, String.class);
+            for (DynamicInfo info : serviceList) {
+                String serviceName = info.getServiceName();
+                String version = info.getVersionName();
+
+                deleteServiceInfoService.invoke(zookeeperHelperClass, serviceName, version);
+            }
+            serviceList.clear();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 

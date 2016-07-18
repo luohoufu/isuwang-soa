@@ -3,7 +3,7 @@
 #### 运行脚本
 
 ```
-cd isuwang-soa-container
+cd dapeng-container
 
 sh dev.sh
 ```
@@ -11,22 +11,22 @@ sh dev.sh
 #### 输出目录
 
 ```
-isuwang-soa-container/target/isuwang-soa-container
+dapeng-container/target/dapeng-container
 ```
 
 #### 目录说明
 
 ```
-|-- isuwang-soa-container                  
+|-- dapeng-container
 |   |-- bin                                
 |   |   |-- lib                            平台jar包目录
-|   |   |   |-- isuwang-soa-container.jar  
+|   |   |   |-- dapeng-container.jar
 |   |   |   |-- ...                   
 |   |   |-- startup.sh                     
 |   |   |-- shutdown.sh                    
-|   |   |-- isuwang-soa-bootstrap.jar      
+|   |   |-- dapeng-bootstrap.jar
 |   |-- lib                                公共依赖jar包目录
-|   |   |-- isuwang-soa-core.jar           
+|   |   |-- dapeng-core.jar
 |   |   |-- ...
 |   |-- conf                               配置文件目录
 |   |   |-- server-conf.xml                
@@ -43,25 +43,25 @@ isuwang-soa-container/target/isuwang-soa-container
 ### 工程目录说明
 
 ```
-|-- isuwang-soa                           
-|   |-- isuwang-soa-api-doc                 服务api站点工程
-|   |-- isuwang-soa-bootstrap               启动模块工程
-|   |-- isuwang-soa-code-generator          服务idl代码生成工程
-|   |-- isuwang-soa-container               容器工程
-|   |-- isuwang-soa-core                    核心工程
-|   |-- isuwang-soa-maven-plugin            Maven开发插件工程
-|   |-- isuwang-soa-monitor
-|   |   |-- isuwang-soa-monitor-api         监控模块api工程
-|   |   |-- isuwang-soa-monitor-druid       druid的监控工具
-|   |   |-- isuwang-soa-monitor-influxdb    监控模块api实现工程(influxdb版本)
-|   |-- isuwang-soa-registry
-|   |   |-- isuwang-soa-registry-api        注册模块api工程
-|   |   |-- isuwang-soa-registry-zookeeper  注册模块api实现工程(zookeeper版本)
-|   |-- isuwang-soa-remoting
-|   |   |-- isuwang-soa-remoting-api        客户端通讯模块api工程
-|   |   |-- isuwang-soa-remoting-netty      客户端通讯模块api实现工程(netty版本)
-|   |   |-- isuwang-soa-remoting-socket     客户端通讯模块api实现工程(socket版本)
-|   |-- isuwang-soa-spring                  spring扩展模块工程             
+|-- dapeng
+|   |-- dapeng-api-doc                 服务api站点工程
+|   |-- dapeng-bootstrap               启动模块工程
+|   |-- dapeng-code-generator          服务idl代码生成工程
+|   |-- dapeng-container               容器工程
+|   |-- dapeng-core                    核心工程
+|   |-- dapeng-maven-plugin            Maven开发插件工程
+|   |-- dapeng-monitor
+|   |   |-- dapeng-monitor-api         监控模块api工程
+|   |   |-- dapeng-monitor-druid       druid的监控工具
+|   |   |-- dapeng-monitor-influxdb    监控模块api实现工程(influxdb版本)
+|   |-- dapeng-registry
+|   |   |-- dapeng-registry-api        注册模块api工程
+|   |   |-- dapeng-registry-zookeeper  注册模块api实现工程(zookeeper版本)
+|   |-- dapeng-remoting
+|   |   |-- dapeng-remoting-api        客户端通讯模块api工程
+|   |   |-- dapeng-remoting-netty      客户端通讯模块api实现工程(netty版本)
+|   |   |-- dapeng-remoting-socket     客户端通讯模块api实现工程(socket版本)
+|   |-- dapeng-spring                  spring扩展模块工程
 ```
 
 ### 服务开发简易说明
@@ -120,14 +120,14 @@ service HelloService {
 
 #### 服务接口代码生成：
 
-> 打包服务接口代码工程(`isuwang-soa-code-generator`): `mvn clean package` 
+> 打包服务接口代码工程(`dapeng-code-generator`): `mvn clean package`
 >
-> 输出的可执行jar包目录: `isuwang-soa-code-generator/target/isuwang-soa-code-generator-1.0-SNAPSHOT-jar-with-dependencies.jar`
+> 输出的可执行jar包目录: `dapeng-code-generator/target/dapeng-code-generator-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
 打印帮助命令
 
 ```
-java -jar isuwang-soa-code-generator-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar dapeng-code-generator-1.1-SNAPSHOT-jar-with-dependencies.jar
 
 -----------------------------------------------------------------------
  args: -gen metadata,js,json file
@@ -149,7 +149,7 @@ java -jar isuwang-soa-code-generator-1.0-SNAPSHOT-jar-with-dependencies.jar
 生成thrift idl 定义服务接口代码
 
 ```
-java -jar isuwang-soa-code-generator-1.0-SNAPSHOT-jar-with-dependencies.jar -gen java -out F:\hello F:\hello\hello_domain.thrift,F:\hello\hello_service.thrift
+java -jar dapeng-code-generator-1.1-SNAPSHOT-jar-with-dependencies.jar -gen java -out F:\hello F:\hello\hello_domain.thrift,F:\hello\hello_service.thrift
 
 # 说明：
 # 1. `-gen java` 表示生成java代码； 
@@ -162,12 +162,12 @@ java -jar isuwang-soa-code-generator-1.0-SNAPSHOT-jar-with-dependencies.jar -gen
 
 `hello-api`工程会被服务端和客户端依赖。
 
-新建maven工程，即`hello-api`工程，依赖于`isuwang-soa-remoting-api`:
+新建maven工程，即`hello-api`工程，依赖于`dapeng-remoting-api`:
 ```
 <dependency>
     <groupId>com.isuwang</groupId>
-    <artifactId>isuwang-soa-remoting-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>dapeng-remoting-api</artifactId>
+    <version>1.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -179,20 +179,20 @@ java -jar isuwang-soa-code-generator-1.0-SNAPSHOT-jar-with-dependencies.jar -gen
 
 #### 创建Service工程
 
-`hello-service`工程依赖于`hello-api`工程和`isuwang-soa-spring`包，在工程中实现api中的接口类，在方法中实现具体的业务逻辑。
+`hello-service`工程依赖于`hello-api`工程和`dapeng-spring`包，在工程中实现api中的接口类，在方法中实现具体的业务逻辑。
 
 * 依赖：
 
 ```
 <dependency>
     <groupId>com.isuwang</groupId>
-    <artifactId>isuwang-soa-hello-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>dapeng-hello-api</artifactId>
+    <version>1.1-SNAPSHOT</version>
 </dependency>
 <dependency>
     <groupId>com.isuwang</groupId>
-    <artifactId>isuwang-soa-spring</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>dapeng-spring</artifactId>
+    <version>1.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -244,16 +244,16 @@ public class HelloServiceImpl implements HelloService {
     
 #### 开发模式启动服务
 
-> 前提:需要把`isuwang-soa-maven-plugin`安装到本地maven仓库
+> 前提:需要把`dapeng-maven-plugin`安装到本地maven仓库
 
 ##### 安装Maven插件
 
-安装`isuwang-soa-maven-plugin`工程
+安装`dapeng-maven-plugin`工程
 
 * 源码手动安装
 
 ```
-cd isuwang-soa/isuwang-soa-maven-plugin
+cd dapeng/dapeng-maven-plugin
 mvn clean install
 ```
 
@@ -288,7 +288,7 @@ mvn compile isuwangsoa:run -Dsoa.remoting.mode=local
 
 # 第二种
 cd hello-service
-mvn compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run -Dsoa.remoting.mode=local
+mvn compile com.isuwang:dapeng-maven-plugin:1.1-SNAPSHOT:run -Dsoa.remoting.mode=local
 ```
 
 * 远程模式(需要启动zookeeper)
@@ -303,7 +303,7 @@ mvn compile isuwangsoa:run
 
 # 第二种
 cd hello-service
-mvn compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run
+mvn compile com.isuwang:dapeng-maven-plugin:1.1-SNAPSHOT:run
 ```
 
 * 启动可选参数
@@ -318,22 +318,22 @@ mvn compile com.isuwang:isuwangsoa-maven-plugin:1.0-SNAPSHOT:run
 
 ##### 依赖配置
 
-客户端要依赖`hello-api`,`isuwang-soa-registry-zookeeper`和`isuwang-soa-remoting-netty`
+客户端要依赖`hello-api`,`dapeng-registry-zookeeper`和`dapeng-remoting-netty`
 ```
 <dependency>
     <groupId>com.isuwang</groupId>
-    <artifactId>isuwang-soa-hello-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>dapeng-hello-api</artifactId>
+    <version>1.1-SNAPSHOT</version>
 </dependency>
 <dependency>
     <groupId>com.isuwang</groupId>
-    <artifactId>isuwang-soa-registry-zookeeper</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>dapeng-registry-zookeeper</artifactId>
+    <version>1.1-SNAPSHOT</version>
 </dependency>
 <dependency>
     <groupId>com.isuwang</groupId>
-    <artifactId>isuwang-soa-remoting-netty</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>dapeng-remoting-netty</artifactId>
+    <version>1.1-SNAPSHOT</version>
 </dependency>
 ```
 

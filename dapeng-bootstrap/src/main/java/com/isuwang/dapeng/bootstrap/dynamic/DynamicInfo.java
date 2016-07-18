@@ -11,6 +11,8 @@ public class DynamicInfo {
 
     public String serviceName;
 
+    public String versionName;
+
     public File serviceFile;
 
     public ClassLoader appClassLoader;
@@ -18,7 +20,6 @@ public class DynamicInfo {
     public Object context;
 
     public List<URL> appUrl;
-
 
     public String getServiceName() {
         return serviceName;
@@ -58,5 +59,13 @@ public class DynamicInfo {
 
     public void setAppUrl(List<URL> appUrl) {
         this.appUrl = appUrl;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
     }
 }
