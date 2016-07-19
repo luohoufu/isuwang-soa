@@ -39,6 +39,7 @@ public class ApiServiceController {
         Map<String, Service> services = serviceCache.getServices();
 
         request.setAttribute("services", services.values());
+
         return "api/api";
     }
 
