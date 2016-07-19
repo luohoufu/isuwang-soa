@@ -81,7 +81,7 @@ public class DynamicThreadHandler implements Runnable {
             System.out.println(">>开始解压缩到dynamic文件夹<<");
             File dynamic = new File(Bootstrap.enginePath, "dynamic");
             if (!dynamic.exists() || !dynamic.isDirectory())
-                tmp.mkdirs();
+                dynamic.mkdirs();
 
             try {
                 decompress(tmpZipFile, dynamic);
