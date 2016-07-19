@@ -18,6 +18,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -31,7 +32,7 @@ public class Bootstrap {
     private static final List<URL> shareURLs = new ArrayList<>();
     private static final List<URL> platformURLs = new ArrayList<>();
     public static final List<List<URL>> appURLs = new ArrayList<>();
-    public static final List<DynamicInfo> dynamicServicesInfo = new ArrayList<>();
+    public static final ConcurrentHashMap<AtomicInteger,List<DynamicInfo>> dynamicServicesInfo = new ConcurrentHashMap<>();
     public static final String enginePath = System.getProperty("soa.base", new File(Bootstrap.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent());
     private static final String soaRunMode = System.getProperty("soa.run.mode", "maven");
 

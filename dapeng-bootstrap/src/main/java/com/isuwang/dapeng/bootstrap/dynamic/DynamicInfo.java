@@ -22,16 +22,6 @@ public class DynamicInfo {
 
     public List<URL> appUrl;
 
-    public AtomicInteger clientId;
-
-    public AtomicInteger getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(AtomicInteger clientId) {
-        this.clientId = clientId;
-    }
-
     public String getServiceName() {
         return serviceName;
     }

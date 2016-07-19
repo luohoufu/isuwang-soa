@@ -3,7 +3,6 @@ package com.isuwang.dapeng.bootstrap.dynamic;
 import com.isuwang.dapeng.bootstrap.Bootstrap;
 import com.isuwang.dapeng.bootstrap.classloader.AppClassLoader;
 import com.isuwang.dapeng.bootstrap.classloader.ClassLoaderManager;
-import org.codehaus.janino.Java;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -11,7 +10,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.CRC32;
@@ -49,12 +47,15 @@ public class DynamicThreadHandler implements Runnable {
             long fileLength = dis.readLong();
 
             // TODO: 2016/7/15 判断容器中已存在服务
-            for (DynamicInfo info : Bootstrap.dynamicServicesInfo) {
-                if (info.getServiceName().equals(serviceName)) {
-                    dos.writeUTF("SERVICE_EXIST");
-                    return;
+            for (Object key : Bootstrap.dynamicServicesInfo.keySet()) {
+                for (DynamicInfo info : Bootstrap.dynamicServicesInfo.get(key)){
+                    if (info.getServiceName().equals(serviceName)) {
+                        dos.writeUTF("SERVICE_EXIST");
+                        return;
+                    }
                 }
             }
+
             dos.writeUTF("READY");
 
             File tmp = new File(Bootstrap.enginePath, "tmp");
@@ -106,6 +107,8 @@ public class DynamicThreadHandler implements Runnable {
 
             tmpAppClassLoaders.put(clientId,new ArrayList<>());
 
+            Bootstrap.dynamicServicesInfo.put(clientId,new ArrayList<>());
+
             for (File file : serviceFiles) {
                 if (serviceRunning(file))
                     continue;
@@ -128,6 +131,7 @@ public class DynamicThreadHandler implements Runnable {
             e.printStackTrace();
         } finally {
             System.out.println("socket关闭啦");
+            Bootstrap.dynamicServicesInfo.remove(clientId);
             deleteDynamicService(clientId);
             for(AppClassLoader appClassLoader : tmpAppClassLoaders.get(clientId)) {
                 // 移除容器临时的AppClassLoader
@@ -141,11 +145,14 @@ public class DynamicThreadHandler implements Runnable {
 
     private static boolean serviceRunning(File file) {
 
-        for (int i = 0; i < Bootstrap.dynamicServicesInfo.size(); i++) {
-            File f = Bootstrap.dynamicServicesInfo.get(i).getServiceFile();
-            if (f.getName().equals(file.getName()))
-                return true;
+        for(Object key : Bootstrap.dynamicServicesInfo.keySet()) {
+            for(DynamicInfo info : Bootstrap.dynamicServicesInfo.get(key)) {
+                File f = info.getServiceFile();
+                if (f.getName().equals(file.getName()))
+                    return true;
+            }
         }
+
         return false;
     }
 
@@ -172,20 +179,19 @@ public class DynamicThreadHandler implements Runnable {
              * 注册服务
              */
             Class<?> zookeeperRegistryClass = ClassLoaderManager.platformClassLoader.loadClass("com.isuwang.dapeng.container.registry.ZookeeperRegistryContainer");
-            Method registryServiceService = zookeeperRegistryClass.getMethod("registryService", Object.class);
-            registryServiceService.invoke(zookeeperRegistryClass, context);
+            Method registryServiceService = zookeeperRegistryClass.getMethod("registryService", Object.class, Boolean.class, AtomicInteger.class);
+            registryServiceService.invoke(zookeeperRegistryClass, context, true ,clientId);
 
             tmpAppClassLoaders.get(clientId).add(appClassLoader);
 
             DynamicInfo info = new DynamicInfo();
-            info.setClientId(clientId);
             info.setServiceName(serviceName);
             info.setServiceFile(appPath);
 //            info.setAppUrl(appURL);
 //            info.setAppClassLoader(appClassLoader);
 //            info.setContext(context);
 
-            Bootstrap.dynamicServicesInfo.add(info);
+            Bootstrap.dynamicServicesInfo.get(clientId).add(info);
             System.out.println(">>加载服务完成<<");
 
         } catch (Exception e) {
@@ -204,11 +210,14 @@ public class DynamicThreadHandler implements Runnable {
 
             // 移除ProcessorCache里面的临时服务
             Method deleteFromProcessorCacheMethod = zookeeperRegistryClass.getMethod("deleteFromProcessorCache",AtomicInteger.class);
-            deleteFromProcessorCacheMethod.invoke(zookeeperRegistryClass);
+            deleteFromProcessorCacheMethod.invoke(zookeeperRegistryClass, clientId);
 
             //从zookeeper删除临时服务
             Class<?> zookeeperHelperClass = ClassLoaderManager.platformClassLoader.loadClass("com.isuwang.dapeng.registry.zookeeper.ZookeeperHelper");
-            Method deleteServiceInfoService = zookeeperHelperClass.getMethod("deleteService", String.class, String.class);
+
+            //Method deleteServiceInfoService = zookeeperHelperClass.getMethod("deleteService", String.class, String.class);
+            Method deleteServiceInfoService = zookeeperHelperClass.getDeclaredMethod("deleteService", String.class, String.class);
+
 
             for (String info : services) {
                 String[] infos = info.split(":");

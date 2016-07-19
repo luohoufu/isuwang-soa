@@ -99,7 +99,7 @@ public class ZookeeperRegistryContainer implements Container {
      * 获得临时服务,这里为了让Bootstrap不依赖dapeng-core，转换List
      * @return
      */
-    public List<String> getTmpService(AtomicInteger clientId) {
+    public static Object getTmpService(AtomicInteger clientId) {
         List<String> serviceList = new ArrayList<>();
         List<ProcessorKey> services = tmpServices.get(clientId);
         for(ProcessorKey processorKey : services) {
@@ -111,7 +111,7 @@ public class ZookeeperRegistryContainer implements Container {
 	/**
 	 * 从ProcessorCache中移除临时的服务
      */
-    public void deleteFromProcessorCache(AtomicInteger clientId) {
+    public static void deleteFromProcessorCache(AtomicInteger clientId) {
         List<ProcessorKey> services = tmpServices.get(clientId);
         for(ProcessorKey processorKey : services) {
             ProcessorCache.getProcessorMap().remove(processorKey);

@@ -19,7 +19,7 @@ public class ZookeeperHelper {
 
 	private String zookeeperHost = SoaSystemEnvProperties.SOA_ZOOKEEPER_HOST;
 
-	private ZooKeeper zk;
+	private static ZooKeeper zk;
 	private RegistryAgent registryAgent;
 
 	public ZookeeperHelper(RegistryAgent registryAgent) {
@@ -159,7 +159,7 @@ public class ZookeeperHelper {
 	 * @param serviceName
 	 * @param versionName
 	 */
-	public void deleteService(String serviceName, String versionName) {
+	public static void deleteService(String serviceName, String versionName) {
 		String path = "/soa/runtime/services/" + serviceName + "/" + SoaSystemEnvProperties.SOA_CONTAINER_IP + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT + ":" + versionName;
 		LOGGER.info("删除临时节点serviceInfo:{}", path);
 		try {
