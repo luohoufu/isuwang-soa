@@ -3,6 +3,7 @@ package com.isuwang.dapeng.bootstrap.dynamic;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by tangliu on 2016/7/15.
@@ -20,6 +21,16 @@ public class DynamicInfo {
     public Object context;
 
     public List<URL> appUrl;
+
+    public AtomicInteger clientId;
+
+    public AtomicInteger getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(AtomicInteger clientId) {
+        this.clientId = clientId;
+    }
 
     public String getServiceName() {
         return serviceName;

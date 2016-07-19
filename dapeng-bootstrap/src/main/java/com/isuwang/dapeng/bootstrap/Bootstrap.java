@@ -18,6 +18,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Bootstrap
@@ -33,6 +34,8 @@ public class Bootstrap {
     public static final List<DynamicInfo> dynamicServicesInfo = new ArrayList<>();
     public static final String enginePath = System.getProperty("soa.base", new File(Bootstrap.class.getProtectionDomain().getCodeSource().getLocation().getFile()).getParent());
     private static final String soaRunMode = System.getProperty("soa.run.mode", "maven");
+
+    public static final AtomicInteger clientId = new AtomicInteger(0);
 
 
     public static void main(String[] args) throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -52,8 +55,6 @@ public class Bootstrap {
 
         setAppClassLoader();
 
-//        if (!isRunInMaven) {
-
         new Thread(() -> {
             try {
                 System.out.println("开启ServerSocket");
@@ -61,7 +62,8 @@ public class Bootstrap {
                 do {
                     final Socket socket = server.accept();
                     socket.setKeepAlive(true);
-                    Thread thread = new Thread(new DynamicThreadHandler(socket));
+                    clientId.incrementAndGet();
+                    Thread thread = new Thread(new DynamicThreadHandler(socket, clientId));
                     thread.start();
                 } while (true);
 
@@ -69,7 +71,6 @@ public class Bootstrap {
                 e.printStackTrace();
             }
         }).start();
-//        }
 
         startup();
     }

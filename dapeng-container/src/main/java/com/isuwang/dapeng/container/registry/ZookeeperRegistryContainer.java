@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Registry Container
@@ -29,7 +30,7 @@ public class ZookeeperRegistryContainer implements Container {
 
     private final static RegistryAgent registryAgent = new RegistryAgentImpl(false);
 
-    private static ConcurrentHashMap<Integer,List<String>> tmpServices = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<AtomicInteger,List<ProcessorKey>> tmpServices = new ConcurrentHashMap<>();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -58,12 +59,14 @@ public class ZookeeperRegistryContainer implements Container {
 
 
     public static void registryService(Object context) {
-        registryService(context, false);
+        registryService(context, false, null);
     }
 
-    public static void registryService(Object context, Boolean isTmp) {
+    public static void registryService(Object context, Boolean isTmp, AtomicInteger clientId) {
         Map<Object, Class<?>> contexts = SpringContainer.getContexts();
         Class<?> contextClass = contexts.get(context);
+
+        List<ProcessorKey> serviceList = new ArrayList<>();
 
         try {
             Method method = contextClass.getMethod("getBeansOfType", Class.class);
@@ -79,16 +82,40 @@ public class ZookeeperRegistryContainer implements Container {
                     ProcessorKey processorKey = new ProcessorKey(processor.getInterfaceClass().getName(), service.version());
                     ProcessorCache.getProcessorMap().put(processorKey, processor);
                     registryAgent.registerService(processor.getInterfaceClass().getName(), service.version());
+                    if(isTmp && clientId != null) {
+                        serviceList.add(processorKey);
+                    }
                 }
+            }
+            if (!serviceList.isEmpty()) {
+                tmpServices.put(clientId,serviceList);
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
 
-    // TODO 添加一个方法获得临时的service
-    public Map<Integer,List<String>> getTmpService() {
-        return tmpServices;
+	/**
+     * 获得临时服务,这里为了让Bootstrap不依赖dapeng-core，转换List
+     * @return
+     */
+    public List<String> getTmpService(AtomicInteger clientId) {
+        List<String> serviceList = new ArrayList<>();
+        List<ProcessorKey> services = tmpServices.get(clientId);
+        for(ProcessorKey processorKey : services) {
+            serviceList.add(processorKey.toString());
+        }
+        return serviceList;
+    }
+
+	/**
+	 * 从ProcessorCache中移除临时的服务
+     */
+    public void deleteFromProcessorCache(AtomicInteger clientId) {
+        List<ProcessorKey> services = tmpServices.get(clientId);
+        for(ProcessorKey processorKey : services) {
+            ProcessorCache.getProcessorMap().remove(processorKey);
+        }
     }
 
 

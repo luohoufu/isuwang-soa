@@ -154,6 +154,11 @@ public class ZookeeperHelper {
 		}
 	};
 
+	/**
+	 * 显示删除服务节点
+	 * @param serviceName
+	 * @param versionName
+	 */
 	public void deleteService(String serviceName, String versionName) {
 		String path = "/soa/runtime/services/" + serviceName + "/" + SoaSystemEnvProperties.SOA_CONTAINER_IP + ":" + SoaSystemEnvProperties.SOA_CONTAINER_PORT + ":" + versionName;
 		LOGGER.info("删除临时节点serviceInfo:{}", path);

@@ -47,4 +47,9 @@ public class ProcessorKey {
 
         return false;
     }
+
+    @Override
+    public String toString() {
+        return serviceName + ":" + versionName;
+    }
 }
