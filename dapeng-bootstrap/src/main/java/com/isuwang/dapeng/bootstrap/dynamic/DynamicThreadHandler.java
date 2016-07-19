@@ -96,7 +96,6 @@ public class DynamicThreadHandler implements Runnable {
             try {
                 decompress(tmpZipFile, dynamic);
             } catch (Exception e) {
-                System.out.println("解压异常...");
                 e.printStackTrace();
             }
             System.out.println(">>解压缩完成<<");
