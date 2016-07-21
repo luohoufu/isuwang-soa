@@ -177,10 +177,12 @@ public class RouteExecutor {
             return ctx.getHeader().getCallerIp().orElse(null);
         } else if ("customerId".equals(id.getName())) {
             return ctx.getHeader().getCustomerId().orElse(null);
-        } else if ("methodName".equals(id.getName())) {
-            throw new AssertionError("not support methodName");
+        } else if ("service".equals(id.getName())) {
+            return ctx.getHeader().getServiceName();
+        } else if ("method".equals(id.getName())) {
+            return ctx.getHeader().getMethodName();
         } else {
-            throw new AssertionError("not support Field");
+            throw new AssertionError("not support Field: " + id.getName());
         }
     }
 
