@@ -2,7 +2,6 @@ package controllers
 
 import javax.inject._
 
-import com.isuwang.dapeng.tools.helpers.{RouteInfoHelper, RequestExampleHelper, MetaInfoHelper}
 import module.ServiceInfo
 import play.api.mvc._
 import util.ZookeeperHelper

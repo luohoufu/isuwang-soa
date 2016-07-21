@@ -40,3 +40,14 @@ GET        /assets/*file                   controllers.Assets.versioned(path="/p
 
 #tools function
 #GET        /metadata               controllers.HostsController.metadata
+
+
+#jdbc route
+GET        /jdbcAdd                        controllers.JdbcController.add
+GET        /jdbcDelete                    controllers.JdbcController.delete
+GET        /jdbcUpdate                      controllers.JdbcController.update
+GET        /jdbcQuery                      controllers.JdbcController.query
+
+
+
+
