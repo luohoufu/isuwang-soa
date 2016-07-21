@@ -284,7 +284,7 @@ object Implicit {
 
       val buffer: ListBuffer[T] = new ListBuffer[T]
       for (v: AnyRef <- value) {
-        buffer.+=(com.isuwang.scala.dbc.utils.ThriftBeanConverter.copy(value, clazzT))
+        buffer.+=(com.isuwang.scala.dbc.utils.ThriftBeanConverter.copy(v, clazzT))
       }
 
       buffer.toList
