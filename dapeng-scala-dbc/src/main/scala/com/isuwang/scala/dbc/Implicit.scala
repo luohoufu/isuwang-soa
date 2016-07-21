@@ -269,4 +269,26 @@ object Implicit {
     }
   }
 
+  implicit class BeanThriftEx3[O <: AnyRef](value: O) {
+    def thriftToThrift[T <: AnyRef : ClassTag]: T = {
+      val clazzT: Class[T] = implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
+      com.isuwang.scala.dbc.utils.ThriftBeanConverter.copy(value, clazzT)
+    }
+  }
+
+
+  implicit class BeanThriftEx4[O <: List[AnyRef]](value: O) {
+
+    def thriftToThrifts[T <: AnyRef : ClassTag](): List[T] = {
+      val clazzT: Class[T] = implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
+
+      val buffer: ListBuffer[T] = new ListBuffer[T]
+      for (v: AnyRef <- value) {
+        buffer.+=(com.isuwang.scala.dbc.utils.ThriftBeanConverter.copy(value, clazzT))
+      }
+
+      buffer.toList
+    }
+  }
+
 }
