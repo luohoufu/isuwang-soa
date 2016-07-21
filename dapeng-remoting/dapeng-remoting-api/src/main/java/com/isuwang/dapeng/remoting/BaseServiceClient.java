@@ -161,9 +161,15 @@ public class BaseServiceClient {
         stubFilterChain.setAttribute(SendMessageFilter.ATTR_KEY_SENDMESSAGE, (SendMessageFilter.SendMessageAction) (chain) -> {
             SoaConnection conn = connectionPool.getConnection();
 
-            RESP resp = conn.send(request, response, requestSerializer, responseSerializer);
+            try {
+                RESP resp = conn.send(request, response, requestSerializer, responseSerializer);
+                chain.setAttribute(StubFilterChain.ATTR_KEY_RESPONSE, resp);
+            } catch (SoaException e) {
 
-            chain.setAttribute(StubFilterChain.ATTR_KEY_RESPONSE, resp);
+                if (e.getCode().equals(SoaBaseCode.NotConnected.getCode()))
+                    connectionPool.removeConnection();
+                throw e;
+            }
         });
 
         try {

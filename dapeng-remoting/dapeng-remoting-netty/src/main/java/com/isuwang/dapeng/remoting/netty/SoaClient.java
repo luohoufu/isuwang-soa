@@ -95,7 +95,7 @@ public class SoaClient {
             Bootstrap b = initBootstrap();
             return channel = b.connect(host, port).sync().channel();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             throw new SoaException(SoaBaseCode.NotConnected);
         }
 //        return null;

@@ -10,4 +10,5 @@ public interface SoaConnectionPool {
 
     SoaConnection getConnection() throws SoaException;
 
+    void removeConnection() throws SoaException;
 }

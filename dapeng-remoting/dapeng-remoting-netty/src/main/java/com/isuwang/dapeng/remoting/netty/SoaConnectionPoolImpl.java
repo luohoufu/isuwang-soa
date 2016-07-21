@@ -44,4 +44,24 @@ public class SoaConnectionPoolImpl implements SoaConnectionPool {
         return soaConnection;
     }
 
+    /**
+     * 删除链接
+     *
+     * @throws SoaException
+     */
+    @Override
+    public synchronized void removeConnection() throws SoaException {
+
+        InvocationContext context = InvocationContext.Factory.getCurrentInstance();
+
+        if (context.getCalleeIp() == null || context.getCalleePort() <= 0)
+            return;
+
+        String connectKey = context.getCalleeIp() + ":" + String.valueOf(context.getCalleePort());
+
+        if (connectionMap.containsKey(connectKey)) {
+            connectionMap.remove(connectKey);
+        }
+    }
+
 }
