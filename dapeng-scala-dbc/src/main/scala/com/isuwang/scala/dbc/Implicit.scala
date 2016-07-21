@@ -2,7 +2,7 @@ package com.isuwang.scala.dbc
 
 import java.nio.ByteBuffer
 import java.sql.Timestamp
-import java.util.Date
+import java.util.{Optional, Date}
 import java.{lang, math, util}
 
 import com.isuwang.org.apache.thrift.TBase
@@ -288,6 +288,12 @@ object Implicit {
       }
 
       buffer.toList
+    }
+  }
+
+  implicit class BeanOptional[O <: AnyRef](value: O) {
+    def toOptional: Optional[O] = {
+      Optional.of(value)
     }
   }
 
