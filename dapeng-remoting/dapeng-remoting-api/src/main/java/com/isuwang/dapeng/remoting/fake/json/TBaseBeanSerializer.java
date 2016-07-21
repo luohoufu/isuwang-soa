@@ -183,7 +183,11 @@ public abstract class TBaseBeanSerializer implements TBeanSerializer<InvocationI
                                 if (entry.getValue() instanceof JsonPrimitive)
                                     writeField(service, field1.getDataType(), oprot, entry.getValue());
                                 else if (entry.getValue() instanceof JsonObject) {
-                                    writeField(service, field1.getDataType(), oprot, entry.getValue().getAsJsonObject().get("value"));
+
+                                    if (entry.getValue().getAsJsonObject().get("value") == null)
+                                        writeField(service, field1.getDataType(), oprot, entry.getValue().getAsJsonObject());
+                                    else
+                                        writeField(service, field1.getDataType(), oprot, entry.getValue().getAsJsonObject().get("value"));
                                 }
                             }
                         } else
