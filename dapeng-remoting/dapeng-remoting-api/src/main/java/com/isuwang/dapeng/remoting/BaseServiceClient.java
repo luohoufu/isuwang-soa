@@ -19,8 +19,6 @@ import org.slf4j.LoggerFactory;
 import javax.xml.bind.JAXB;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Future;
@@ -117,12 +115,7 @@ public class BaseServiceClient {
             soaHeader.setOperatorName(headerProxy.operatorName());
         }
 
-        try {
-            soaHeader.setCallerIp(Optional.of(InetAddress.getLocalHost().getHostAddress()));
-        } catch (UnknownHostException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-
+        soaHeader.setCallerIp(Optional.of(SoaSystemEnvProperties.SOA_CALLER_IP));
         soaHeader.setServiceName(serviceName);
         soaHeader.setMethodName(methodName);
         soaHeader.setVersionName(versionName);
