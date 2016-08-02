@@ -2,6 +2,7 @@ package com.isuwang.dapeng.transaction;
 
 import com.isuwang.dapeng.core.SoaHeader;
 import com.isuwang.dapeng.core.SoaSystemEnvProperties;
+import com.isuwang.dapeng.core.helper.MasterHelper;
 import com.isuwang.dapeng.core.metadata.Service;
 import com.isuwang.dapeng.remoting.fake.json.JSONPost;
 import com.isuwang.dapeng.remoting.fake.metadata.MetadataClient;
@@ -35,6 +36,11 @@ public class GlobalTransactionManager {
 
     @Transactional(value = "globalTransaction", rollbackFor = Exception.class)
     public void doJob() {
+
+        if (!MasterHelper.isMaster("com.isuwang.dapeng.transaction.api.service.GlobalTransactionService", "1.0.0")) {
+            LOGGER.info("--- 定时事务管理器不是Master，跳过 ---");
+            return;
+        }
         if (working.get())
             return;
 
