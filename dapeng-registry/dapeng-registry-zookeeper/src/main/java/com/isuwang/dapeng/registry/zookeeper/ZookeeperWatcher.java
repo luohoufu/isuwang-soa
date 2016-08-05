@@ -99,9 +99,10 @@ public class ZookeeperWatcher {
         try {
             String data = new String(bytes, "utf-8");
 
-            if (data.trim().equals(""))
+            if (data.trim().equals("") || data.equals("/soa/config/route")) {
+                routes.clear();
                 return;
-
+            }
             synchronized (routes) {
                 routes.clear();
                 new RouteParser().parseAll(routes, data);
