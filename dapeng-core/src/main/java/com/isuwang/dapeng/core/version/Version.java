@@ -24,12 +24,18 @@ public class Version {
         this.patchNum = patchNum;
     }
 
+    /**
+     * 只能调更新的接口，不能调旧的接口
+     *
+     * @param required
+     * @return
+     */
     public boolean compatibleTo(Version required) {
-        if (required.majorNum != this.majorNum) return false;
+        if (this.majorNum != required.majorNum) return false;
 
-        if (required.minorNum > this.minorNum) return false;
+        if (this.minorNum > required.minorNum) return false;
 
-        if (required.minorNum == this.minorNum) return required.patchNum > this.patchNum;
+        if (this.minorNum == required.minorNum) return this.patchNum <= required.patchNum;
 
         return true;
     }
@@ -57,5 +63,11 @@ public class Version {
     public String toString() {
         return fullName;
     }
-    
+
+    public static void main(String[] args) {
+
+        System.out.println(Version.toVersion("1.0.0").compatibleTo(Version.toVersion("1.0.1")));
+
+    }
+
 }

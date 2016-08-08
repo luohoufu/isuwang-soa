@@ -45,10 +45,7 @@ public class LoadBalanceFilter implements Filter {
         if (isLocal)
             usableList = new ArrayList<>();
         else {
-            usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName(), false);
-            if (usableList.size() <= 0) {
-                usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName(), true);
-            }
+            usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName(), true);
         }
 
         //使用路由规则，过滤可用服务器 （local模式不考虑）
@@ -117,10 +114,7 @@ public class LoadBalanceFilter implements Filter {
         if (isLocal)
             usableList = new ArrayList<>();
         else {
-            usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(serviceName, versionName, false);
-            if (usableList.size() <= 0) {
-                usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(serviceName, versionName, true);
-            }
+            usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(serviceName, versionName, true);
         }
 
         String serviceKey = serviceName + "." + versionName + "." + methodName + ".consumer";

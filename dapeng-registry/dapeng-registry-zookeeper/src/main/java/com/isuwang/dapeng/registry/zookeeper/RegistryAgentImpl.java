@@ -28,6 +28,9 @@ public class RegistryAgentImpl implements RegistryAgent {
     private final ZookeeperHelper zooKeeperHelper = new ZookeeperHelper(this);
 
     private ZookeeperWatcher siw;
+
+    private ZookeeperFallbackWatcher zkfbw;
+
     private Map<ProcessorKey, SoaBaseProcessor<?>> processorMap;
 
     public RegistryAgentImpl() {
@@ -48,6 +51,11 @@ public class RegistryAgentImpl implements RegistryAgent {
 
         siw = new ZookeeperWatcher(isClient);
         siw.init();
+
+        if (SoaSystemEnvProperties.SOA_ZOOKEEPER_FALLBACK_ISCONFIG) {
+            zkfbw = new ZookeeperFallbackWatcher();
+            zkfbw.init();
+        }
     }
 
     @Override
@@ -55,6 +63,9 @@ public class RegistryAgentImpl implements RegistryAgent {
         zooKeeperHelper.destroy();
         if (siw != null)
             siw.destroy();
+
+        if (zkfbw != null)
+            zkfbw.destroy();
     }
 
     @Override
@@ -104,7 +115,12 @@ public class RegistryAgentImpl implements RegistryAgent {
 
     @Override
     public List<ServiceInfo> loadMatchedServices(String serviceName, String versionName, boolean compatible) {
-        return siw.getServiceInfo(serviceName, versionName, compatible);
+
+        List<ServiceInfo> serviceInfos = siw.getServiceInfo(serviceName, versionName, compatible);
+        if (serviceInfos.size() <= 0 && SoaSystemEnvProperties.SOA_ZOOKEEPER_FALLBACK_ISCONFIG) {
+            serviceInfos = zkfbw.getServiceInfo(serviceName, versionName, compatible);
+        }
+        return serviceInfos;
     }
 
     @Override

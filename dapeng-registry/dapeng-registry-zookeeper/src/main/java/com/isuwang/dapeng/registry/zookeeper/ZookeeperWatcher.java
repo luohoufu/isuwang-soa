@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,6 +40,7 @@ public class ZookeeperWatcher {
     }
 
     public void init() {
+
         connect();
 
         if (isClient) {
@@ -206,7 +206,7 @@ public class ZookeeperWatcher {
             if (!compatible) {
                 usableList.addAll(serverList.stream().filter(server -> server.getVersionName().equals(versionName)).collect(Collectors.toList()));
             } else {
-                usableList.addAll(serverList.stream().filter(server -> Version.toVersion(server.getVersionName()).compatibleTo(Version.toVersion(versionName))).collect(Collectors.toList()));
+                usableList.addAll(serverList.stream().filter(server -> Version.toVersion(versionName).compatibleTo(Version.toVersion(server.getVersionName()))).collect(Collectors.toList()));
             }
         }
         return usableList;
@@ -285,46 +285,12 @@ public class ZookeeperWatcher {
                 case OK:
                     LOGGER.info("获取{}的子节点成功", path);
 
-                    resetServiceInfoByName((String) ctx, path, children);
+                    WatcherUtils.resetServiceInfoByName((String) ctx, path, children, caches);
                     break;
                 default:
                     LOGGER.error("获取{}的子节点失败", path);
             }
         }, serviceName);
-    }
-
-    /**
-     * serviceName下子节点列表即可用服务地址列表
-     * 子节点命名为：host:port:versionName
-     *
-     * @param serviceName
-     * @param path
-     * @param infos
-     */
-    private void resetServiceInfoByName(String serviceName, String path, List<String> infos) {
-        LOGGER.info(serviceName + "\n" + infos);
-
-        List<ServiceInfo> sinfos = new ArrayList<>();
-
-        for (String info : infos) {
-            String[] serviceInfo = info.split(":");
-            ServiceInfo sinfo = new ServiceInfo(serviceInfo[0], Integer.valueOf(serviceInfo[1]), serviceInfo[2]);
-            sinfos.add(sinfo);
-        }
-
-        if (caches.containsKey(serviceName)) {
-            List<ServiceInfo> currentInfos = caches.get(serviceName);
-
-            for (ServiceInfo sinfo : sinfos) {
-                for (ServiceInfo currentSinfo : currentInfos) {
-                    if (sinfo.equalTo(currentSinfo)) {
-                        sinfo.setActiveCount(currentSinfo.getActiveCount());
-                        break;
-                    }
-                }
-            }
-        }
-        caches.put(serviceName, sinfos);
     }
     //----------------------servicesInfo相关-----------------------------------
 
@@ -385,61 +351,13 @@ public class ZookeeperWatcher {
                     getConfigData(path1, (String) ctx);
                     break;
                 case OK:
-                    processConfigData((String) ctx, data);
+                    WatcherUtils.processConfigData((String) ctx, data, config);
                     break;
                 default:
                     LOGGER.error("Error when trying to get data of {}.", path1);
             }
         }, configNodeName);
     }
-
-    private void processConfigData(String configNode, byte[] data) {
-        Map<ConfigKey, Object> propertyMap = new HashMap<>();
-        try {
-            String propertiesStr = new String(data, "utf-8");
-
-            String[] properties = propertiesStr.split(";");
-            for (String property : properties) {
-
-                String[] key_values = property.split("=");
-                if (key_values.length == 2) {
-
-                    ConfigKey type = ConfigKey.findByValue(key_values[0]);
-                    switch (type) {
-
-                        case Thread:
-                            Integer value = Integer.valueOf(key_values[1]);
-                            propertyMap.put(type, value);
-                            break;
-                        case ThreadPool:
-                            Boolean bool = Boolean.valueOf(key_values[1]);
-                            propertyMap.put(type, bool);
-                            break;
-                        case Timeout:
-                            Integer timeout = Integer.valueOf(key_values[1]);
-                            propertyMap.put(type, timeout);
-                            break;
-                        case LoadBalance:
-                            propertyMap.put(type, key_values[1]);
-                            break;
-                        case FailOver:
-                            propertyMap.put(type, Integer.valueOf(key_values[1]));
-                            break;
-                        case Compatible:
-                            propertyMap.put(type, key_values[1].split(","));
-                            break;
-                    }
-                }
-            }
-
-            LOGGER.info("get config form {} with data [{}]", configNode, propertiesStr);
-        } catch (UnsupportedEncodingException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-
-        config.put(configNode, propertyMap);
-    }
-
     //---------------------static config end-----------------------------------
 
     /**
