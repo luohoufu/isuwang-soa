@@ -48,27 +48,6 @@ public class LoadBalanceFilter implements Filter {
             usableList = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).loadMatchedServices(soaHeader.getServiceName(), soaHeader.getVersionName(), true);
         }
 
-        //使用路由规则，过滤可用服务器 （local模式不考虑）
-        if (!isLocal) {
-            List<Route> routes = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client).getRoutes();
-            List<ServiceInfo> tmpList = new ArrayList<>();
-
-            for (ServiceInfo sif : usableList) {
-                try {
-                    InetAddress inetAddress = InetAddress.getByName(sif.getHost());
-                    if (RouteExecutor.isServerMatched(context, routes, inetAddress)) {
-                        tmpList.add(sif);
-                    }
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            LOGGER.info("路由过滤前可用列表{}", usableList.stream().map(s -> s.getHost()).collect(Collectors.toList()));
-            usableList = tmpList;
-            LOGGER.info("路由过滤后可用列表{}", usableList.stream().map(s -> s.getHost()).collect(Collectors.toList()));
-        }
-
         String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
         LoadBalanceStratage balance = getLoadBalanceStratage(serviceKey) == null ? LoadBalanceStratage.LeastActive : getLoadBalanceStratage(serviceKey);
 
