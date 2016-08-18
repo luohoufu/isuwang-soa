@@ -1,33 +1,38 @@
 package com.isuwang.dapeng.registry.zookeeper;
 
-import com.isuwang.dapeng.core.ProcessorKey;
-import com.isuwang.dapeng.core.Service;
-import com.isuwang.dapeng.core.SoaBaseProcessor;
-import com.isuwang.dapeng.core.SoaSystemEnvProperties;
+import com.isuwang.dapeng.core.*;
 import com.isuwang.dapeng.registry.ConfigKey;
 import com.isuwang.dapeng.registry.RegistryAgent;
 import com.isuwang.dapeng.registry.ServiceInfo;
+import com.isuwang.dapeng.registry.ServiceInfos;
 import com.isuwang.dapeng.route.Route;
+import com.isuwang.dapeng.route.RouteExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * Registry Agent
+ * RegistryAgent using Synchronous zookeeper requesting
  *
- * @author craneding
- * @date 16/1/13
+ * @author tangliu
+ * @date 2016-08-12
  */
 public class RegistryAgentImpl implements RegistryAgent {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistryAgentImpl.class);
 
     private final boolean isClient;
     private final ZookeeperHelper zooKeeperHelper = new ZookeeperHelper(this);
 
-    private ZookeeperWatcher siw;
+    private ZookeeperWatcher siw, zkfbw;
+
     private Map<ProcessorKey, SoaBaseProcessor<?>> processorMap;
 
     public RegistryAgentImpl() {
@@ -46,8 +51,13 @@ public class RegistryAgentImpl implements RegistryAgent {
             zooKeeperHelper.connect();
         }
 
-        siw = new ZookeeperWatcher(isClient);
+        siw = new ZookeeperWatcher(isClient, SoaSystemEnvProperties.SOA_ZOOKEEPER_HOST);
         siw.init();
+
+        if (SoaSystemEnvProperties.SOA_ZOOKEEPER_FALLBACK_ISCONFIG) {
+            zkfbw = new ZookeeperWatcher(isClient, SoaSystemEnvProperties.SOA_ZOOKEEPER_FALLBACK_HOST);
+            zkfbw.init();
+        }
     }
 
     @Override
@@ -55,6 +65,9 @@ public class RegistryAgentImpl implements RegistryAgent {
         zooKeeperHelper.destroy();
         if (siw != null)
             siw.destroy();
+
+        if (zkfbw != null)
+            zkfbw.destroy();
     }
 
     @Override
@@ -85,6 +98,11 @@ public class RegistryAgentImpl implements RegistryAgent {
                 this.registerService(processor.getInterfaceClass().getName(), service.version());
             }
         }
+
+        //如果开启了全局事务，将事务服务也注册到zookeeper,为了主从竞选，只有主全局事务管理器会执行
+        if (SoaSystemEnvProperties.SOA_TRANSACTIONAL_ENABLE) {
+            this.registerService("com.isuwang.dapeng.transaction.api.service.GlobalTransactionService", "1.0.0");
+        }
     }
 
     @Override
@@ -98,19 +116,60 @@ public class RegistryAgentImpl implements RegistryAgent {
     }
 
     @Override
-    public List<ServiceInfo> loadMatchedServices(String serviceName, String versionName, boolean compatible) {
-        return siw.getServiceInfo(serviceName, versionName, compatible);
+    public ServiceInfos loadMatchedServices(String serviceName, String versionName, boolean compatible) {
+
+        boolean usingFallbackZookeeper = false;
+        List<ServiceInfo> serviceInfos = siw.getServiceInfo(serviceName, versionName, compatible);
+        if (serviceInfos.size() <= 0 && SoaSystemEnvProperties.SOA_ZOOKEEPER_FALLBACK_ISCONFIG) {
+            usingFallbackZookeeper = true;
+            serviceInfos = zkfbw.getServiceInfo(serviceName, versionName, compatible);
+        }
+
+        //使用路由规则，过滤可用服务器 （local模式不考虑）
+        final boolean isLocal = SoaSystemEnvProperties.SOA_REMOTING_MODE.equals("local");
+        if (!isLocal) {
+            InvocationContext context = InvocationContext.Factory.getCurrentInstance();
+            List<Route> routes = usingFallbackZookeeper ? zkfbw.getRoutes() : siw.getRoutes();
+            List<ServiceInfo> tmpList = new ArrayList<>();
+
+            for (ServiceInfo sif : serviceInfos) {
+                try {
+                    InetAddress inetAddress = InetAddress.getByName(sif.getHost());
+                    if (RouteExecutor.isServerMatched(context, routes, inetAddress)) {
+                        tmpList.add(sif);
+                    }
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            LOGGER.info("路由过滤前可用列表{}", serviceInfos.stream().map(s -> s.getHost()).collect(Collectors.toList()));
+            serviceInfos = tmpList;
+            LOGGER.info("路由过滤后可用列表{}", serviceInfos.stream().map(s -> s.getHost()).collect(Collectors.toList()));
+        }
+
+        return new ServiceInfos(usingFallbackZookeeper, serviceInfos);
     }
 
     @Override
-    public Map<String, Map<ConfigKey, Object>> getConfig() {
-        return siw.getConfig();
+    public Map<ConfigKey, Object> getConfig(boolean usingFallback, String serviceKey) {
+
+        if (usingFallback) {
+            if (zkfbw.getConfigWithKey(serviceKey).entrySet().size() <= 0)
+                return null;
+            else
+                return zkfbw.getConfigWithKey(serviceKey);
+        } else {
+
+            if (siw.getConfigWithKey(serviceKey).entrySet().size() <= 0)
+                return null;
+            else
+                return siw.getConfigWithKey(serviceKey);
+        }
     }
 
     @Override
-    public List<Route> getRoutes() {
-        return siw.getRoutes();
+    public List<Route> getRoutes(boolean usingFallback) {
+        return null;
     }
-
-
 }

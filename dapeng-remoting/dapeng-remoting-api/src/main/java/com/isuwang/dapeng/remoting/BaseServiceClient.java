@@ -115,6 +115,18 @@ public class BaseServiceClient {
             soaHeader.setOperatorName(headerProxy.operatorName());
         }
 
+        //如果在容器内调用其它服务，将原始的调用者信息(customerId/customerName/operatorId/operatorName)传递
+        if (TransactionContext.hasCurrentInstance()) {
+
+            TransactionContext transactionContext = TransactionContext.Factory.getCurrentInstance();
+            SoaHeader oriHeader = transactionContext.getHeader();
+
+            soaHeader.setCustomerId(oriHeader.getCustomerId());
+            soaHeader.setCustomerName(oriHeader.getCustomerName());
+            soaHeader.setOperatorId(oriHeader.getOperatorId());
+            soaHeader.setOperatorName(oriHeader.getOperatorName());
+        }
+
         soaHeader.setCallerIp(Optional.of(SoaSystemEnvProperties.SOA_CALLER_IP));
         soaHeader.setServiceName(serviceName);
         soaHeader.setMethodName(methodName);
@@ -173,9 +185,13 @@ public class BaseServiceClient {
                 int failOverTimes = 0;
                 String serviceKey = soaHeader.getServiceName() + "." + soaHeader.getVersionName() + "." + soaHeader.getMethodName() + ".consumer";
                 RegistryAgent registryAgent = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Client);
-                Map<ConfigKey, Object> configs = registryAgent != null ? registryAgent.getConfig().get(serviceKey) : null;
-                if (null != configs) {
-                    failOverTimes = (Integer) configs.get(ConfigKey.FailOver);
+
+                Boolean usingFallbackZK = (Boolean) stubFilterChain.getAttribute(StubFilterChain.ATTR_KEY_USERING_FBZK);
+                if (usingFallbackZK != null) {
+                    Map<ConfigKey, Object> configs = registryAgent != null ? registryAgent.getConfig(usingFallbackZK, serviceKey) : null;
+                    if (null != configs) {
+                        failOverTimes = (Integer) configs.get(ConfigKey.FailOver);
+                    }
                 }
 
                 if (context.getFailedTimes() < failOverTimes) {

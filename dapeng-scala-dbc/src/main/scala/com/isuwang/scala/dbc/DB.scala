@@ -166,4 +166,12 @@ trait DB {
     if (sql.startsWith("update") || sql.startsWith("delete"))
       assert(sql.contains("where"), "UPDATE and DELETE sql must have WHERE condition")
   }
+
+  def insertSql(stmt: SQLWithArgs): Int = {
+    var index = 0
+    esqlWithGenerateKey(stmt) { rs: ResultSet =>
+      if (rs.next()) index = rs.getInt(1)
+    }
+    index
+  }
 }

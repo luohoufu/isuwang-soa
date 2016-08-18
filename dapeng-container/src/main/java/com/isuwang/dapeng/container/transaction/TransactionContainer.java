@@ -3,6 +3,8 @@ package com.isuwang.dapeng.container.transaction;
 import com.isuwang.dapeng.container.Container;
 import com.isuwang.dapeng.container.spring.SpringContainer;
 import com.isuwang.dapeng.core.SoaSystemEnvProperties;
+import com.isuwang.dapeng.registry.RegistryAgent;
+import com.isuwang.dapeng.registry.RegistryAgentProxy;
 import com.isuwang.dapeng.transaction.api.GlobalTransactionFactory;
 import com.isuwang.dapeng.transaction.api.service.GlobalTransactionProcessService;
 import com.isuwang.dapeng.transaction.api.service.GlobalTransactionService;
@@ -42,7 +44,7 @@ public class TransactionContainer implements Container {
                 while (resources.hasMoreElements()) {
                     URL nextElement = resources.nextElement();
 
-                    if(nextElement.toString().matches(".*dapeng-transaction.*"))
+                    if (nextElement.toString().matches(".*dapeng-transaction.*"))
                         xmlPaths.add(nextElement.toString());
                 }
 
@@ -51,6 +53,10 @@ public class TransactionContainer implements Container {
 
                 GlobalTransactionFactory.setGlobalTransactionService(context.getBeansOfType(GlobalTransactionService.class).values().iterator().next());
                 GlobalTransactionFactory.setGlobalTransactionProcessService(context.getBeansOfType(GlobalTransactionProcessService.class).values().iterator().next());
+
+                RegistryAgent agent = RegistryAgentProxy.getCurrentInstance(RegistryAgentProxy.Type.Server);
+                agent.registerService("com.isuwang.dapeng.transaction.api.service.GlobalTransactionService", "1.0.0");
+
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -59,7 +65,7 @@ public class TransactionContainer implements Container {
 
     @Override
     public void stop() {
-        if(context != null)
+        if (context != null)
             context.stop();
     }
 
